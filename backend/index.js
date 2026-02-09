@@ -98,6 +98,15 @@ app.post('/api/login', (req, res) => {
   const authData = loadAuth();
   const passwordHash = hashPassword(password);
 
+  console.log('=== LOGIN DEBUG ===');
+  console.log('Username recebido:', username);
+  console.log('Username esperado:', authData.username);
+  console.log('Hash recebido:', passwordHash);
+  console.log('Hash esperado:', authData.passwordHash);
+  console.log('Match username:', username === authData.username);
+  console.log('Match hash:', passwordHash === authData.passwordHash);
+  console.log('==================');
+
   if (username === authData.username && passwordHash === authData.passwordHash) {
     return res.status(200).json({ success: true });
   }
