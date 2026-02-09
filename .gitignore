@@ -16,7 +16,9 @@ backups/
 *.log
 
 # Environment files
-.env*
+.env
+.env.local
+.env.*.local
 
 # Editor settings
 .vscode/
