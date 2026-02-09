@@ -113,7 +113,7 @@ const formatDateFull = (value) => {
       return
     }
     
-    const payload = { ...form, unit_price: parsePrice(priceDisplay), quantity: Number(form.quantity) }
+    const payload = { ...form, unit_price: parsePrice(priceDisplay), quantity: Number(form.quantity), month: currentMonth }
     if(editing) onUpdate(editing.id, payload); else onCreate(payload)
     setForm(empty)
     setPriceDisplay('0,00')
