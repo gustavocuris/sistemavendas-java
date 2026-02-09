@@ -5,6 +5,7 @@ import SaleList from './components/SaleList'
 import CommissionSummary from './components/CommissionSummary'
 import ChartView from './components/ChartView'
 import NotesPanel from './NotesPanel'
+import Login from './components/Login'
 
 const API = `${import.meta.env.VITE_API_URL}/api`
 
@@ -19,6 +20,9 @@ const PRESET_COLORS = [
 ]
 
 export default function App(){
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('authenticated') === 'true'
+  })
   const [sales, setSales] = useState([])
   const [editing, setEditing] = useState(null)
   const [commissions, setCommissions] = useState({ new: 5, recap: 8, recapping: 10, service: 0 })
@@ -39,6 +43,21 @@ export default function App(){
   const [showChart, setShowChart] = useState(false)
   const [chartRefresh, setChartRefresh] = useState(0)
   const [showNotes, setShowNotes] = useState(false)
+
+  const handleLogin = () => {
+    setIsAuthenticated(true)
+    localStorage.setItem('authenticated', 'true')
+  }
+
+  const handleLogout = () => {
+    setIsAuthenticated(false)
+    localStorage.removeItem('authenticated')
+  }
+
+  // Se não estiver autenticado, mostra tela de login
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />
+  }
 
   const load = async ()=>{
     const res = await axios.get(`${API}/sales?month=${currentMonth}`)
@@ -207,6 +226,13 @@ export default function App(){
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </button>
+          <button className="btn-logout" onClick={handleLogout} title="Sair do sistema">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
             </svg>
           </button>
           {showColorPicker && (

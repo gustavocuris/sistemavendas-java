@@ -1,6 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import db from './db.js';
 
 dotenv.config();
@@ -27,6 +32,40 @@ app.use(cors({
 
 app.use(express.json());
 
+// Auth storage (simple file-based for now)
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const authDataDir = path.join(__dirname, 'data');
+const authFilePath = path.join(authDataDir, 'auth.json');
+
+function hashPassword(password) {
+  return crypto.createHash('sha256').update(password).digest('hex');
+}
+
+function ensureAuthFile() {
+  if (!fs.existsSync(authDataDir)) {
+    fs.mkdirSync(authDataDir, { recursive: true });
+  }
+
+  if (!fs.existsSync(authFilePath)) {
+    const initialAuth = {
+      username: 'Intercap Pneus',
+      passwordHash: hashPassword('IPN2026@'),
+      resetToken: null,
+      resetTokenExpires: null
+    };
+    fs.writeFileSync(authFilePath, JSON.stringify(initialAuth, null, 2));
+  }
+}
+
+function loadAuth() {
+  ensureAuthFile();
+  return JSON.parse(fs.readFileSync(authFilePath, 'utf-8'));
+}
+
+function saveAuth(authData) {
+  fs.writeFileSync(authFilePath, JSON.stringify(authData, null, 2));
+}
+
 // Helper to get current month in YYYY-MM format
 function getCurrentMonth() {
   const now = new Date();
@@ -46,6 +85,24 @@ function renumberIdsForMonth(monthData) {
 app.get('/api/months', (req, res) => {
   const months = Object.keys(db.data.months || {}).sort().reverse();
   res.json(months);
+});
+
+// Login endpoint
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body || {};
+
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Login e senha sao obrigatorios' });
+  }
+
+  const authData = loadAuth();
+  const passwordHash = hashPassword(password);
+
+  if (username === authData.username && passwordHash === authData.passwordHash) {
+    return res.status(200).json({ success: true });
+  }
+
+  return res.status(401).json({ message: 'Login ou senha incorretos' });
 });
 
 // Create a new month
@@ -490,6 +547,148 @@ app.post('/api/falta-pagar/:id/convert-to-sale', async (req, res) => {
 // Get full database (debug/view)
 app.get('/api/database', (req, res) => {
   res.json(db.data);
+});
+
+// Email configuration for password recovery
+function createTransporter() {
+  return nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASSWORD
+    }
+  });
+}
+
+// Forgot password endpoint
+app.post('/api/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ message: 'Email inválido' });
+    }
+
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_PASSWORD) {
+      return res.status(500).json({
+        message: 'Email nao configurado. Defina GMAIL_USER e GMAIL_PASSWORD no backend/.env'
+      });
+    }
+
+    const authData = loadAuth();
+
+    // Gerar token simples (tempo + random)
+    const resetToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
+    const resetExpires = Date.now() + (2 * 60 * 60 * 1000);
+    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5174'}/?token=${resetToken}`;
+
+    authData.resetToken = resetToken;
+    authData.resetTokenExpires = resetExpires;
+    saveAuth(authData);
+
+    const transporter = createTransporter();
+
+    // Preparar email
+    const mailOptions = {
+      from: process.env.GMAIL_USER,
+      to: process.env.GMAIL_USER,
+      subject: '🔐 Recuperação de Senha - Intercap Pneus',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f5f5f5; padding: 20px; border-radius: 10px;">
+          <div style="background: linear-gradient(135deg, #167edb 0%, #0a3d62 100%); color: white; padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
+            <h1 style="margin: 0; font-size: 28px;">🚗 Intercap Pneus</h1>
+            <p style="margin: 10px 0 0 0; font-size: 14px;">Sistema de Gestão de Vendas</p>
+          </div>
+
+          <div style="background: white; padding: 30px; border-radius: 10px;">
+            <h2 style="color: #0a3d62; margin-top: 0;">Recuperação de Senha</h2>
+            
+            <p style="color: #666; line-height: 1.6;">
+              Recebemos uma solicitação para recuperar sua senha. Se você não fez essa solicitação, ignore este email.
+            </p>
+
+            <p style="color: #666; line-height: 1.6;">
+              Para redefinir sua senha, clique no botão abaixo:
+            </p>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetLink}" style="
+                display: inline-block;
+                background: linear-gradient(135deg, #167edb 0%, #0a5ba6 100%);
+                color: white;
+                text-decoration: none;
+                padding: 14px 32px;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 16px;
+              ">
+                Redefinir Senha
+              </a>
+            </div>
+
+            <p style="color: #999; font-size: 13px; line-height: 1.6;">
+              Ou copie este link no seu navegador:<br>
+              <code style="background: #f5f5f5; padding: 8px 12px; border-radius: 4px; word-break: break-all;">
+                ${resetLink}
+              </code>
+            </p>
+
+            <p style="color: #999; font-size: 13px; margin-top: 30px; border-top: 1px solid #e0e0e0; padding-top: 20px;">
+              Este link expira em 2 horas.<br>
+              Se você não fez esta solicitação, ignore este email ou entre em contato com o administrador.
+            </p>
+          </div>
+
+          <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
+            <p>© 2026 Intercap Pneus. Todos os direitos reservados.</p>
+          </div>
+        </div>
+      `
+    };
+
+    // Enviar email
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({
+      message: 'Email enviado com sucesso! Verifique sua caixa de entrada.',
+      success: true
+    });
+
+  } catch (error) {
+    console.error('Erro ao enviar email:', error);
+    res.status(500).json({
+      message: 'Erro ao processar solicitação. Tente novamente mais tarde.',
+      error: error.message
+    });
+  }
+});
+
+// Reset password endpoint
+app.post('/api/reset-password', (req, res) => {
+  const { token, newPassword } = req.body || {};
+
+  if (!token || !newPassword) {
+    return res.status(400).json({ message: 'Token e nova senha sao obrigatorios' });
+  }
+
+  const authData = loadAuth();
+
+  if (!authData.resetToken || authData.resetToken !== token) {
+    return res.status(400).json({ message: 'Token invalido' });
+  }
+
+  if (!authData.resetTokenExpires || Date.now() > authData.resetTokenExpires) {
+    return res.status(400).json({ message: 'Token expirado' });
+  }
+
+  authData.passwordHash = hashPassword(newPassword);
+  authData.resetToken = null;
+  authData.resetTokenExpires = null;
+  saveAuth(authData);
+
+  return res.status(200).json({ success: true, message: 'Senha alterada com sucesso' });
 });
 
 const PORT = process.env.PORT || 3001;
