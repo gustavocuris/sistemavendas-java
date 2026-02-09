@@ -9,7 +9,7 @@ build/
 node_modules/
 
 # Data and backups
-data/
+data/sales.json
 backups/
 
 # Logs
