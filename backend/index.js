@@ -22,16 +22,8 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
     ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    // Permitir requisições sem origin (mobile apps, curl, etc)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
+  origin: '*',
+  credentials: false
 }));
 
 app.use(express.json());
