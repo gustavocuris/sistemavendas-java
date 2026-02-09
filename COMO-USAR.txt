@@ -1,0 +1,156 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                    SISTEMA DE VENDAS - GUIA DE INICIALIZAÇÃO                     ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+📋 ARQUIVOS DE INICIALIZAÇÃO:
+
+  ✓ iniciar.bat        → RECOMENDADO (mais simples)
+  ✓ iniciar.ps1        → Alternativa (mais robusto)
+  ✓ parar.bat          → Encerra o sistema
+  ✓ parar.ps1          → Alternativa para encerrar
+  ✓ README.md          → Documentação completa
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🚀 COMO USAR - OPÇÃO 1 (MAIS SIMPLES - RECOMENDADO):
+
+1. **INICIAR O SISTEMA:**
+   - Abra a pasta do projeto
+   - DUPLO CLIQUE em "iniciar.bat"
+   - Aguarde 20 segundos (vai parecer muito, mas é necessário)
+   - O navegador abrirá automaticamente em http://localhost:5174
+
+2. **USAR O SISTEMA:**
+   - Você verá a aplicação no navegador
+   - Deixe as 2 janelas de comando abertas
+   - Backend rodando em: http://localhost:3001
+   - Frontend rodando em: http://localhost:5174
+
+3. **PARAR O SISTEMA:**
+   - Opção 1: DUPLO CLIQUE em "parar.bat"
+   - Opção 2: Feche manualmente as 2 janelas de comando
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🚀 COMO USAR - OPÇÃO 2 (MAIS ROBUSTO - ALTERNATIVA):
+
+Se iniciar.bat não funcionar, tente com PowerShell:
+
+1. ABRA O PowerShell
+2. Digite: Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser
+3. Pressione Y e Enter
+4. DUPLO CLIQUE em "iniciar.ps1"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+⚙️ PRÉ-REQUISITOS (primeira vez):
+
+Se nunca rodou antes, execute uma única vez no PowerShell:
+
+  cd c:\Users\gusta\sistemavendas-java
+  cd backend
+  npm install
+  cd ../frontend
+  npm install
+  cd ..
+
+Depois é só usar o iniciar.bat!
+
+═══════════════════════════════════════════════════════════════════════════════
+
+❌ PROBLEMAS COMUNS E SOLUÇÕES:
+
+1. "npm: não é reconhecido como comando"
+   → Instale o Node.js em: https://nodejs.org/
+   → Reinicie o Windows após instalar
+   → Teste com: node -v
+
+2. "A porta está em uso / Erro de conexão"
+   → Execute: parar.bat
+   → Aguarde 10 segundos
+   → Clique novamente em iniciar.bat
+
+3. "O navegador não abriu / Página em branco"
+   → Abra manualmente: http://localhost:5174
+   → Aguarde 5 segundos
+   → Atualize a página (F5)
+
+4. "Erro: Cannot GET /api/sales"
+   → Aguarde 15 segundos para o backend iniciar
+   → Verifique se duas janelas de comando abriram
+   → Se abriu só uma, o backend pode ter erro
+
+5. "Janelas abriram mas nada acontece"
+   → Verifique se aparecem mensagens nas janelas
+   → Se estiver em branco/travado, feche tudo e execute parar.bat
+   → Aguarde 20 segundos e tente novamente
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📱 DETALHES DO QUE ACONTECE:
+
+Quando você clica em iniciar.bat:
+
+  1. Mata todos os processos Node anteriores
+  2. Aguarda 2 segundos
+  3. Abre uma janela para Backend (npm start na porta 3001)
+  4. Aguarda 8 segundos para o backend ficar pronto
+  5. Abre uma janela para Frontend (npm run dev na porta 5174)
+  6. Aguarda 8 segundos para o frontend ficar pronto
+  7. Abre o navegador em http://localhost:5174
+  8. Você verá o sistema funcionando
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📱 ACESSAR DE OUTRO COMPUTADOR:
+
+Se quiser usar em outra máquina da rede:
+1. Abra PowerShell
+2. Digite: ipconfig
+3. Procure por "IPv4 Address" (ex: 192.168.1.100)
+4. No outro computador, acesse: http://192.168.1.100:5174
+
+═══════════════════════════════════════════════════════════════════════════════
+
+💡 DICAS IMPORTANTES:
+
+- NÃO feche as janelas de comando (Backend e Frontend) com o sistema rodando
+- DEIXE as janelas abertas enquanto usa a aplicação
+- Os dados são salvos em: backend/sales.json
+- Faça backup periódico de sales.json (é importante!)
+- Se demorar muito, o browser pode desconectar - atualize (F5)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ PASSO A PASSO RÁPIDO:
+
+1. DUPLO CLIQUE em iniciar.bat
+2. AGUARDE 20 SEGUNDOS (é normal demorar)
+3. O navegador abre automaticamente
+4. USE O SISTEMA normalmente
+5. Para parar: DUPLO CLIQUE em parar.bat (ou feche as janelas)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+❓ AINDA NÃO FUNCIONOU?
+
+Tente o método manual no PowerShell:
+
+  cd c:\Users\gusta\sistemavendas-java\backend
+  npm start
+
+  # Em OUTRO PowerShell:
+  cd c:\Users\gusta\sistemavendas-java\frontend
+  npm run dev
+
+  # Abra o navegador manualmente:
+  http://localhost:5174
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ VOCÊ ESTÁ PRONTO!
+
+DUPLO CLIQUE EM: iniciar.bat
+
+═══════════════════════════════════════════════════════════════════════════════
+

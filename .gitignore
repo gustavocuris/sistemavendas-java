@@ -1,0 +1,26 @@
+# Build outputs
+target/
+bin/
+dist/
+build/
+.vite/
+
+# Node dependencies
+node_modules/
+
+# Data and backups
+data/
+backups/
+
+# Logs
+*.log
+
+# Environment files
+.env*
+
+# Editor settings
+.vscode/
+.idea/
+
+# Java compiled artifacts
+*.class
