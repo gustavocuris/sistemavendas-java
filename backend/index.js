@@ -15,7 +15,11 @@ const app = express();
 // Configuração de CORS
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',').map(url => url.trim())
-  : ['http://localhost:5173', 'http://localhost:5174'];
+  : [
+      'http://localhost:5173', 
+      'http://localhost:5174',
+      'https://sistemavendas-frontend-intercap.onrender.com'
+    ];
 
 app.use(cors({
   origin: function (origin, callback) {
