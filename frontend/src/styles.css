@@ -1029,8 +1029,8 @@ h1 {
 
 .list td {
   padding: 13px 12px;
-  border-bottom: 1px solid #3a3a3a;
-  color: #ffffff;
+  border-bottom: 1px solid rgba(var(--primary-color-rgb), 0.2);
+  color: var(--primary-dark);
   font-weight: 500;
   font-size: 0.85em;
   line-height: 1.4;
@@ -1047,17 +1047,17 @@ h1 {
 
 .list tbody tr {
   transition: all 0.2s ease;
-  background: #1a1a1a;
+  background: #ffffff;
   height: auto;
 }
 
 .list tbody tr:hover {
-  background: #222222;
-  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
+  background: rgba(var(--primary-color-rgb), 0.08);
+  box-shadow: 0 2px 6px rgba(var(--primary-color-rgb), 0.12);
 }
 
 .list tbody tr:nth-child(even) {
-  background: #262626;
+  background: rgba(var(--primary-color-rgb), 0.06);
 }
 
 .list tfoot {
@@ -1832,7 +1832,7 @@ h1 {
 }
 
 .dark-mode .list td {
-  border-bottom-color: #3a3a3a;
+  border-bottom-color: rgba(var(--primary-light-rgb), 0.2);
   color: #ffffff;
 }
 
@@ -1842,12 +1842,12 @@ h1 {
 }
 
 .dark-mode .list tbody tr:hover {
-  background: #222222;
-  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
+  background: rgba(var(--primary-color-rgb), 0.15);
+  box-shadow: 0 2px 6px rgba(var(--primary-light-rgb), 0.15);
 }
 
 .dark-mode .list tbody tr:nth-child(even) {
-  background-color: #262626;
+  background: rgba(var(--primary-dark-rgb), 0.4);
 }
 
 .dark-mode .list tfoot {
