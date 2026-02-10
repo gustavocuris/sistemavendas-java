@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const tireTypeLabel = { new: 'Novo', recap: 'Recapado', recapping: 'Recapagem', service: 'Sv Borracharia' }
 const desfechoLabel = { entrega: 'Entrega ao Cliente', piratininga: 'Coleta Piratininga', belavista: 'Coleta Bela Vista' }
@@ -25,17 +25,36 @@ const formatDateFull = (value) => {
 }
 
 export default function SaleList({ sales, onEdit, onDelete }){
-  const totalAll = sales.reduce((s,i)=>s+Number(i.total||0),0)
+  const [isAscending, setIsAscending] = useState(false)
+  
+  const sortedSales = [...sales].sort((a, b) => {
+    if (isAscending) {
+      return a.id - b.id
+    } else {
+      return b.id - a.id
+    }
+  })
+  
+  const totalAll = sortedSales.reduce((s,i)=>s+Number(i.total||0),0)
   return (
     <div className="list">
-      <h2>Vendas</h2>
+      <div className="list-header-with-sort">
+        <h2>Vendas</h2>
+        <button 
+          onClick={() => setIsAscending(!isAscending)}
+          className="btn-sort"
+          title={isAscending ? "Ordenar: Novas para Antigas" : "Ordenar: Antigas para Novas"}
+        >
+          {isAscending ? '↑' : '↓'}
+        </button>
+      </div>
       <div className="list-wrapper">
         <table>
           <thead>
             <tr><th>ID</th><th>Data</th><th>Cliente</th><th>Telefone</th><th>Produto</th><th>Unit.</th><th>Qtd</th><th>Tipo de Venda</th><th>Desfecho</th><th>Total</th><th>Ações</th></tr>
           </thead>
           <tbody>
-            {sales.map(s=> (
+            {sortedSales.map(s=> (
               <tr key={s.id}>
                 <td>{s.id}</td>
                 <td title={formatDateFull(s.date)}>{formatDate(s.date)}</td>

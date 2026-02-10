@@ -708,6 +708,15 @@ h1 {
   flex-direction: column;
 }
 
+.list-header-with-sort {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 22px 24px;
+  border-bottom: 3px solid var(--primary-light);
+}
+
 .list h2 {
   color: var(--primary-color);
   margin: 0;
@@ -715,9 +724,33 @@ h1 {
   font-weight: 950;
   text-transform: uppercase;
   letter-spacing: 1px;
-  padding: 22px 24px;
-  border-bottom: 3px solid var(--primary-light);
   line-height: 1.2;
+}
+
+.btn-sort {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 1.4em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+}
+
+.btn-sort:hover {
+  background: var(--primary-dark);
+  transform: scale(1.08);
+}
+
+.btn-sort:active {
+  transform: scale(0.95);
 }
 
 .list-wrapper {
@@ -1479,9 +1512,22 @@ h1 {
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
 }
 
+.dark-mode .list-header-with-sort {
+  border-bottom-color: var(--primary-color);
+}
+
 .dark-mode .list h2 {
   color: #f0f0f0;
-  border-bottom-color: var(--primary-color);
+}
+
+.dark-mode .btn-sort {
+  background: var(--primary-color);
+  color: white;
+}
+
+.dark-mode .btn-sort:hover {
+  background: var(--primary-light);
+  color: var(--primary-dark);
 }
 
 .dark-mode .list th {
