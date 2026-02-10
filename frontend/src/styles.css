@@ -650,28 +650,33 @@ h1 {
 }
 
 .recap-trade {
-  margin-top: 8px;
-  padding: 10px 12px;
+  margin-top: 6px;
+  padding: 6px 10px;
   border: 2px solid var(--primary-color);
   border-radius: 8px;
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
   box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .recap-trade-label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 8px;
   font-weight: 800;
   color: var(--primary-color);
-  font-size: 0.85em;
+  font-size: 0.8em;
   text-transform: uppercase;
   letter-spacing: 0.6px;
+  line-height: 1;
 }
 
 .recap-trade input {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   accent-color: var(--primary-color);
   border-radius: 4px;
 }
