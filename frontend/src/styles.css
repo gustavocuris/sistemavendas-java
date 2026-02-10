@@ -1129,24 +1129,24 @@ h1 {
 }
 
 .btn-edit {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
   color: white;
 }
 
 .btn-edit:hover {
-  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, #166534 0%, #14532d 100%);
+  box-shadow: 0 4px 12px rgba(22, 101, 52, 0.5);
   transform: translateY(-2px);
 }
 
 .btn-delete {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
   color: white;
 }
 
 .btn-delete:hover {
-  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+  background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+  box-shadow: 0 4px 12px rgba(153, 27, 27, 0.5);
   transform: translateY(-2px);
 }
 
