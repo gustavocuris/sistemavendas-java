@@ -666,24 +666,26 @@ h1 {
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
-  font-weight: 950;
+  font-weight: 900;
   color: var(--primary-color);
-  font-size: 0.9em;
+  font-size: 1em;
   text-transform: uppercase;
-  letter-spacing: 0.9px;
+  letter-spacing: 1px;
   line-height: 1.2;
   cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .recap-trade input {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   accent-color: var(--primary-color);
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
   transition: all 0.3s ease;
   border: 2px solid var(--primary-color);
   background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.25);
 }
 
 .recap-trade input:hover {
@@ -1740,13 +1742,14 @@ h1 {
 
 .dark-mode .recap-trade-label {
   color: var(--primary-light);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 .dark-mode .recap-trade input {
   accent-color: var(--primary-light);
   border: 2px solid var(--primary-light);
-  background: #0f0f0f;
+  background: #0b0b0b;
+  box-shadow: 0 0 0 2px rgba(var(--primary-light-rgb), 0.25);
 }
 
 .dark-mode .form input,
