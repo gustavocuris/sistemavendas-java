@@ -1328,15 +1328,20 @@ h1 {
 
 .commission-row {
   background: white;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgba(var(--primary-color-rgb), 0.15);
   font-size: 0.95em;
   padding: 16px 18px;
   transition: all 0.2s ease;
 }
 
 .commission-row:hover {
-  background: linear-gradient(90deg, rgba(var(--primary-light-rgb), 0.04) 0%, white 100%);
-  border-left-color: var(--primary-light);
+  background: rgba(var(--primary-color-rgb), 0.12);
+  border-left-color: var(--primary-color);
+  box-shadow: 0 2px 6px rgba(var(--primary-color-rgb), 0.12);
+}
+
+.commission-row:nth-child(even) {
+  background: rgba(var(--primary-color-rgb), 0.08);
 }
 
 .cell-name {
@@ -2022,17 +2027,18 @@ h1 {
 
 .dark-mode .commission-row {
   background: #1a1a1a;
-  border-bottom-color: #3d3d3d;
+  border-bottom-color: rgba(var(--primary-light-rgb), 0.2);
   color: #f0f0f0;
   transition: all 0.2s ease;
 }
 
 .dark-mode .commission-row:hover {
-  background: linear-gradient(90deg, rgba(var(--primary-light-rgb), 0.1) 0%, #1a1a1a 100%);
+  background: rgba(var(--primary-color-rgb), 0.2);
+  box-shadow: 0 2px 6px rgba(var(--primary-light-rgb), 0.2);
 }
 
 .dark-mode .commission-row:nth-child(even) {
-  background-color: #222222;
+  background-color: rgba(var(--primary-color-rgb), 0.28);
 }
 
 .dark-mode .cell-name {
