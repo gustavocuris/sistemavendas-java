@@ -5,16 +5,23 @@ import fs from 'fs';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataDir = path.join(__dirname, 'data');
 const filePath = path.join(dataDir, 'sales.json');
+const backupDir = path.join(dataDir, 'backups');
 
 // Ensure data directory exists
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
+// Ensure backup directory exists
+if (!fs.existsSync(backupDir)) {
+  fs.mkdirSync(backupDir, { recursive: true });
+}
+
 // Simple JSON file storage
 class DB {
   constructor(filePath) {
     this.filePath = filePath;
+    this.saveCount = 0; // Counter para auto-backup a cada 10 saves
     this.data = { 
       nextId: 1,
       months: {},
@@ -121,6 +128,23 @@ class DB {
 
   save() {
     fs.writeFileSync(this.filePath, JSON.stringify(this.data, null, 2));
+    
+    // Auto-backup a cada 10 saves
+    this.saveCount++;
+    if (this.saveCount % 10 === 0) {
+      this.createAutoBackup();
+    }
+  }
+
+  createAutoBackup() {
+    try {
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+      const backupFile = path.join(backupDir, `auto-backup-${timestamp}.json`);
+      fs.copyFileSync(this.filePath, backupFile);
+      console.log(`✅ Auto-backup criado: auto-backup-${timestamp}.json`);
+    } catch (error) {
+      console.error('Erro ao criar auto-backup:', error);
+    }
   }
 
   async write() {
