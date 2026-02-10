@@ -651,27 +651,21 @@ h1 {
 
 .recap-trade {
   margin-top: 8px;
-  padding: 10px 14px;
-  border: 2px solid var(--primary-color);
-  border-radius: 8px;
-  background: linear-gradient(135deg, #f0f9f4 0%, #ffffff 100%);
-  box-shadow: 0 2px 10px rgba(30, 113, 69, 0.12);
   display: flex;
-  justify-content: center;
   align-items: center;
-  transition: all 0.3s ease;
+  justify-content: flex-start;
+  padding-left: 2px;
 }
 
 .recap-trade:hover {
-  box-shadow: 0 4px 16px rgba(30, 113, 69, 0.18);
-  transform: translateY(-1px);
+  transform: none;
 }
 
 .recap-trade-label {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 18px;
+  justify-content: flex-start;
+  gap: 8px;
   font-weight: 900;
   color: var(--primary-color);
   font-size: 0.85em;
@@ -1733,13 +1727,13 @@ h1 {
 }
 
 .dark-mode .recap-trade {
-  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  border-color: var(--primary-light);
-  box-shadow: 0 2px 12px rgba(74, 222, 128, 0.15);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .dark-mode .recap-trade:hover {
-  box-shadow: 0 4px 18px rgba(74, 222, 128, 0.25);
+  box-shadow: none;
 }
 
 .dark-mode .recap-trade-label {
