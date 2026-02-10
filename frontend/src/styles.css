@@ -1052,12 +1052,12 @@ h1 {
 }
 
 .list tbody tr:hover {
-  background: rgba(var(--primary-color-rgb), 0.08);
-  box-shadow: 0 2px 6px rgba(var(--primary-color-rgb), 0.12);
+  background: rgba(var(--primary-color-rgb), 0.1);
+  box-shadow: 0 2px 6px rgba(var(--primary-color-rgb), 0.15);
 }
 
 .list tbody tr:nth-child(even) {
-  background: rgba(var(--primary-color-rgb), 0.06);
+  background: rgba(var(--primary-color-rgb), 0.15);
 }
 
 .list tfoot {
@@ -1842,12 +1842,12 @@ h1 {
 }
 
 .dark-mode .list tbody tr:hover {
-  background: rgba(var(--primary-color-rgb), 0.15);
-  box-shadow: 0 2px 6px rgba(var(--primary-light-rgb), 0.15);
+  background: rgba(var(--primary-color-rgb), 0.2);
+  box-shadow: 0 2px 6px rgba(var(--primary-light-rgb), 0.2);
 }
 
 .dark-mode .list tbody tr:nth-child(even) {
-  background: rgba(var(--primary-dark-rgb), 0.4);
+  background: rgba(var(--primary-color-rgb), 0.3);
 }
 
 .dark-mode .list tfoot {
