@@ -3141,6 +3141,22 @@ h1 {
   transition: all 0.2s ease;
 }
 
+.flow-bt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--primary-color);
+  white-space: nowrap;
+}
+
+.flow-bt input {
+  width: 12px;
+  height: 12px;
+  accent-color: var(--primary-color);
+}
+
 .flow-form input[type="month"],
 .flow-form input[type="date"] {
   cursor: pointer;
@@ -3158,6 +3174,14 @@ h1 {
 .flow-modal.dark-mode .flow-form select option {
   background: #2a2a2a;
   color: #e0e0e0;
+}
+
+.flow-modal.dark-mode .flow-bt {
+  color: white;
+}
+
+.flow-modal.dark-mode .flow-bt input {
+  accent-color: white;
 }
 
 .flow-modal.dark-mode .flow-form input[type="month"],

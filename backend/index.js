@@ -283,7 +283,7 @@ app.get('/api/comprar-depois', (req, res) => {
 });
 
 app.post('/api/comprar-depois', async (req, res) => {
-  const { client, phone, product, tire_type, unit_price, quantity, desfecho } = req.body;
+  const { client, phone, product, tire_type, unit_price, quantity, desfecho, base_trade } = req.body;
   if (!client || !product || !tire_type || unit_price == null) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
@@ -298,6 +298,7 @@ app.post('/api/comprar-depois', async (req, res) => {
     phone: phone || '',
     product,
     tire_type,
+    base_trade: !!base_trade,
     unit_price: Number(unit_price),
     quantity: Number(quantity) || 1,
     desfecho: desfecho || 'entrega',
@@ -311,7 +312,7 @@ app.post('/api/comprar-depois', async (req, res) => {
 
 app.put('/api/comprar-depois/:id', async (req, res) => {
   const { id } = req.params;
-  const { client, phone, product, tire_type, unit_price, quantity, desfecho } = req.body;
+  const { client, phone, product, tire_type, unit_price, quantity, desfecho, base_trade } = req.body;
 
   const comprar = db.data.comprarDepois || [];
   const itemIndex = comprar.findIndex(i => i.id == id);
@@ -326,6 +327,7 @@ app.put('/api/comprar-depois/:id', async (req, res) => {
     phone: phone || '',
     product,
     tire_type,
+    base_trade: !!base_trade,
     unit_price: Number(unit_price),
     quantity: Number(quantity) || 1,
     desfecho: desfecho || 'entrega'
@@ -380,6 +382,7 @@ app.post('/api/comprar-depois/:id/move-to-pagar', async (req, res) => {
     phone: item.phone,
     product: item.product,
     tire_type: item.tire_type,
+    base_trade: !!item.base_trade,
     unit_price: item.unit_price,
     quantity: item.quantity,
     desfecho: item.desfecho || 'entrega',
@@ -407,7 +410,7 @@ app.get('/api/falta-pagar', (req, res) => {
 });
 
 app.post('/api/falta-pagar', async (req, res) => {
-  const { client, phone, product, tire_type, unit_price, quantity, date, desfecho } = req.body;
+  const { client, phone, product, tire_type, unit_price, quantity, date, desfecho, base_trade } = req.body;
   if (!client || !product || !tire_type || unit_price == null || !date) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
@@ -422,6 +425,7 @@ app.post('/api/falta-pagar', async (req, res) => {
     phone: phone || '',
     product,
     tire_type,
+    base_trade: !!base_trade,
     unit_price: Number(unit_price),
     quantity: Number(quantity) || 1,
     desfecho: desfecho || 'entrega',
@@ -436,7 +440,7 @@ app.post('/api/falta-pagar', async (req, res) => {
 
 app.put('/api/falta-pagar/:id', async (req, res) => {
   const { id } = req.params;
-  const { client, phone, product, tire_type, unit_price, quantity, date, desfecho } = req.body;
+  const { client, phone, product, tire_type, unit_price, quantity, date, desfecho, base_trade } = req.body;
 
   const pagar = db.data.faltaPagar || [];
   const itemIndex = pagar.findIndex(i => i.id == id);
@@ -451,6 +455,7 @@ app.put('/api/falta-pagar/:id', async (req, res) => {
     phone: phone || '',
     product,
     tire_type,
+    base_trade: !!base_trade,
     unit_price: Number(unit_price),
     quantity: Number(quantity) || 1,
     desfecho: desfecho || 'entrega',
@@ -528,6 +533,7 @@ app.post('/api/falta-pagar/:id/convert-to-sale', async (req, res) => {
     unit_price: pagarItem.unit_price,
     quantity: pagarItem.quantity,
     tire_type: pagarItem.tire_type,
+    base_trade: !!pagarItem.base_trade,
     desfecho: pagarItem.desfecho || 'entrega',
     total
   };

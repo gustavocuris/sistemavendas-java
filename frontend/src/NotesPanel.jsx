@@ -22,13 +22,13 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
   const [faltaPagar, setFaltaPagar] = useState([]);
 
   const [formComprar, setFormComprar] = useState({
-    client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', desfecho: 'entrega'
+    client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', desfecho: 'entrega', base_trade: false
   });
   const [priceDisplayComprar, setPriceDisplayComprar] = useState('0,00');
   const [editingComprar, setEditingComprar] = useState(null);
 
   const [formPagar, setFormPagar] = useState({
-    client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', date: '', desfecho: 'entrega'
+    client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', date: '', desfecho: 'entrega', base_trade: false
   });
   const [priceDisplayPagar, setPriceDisplayPagar] = useState('0,00');
   const [editingPagar, setEditingPagar] = useState(null);
@@ -101,14 +101,14 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
       const payload = { ...formComprar, unit_price: parsePrice(priceDisplayComprar), quantity: Number(formComprar.quantity) };
       if (editingComprar) { await axios.put(`${API}/comprar-depois/${editingComprar}`, payload); setEditingComprar(null); }
       else { await axios.post(`${API}/comprar-depois`, payload); }
-      setFormComprar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', desfecho: 'entrega' });
+      setFormComprar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', desfecho: 'entrega', base_trade: false });
       setPriceDisplayComprar('0,00');
       await loadData();
     } catch (err) { alert('Erro ao salvar'); }
   };
 
   const handleEditComprar = (item) => {
-    setFormComprar({ ...item, unit_price: item.unit_price, quantity: item.quantity || '1' });
+    setFormComprar({ ...item, base_trade: !!item.base_trade, unit_price: item.unit_price, quantity: item.quantity || '1' });
     setPriceDisplayComprar(formatPrice(Math.round(item.unit_price * 100)));
     setEditingComprar(item.id);
   };
@@ -137,14 +137,14 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
       const payload = { ...formPagar, unit_price: parsePrice(priceDisplayPagar), quantity: Number(formPagar.quantity) };
       if (editingPagar) { await axios.put(`${API}/falta-pagar/${editingPagar}`, payload); setEditingPagar(null); }
       else { await axios.post(`${API}/falta-pagar`, payload); }
-      setFormPagar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', date: '', desfecho: 'entrega' });
+      setFormPagar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', date: '', desfecho: 'entrega', base_trade: false });
       setPriceDisplayPagar('0,00');
       await loadData();
     } catch (err) { alert('Erro ao salvar'); }
   };
 
   const handleEditPagar = (item) => {
-    setFormPagar({ ...item, quantity: item.quantity || '1' });
+    setFormPagar({ ...item, base_trade: !!item.base_trade, quantity: item.quantity || '1' });
     setPriceDisplayPagar(formatPrice(Math.round(item.unit_price * 100)));
     setEditingPagar(item.id);
   };
@@ -186,7 +186,8 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
 
   const getTireTypeLabel = (type) => TIRE_TYPES.find(t => t.value === type)?.label || type;
 
-  const getTireTypeBadge = (type) => {
+  const getTireTypeBadge = (item) => {
+    const type = item?.tire_type || 'new';
     const badges = {
       'new': { label: 'Pneu Novo', color: '#10b981' },
       'recap': { label: 'Recapado', color: '#3b82f6' },
@@ -194,6 +195,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
       'service': { label: 'SV Borracharia', color: '#8b5cf6' }
     };
     const badge = badges[type] || badges['new'];
+    if (type === 'recap' && item?.base_trade) return `${badge.label} BT`;
     return badge.label;
   };
 
@@ -264,9 +266,18 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                 <input type="text" placeholder="Cliente" value={formComprar.client} onChange={(e) => setFormComprar({ ...formComprar, client: e.target.value })} />
                 <input type="tel" placeholder="(XX) XXXXX-XXXX" value={formComprar.phone} onChange={(e) => setFormComprar({ ...formComprar, phone: formatPhone(e.target.value) })} />
                 <input type="text" placeholder="Produto/Pneu" value={formComprar.product} onChange={(e) => setFormComprar({ ...formComprar, product: e.target.value })} />
-                <select value={formComprar.tire_type} onChange={(e) => setFormComprar({ ...formComprar, tire_type: e.target.value })}>
+                <select value={formComprar.tire_type} onChange={(e) => {
+                  const nextType = e.target.value;
+                  setFormComprar({ ...formComprar, tire_type: nextType, base_trade: nextType === 'recap' ? !!formComprar.base_trade : false });
+                }}>
                   {TIRE_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
+                {formComprar.tire_type === 'recap' && (
+                  <label className="flow-bt">
+                    <input type="checkbox" checked={!!formComprar.base_trade} onChange={(e) => setFormComprar({ ...formComprar, base_trade: e.target.checked })} />
+                    Pneu a base de troca
+                  </label>
+                )}
                 <input type="text" placeholder="Valor (R$)" value={priceDisplayComprar} onChange={(e) => setPriceDisplayComprar(formatPrice(e.target.value))} />
                 <input type="number" placeholder="Quantidade" value={formComprar.quantity} onChange={(e) => setFormComprar({ ...formComprar, quantity: e.target.value })} min="1" />
                 <select value={formComprar.desfecho} onChange={(e) => setFormComprar({ ...formComprar, desfecho: e.target.value })}>
@@ -280,7 +291,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                     {editingComprar ? 'Atualizar' : 'Adicionar'}
                   </button>
                   {editingComprar && (
-                    <button type="button" className="flow-btn-cancel" onClick={() => { setEditingComprar(null); setFormComprar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', desfecho: 'entrega' }); setPriceDisplayComprar('0,00'); }}>
+                    <button type="button" className="flow-btn-cancel" onClick={() => { setEditingComprar(null); setFormComprar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', desfecho: 'entrega', base_trade: false }); setPriceDisplayComprar('0,00'); }}>
                       ✕ Cancelar
                     </button>
                   )}
@@ -312,7 +323,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                           <td>{item.client}</td>
                           <td>{item.phone}</td>
                           <td>{item.product}</td>
-                          <td><span className="flow-badge">{getTireTypeBadge(item.tire_type)}</span></td>
+                          <td><span className="flow-badge">{getTireTypeBadge(item)}</span></td>
                           <td style={{ textAlign: 'right', fontWeight: '700' }}>R$ {formatPrice(Math.round(item.unit_price * 100))}</td>
                           <td style={{ textAlign: 'center', fontWeight: '700' }}>{item.quantity}</td>
                           <td style={{ textAlign: 'center' }}><span className="flow-badge">{getDesfechoLabel(item.desfecho)}</span></td>
@@ -351,9 +362,18 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                 <input type="text" placeholder="Cliente" value={formPagar.client} onChange={(e) => setFormPagar({ ...formPagar, client: e.target.value })} />
                 <input type="tel" placeholder="(XX) XXXXX-XXXX" value={formPagar.phone} onChange={(e) => setFormPagar({ ...formPagar, phone: formatPhone(e.target.value) })} />
                 <input type="text" placeholder="Produto/Pneu" value={formPagar.product} onChange={(e) => setFormPagar({ ...formPagar, product: e.target.value })} />
-                <select value={formPagar.tire_type} onChange={(e) => setFormPagar({ ...formPagar, tire_type: e.target.value })}>
+                <select value={formPagar.tire_type} onChange={(e) => {
+                  const nextType = e.target.value;
+                  setFormPagar({ ...formPagar, tire_type: nextType, base_trade: nextType === 'recap' ? !!formPagar.base_trade : false });
+                }}>
                   {TIRE_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
+                {formPagar.tire_type === 'recap' && (
+                  <label className="flow-bt">
+                    <input type="checkbox" checked={!!formPagar.base_trade} onChange={(e) => setFormPagar({ ...formPagar, base_trade: e.target.checked })} />
+                    Pneu a base de troca
+                  </label>
+                )}
                 <input type="text" placeholder="Valor (R$)" value={priceDisplayPagar} onChange={(e) => setPriceDisplayPagar(formatPrice(e.target.value))} />
                 <input type="number" placeholder="Quantidade" value={formPagar.quantity} onChange={(e) => setFormPagar({ ...formPagar, quantity: e.target.value })} min="1" />
                 <input type="date" placeholder="Data" value={formPagar.date} onChange={(e) => setFormPagar({ ...formPagar, date: e.target.value })} />
@@ -368,7 +388,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                     {editingPagar ? 'Atualizar' : 'Adicionar'}
                   </button>
                   {editingPagar && (
-                    <button type="button" className="flow-btn-cancel" onClick={() => { setEditingPagar(null); setFormPagar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', date: '', desfecho: 'entrega' }); setPriceDisplayPagar('0,00'); }}>
+                    <button type="button" className="flow-btn-cancel" onClick={() => { setEditingPagar(null); setFormPagar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', date: '', desfecho: 'entrega', base_trade: false }); setPriceDisplayPagar('0,00'); }}>
                       ✕ Cancelar
                     </button>
                   )}
@@ -401,7 +421,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                           <td>{item.client}</td>
                           <td>{item.phone}</td>
                           <td>{item.product}</td>
-                          <td><span className="flow-badge">{getTireTypeBadge(item.tire_type)}</span></td>
+                          <td><span className="flow-badge">{getTireTypeBadge(item)}</span></td>
                           <td style={{ textAlign: 'right', fontWeight: '700' }}>R$ {formatPrice(Math.round(item.unit_price * 100))}</td>
                           <td style={{ textAlign: 'center', fontWeight: '700' }}>{item.quantity}</td>
                           <td style={{ textAlign: 'center' }}><span className="flow-date-badge">{formatDateDisplay(item.date)}</span></td>
