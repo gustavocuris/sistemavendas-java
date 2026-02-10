@@ -682,13 +682,19 @@ h1 {
 }}
 
 .actions {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch;
   gap: 12px;
   margin-top: 40px;
   padding-top: 24px;
   border-top: 2px solid #e2e8f0;
+}
+
+.actions > button {
+  flex: 1 1 0%;
+  min-width: 0;
 }
 
 .btn-primary,
@@ -1489,11 +1495,16 @@ h1 {
   }
 
   .actions {
-    flex-direction: row;
-    flex-wrap: nowrap;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     gap: 8px;
     margin-top: 32px;
     padding-top: 16px;
+  }
+
+  .actions > button {
+    flex: 1 1 0%;
+    min-width: 0;
   }
 
   .btn-primary,

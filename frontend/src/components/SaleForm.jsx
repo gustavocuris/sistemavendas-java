@@ -315,11 +315,7 @@ const formatDateFull = (value) => {
       </div>
       <div className="actions">
         <button type="submit" className="btn-primary">{editing? 'Salvar': items.length > 0 ? 'Salvar Todos' : 'Adicionar'}</button>
-        {!editing && (
-          <button type="button" onClick={addItem} className="btn-primary btn-add-item" title="Adicionar mais um item para o mesmo cliente">
-            + Itens
-          </button>
-        )}
+        {!editing && <button type="button" onClick={addItem} className="btn-primary" title="Adicionar mais um item para o mesmo cliente">+ Itens</button>}
       </div>
       
       {items.length > 0 && (
