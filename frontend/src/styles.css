@@ -652,7 +652,7 @@ h1 {
 .recap-trade {
   margin-top: 8px;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--primary-color);
   border-radius: 8px;
   background: #f8fafc;
 }
@@ -662,13 +662,13 @@ h1 {
   align-items: center;
   gap: 10px;
   font-weight: 700;
-  color: #2d3748;
+  color: var(--primary-color);
   font-size: 0.85em;
 }
 
 .recap-trade input {
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
   accent-color: var(--primary-color);
 }
 
@@ -1699,11 +1699,15 @@ h1 {
 
 .dark-mode .recap-trade {
   background: #1f2937;
-  border-color: #374151;
+  border-color: #4b5563;
 }
 
 .dark-mode .recap-trade-label {
-  color: #e5e7eb;
+  color: white;
+}
+
+.dark-mode .recap-trade input {
+  accent-color: white;
 }
 
 .dark-mode .form input,

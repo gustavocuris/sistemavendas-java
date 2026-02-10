@@ -136,7 +136,7 @@ app.get('/api/sales', (req, res) => {
 
 // Create sale
 app.post('/api/sales', async (req, res) => {
-  const { date, client, phone, product, unit_price, quantity, tire_type, desfecho, month } = req.body;
+  const { date, client, phone, product, unit_price, quantity, tire_type, desfecho, month, base_trade } = req.body;
   if (!date || !client || !product || unit_price == null || quantity == null || !tire_type) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
@@ -167,6 +167,7 @@ app.post('/api/sales', async (req, res) => {
     unit_price: Number(unit_price),
     quantity: qty,
     tire_type,
+    base_trade: !!base_trade,
     desfecho: desfecho || 'entrega',
     total
   };
@@ -178,7 +179,7 @@ app.post('/api/sales', async (req, res) => {
 // Update sale
 app.put('/api/sales/:id', async (req, res) => {
   const { id } = req.params;
-  const { date, client, phone, product, unit_price, quantity, tire_type, desfecho, month } = req.body;
+  const { date, client, phone, product, unit_price, quantity, tire_type, desfecho, month, base_trade } = req.body;
   
   const qty = Number(quantity);
   if (!Number.isInteger(qty) || qty < 1) {
@@ -205,6 +206,7 @@ app.put('/api/sales/:id', async (req, res) => {
     unit_price: Number(unit_price),
     quantity: qty,
     tire_type,
+    base_trade: !!base_trade,
     desfecho: desfecho || 'entrega',
     total
   };
