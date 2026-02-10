@@ -652,24 +652,28 @@ h1 {
 .recap-trade {
   margin-top: 8px;
   padding: 10px 12px;
-  border: 1px solid var(--primary-color);
+  border: 2px solid var(--primary-color);
   border-radius: 8px;
-  background: #f8fafc;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
 }
 
 .recap-trade-label {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--primary-color);
   font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
 }
 
 .recap-trade input {
   width: 14px;
   height: 14px;
   accent-color: var(--primary-color);
+  border-radius: 4px;
 }
 
 .tire-type-btn {
@@ -1700,6 +1704,7 @@ h1 {
 .dark-mode .recap-trade {
   background: #1f2937;
   border-color: #4b5563;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 .dark-mode .recap-trade-label {
