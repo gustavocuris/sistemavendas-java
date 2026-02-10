@@ -55,12 +55,11 @@ export default function SaleList({ sales, onEdit, onDelete }){
       <div className="list-wrapper">
         <table>
           <thead>
-            <tr><th>ID</th><th>Data</th><th>Cliente</th><th>Telefone</th><th>Produto</th><th>Unit.</th><th>Qtd</th><th>Tipo de Venda</th><th>Desfecho</th><th>Total</th><th>Ações</th></tr>
+            <tr><th>Data</th><th>Cliente</th><th>Telefone</th><th>Produto</th><th>Unit.</th><th>Qtd</th><th>Tipo de Venda</th><th>Desfecho</th><th>Total</th><th>Ações</th></tr>
           </thead>
           <tbody>
             {sortedSales.map(s=> (
               <tr key={s.id}>
-                <td>{s.id}</td>
                 <td title={formatDateFull(s.date)}>{formatDate(s.date)}</td>
                 <td>{s.client}</td>
                 <td>{s.phone}</td>
@@ -79,7 +78,7 @@ export default function SaleList({ sales, onEdit, onDelete }){
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={9} className="total-label">VALOR TOTAL</td>
+              <td colSpan={8} className="total-label">VALOR TOTAL</td>
               <td colSpan={2} className="total-amount">{formatBRL(totalAll)}</td>
             </tr>
           </tfoot>
