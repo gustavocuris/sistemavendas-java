@@ -989,6 +989,7 @@ h1 {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9em;
+  table-layout: auto;
 }
 
 .list th {
@@ -1026,21 +1027,21 @@ h1 {
 }
 
 .list td {
-  padding: 16px 14px;
-  border-bottom: 1px solid #d0d0d0;
+  padding: 14px 12px;
+  border-bottom: 1px solid #e0e0e0;
   color: #2d3748;
   font-weight: 600;
-  font-size: 0.95em;
-  line-height: 1.5;
+  font-size: 0.9em;
+  line-height: 1.4;
   text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   vertical-align: middle;
 }
 
-.list td:last-child {
-  white-space: normal;
+.list td:nth-child(2),
+.list td:nth-child(4),
+.list td:nth-child(7),
+.list td:nth-child(8) {
+  text-transform: uppercase;
 }
 
 .list tbody tr {
