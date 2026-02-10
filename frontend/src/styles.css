@@ -1961,12 +1961,12 @@ h1 {
 }
 
 .dark-mode .btn-edit {
-  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
   color: white;
 }
 
 .dark-mode .btn-delete {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
   color: white;
 }
 
