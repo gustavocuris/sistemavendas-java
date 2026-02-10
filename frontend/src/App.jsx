@@ -69,6 +69,12 @@ export default function App(){
   const handleLogin = () => {
     setIsAuthenticated(true)
     localStorage.setItem('authenticated', 'true')
+    // Recarregar dados após login
+    setTimeout(() => {
+      load()
+      loadCommissions()
+      loadMonths()
+    }, 0)
   }
 
   const handleLogout = () => {
@@ -103,13 +109,33 @@ export default function App(){
   }
 
   useEffect(()=>{ 
-    load()
-    loadCommissions()
-    loadMonths()
+    if (isAuthenticated) {
+      load()
+      loadCommissions()
+      loadMonths()
+    }
+  }, [isAuthenticated])
+
+  // Aplicar estilos imediatamente na montagem
+  useEffect(() => {
+    // Aplicar modo escuro
+    if (darkMode) {
+      document.body.classList.add('dark-mode')
+    } else {
+      document.body.classList.remove('dark-mode')
+    }
+    
+    // Aplicar cor primária
+    const currentColorPreset = PRESET_COLORS.find(c => c.hex === primaryColor) || PRESET_COLORS[0]
+    document.documentElement.style.setProperty('--primary-color', currentColorPreset.hex)
+    document.documentElement.style.setProperty('--primary-dark', currentColorPreset.dark)
+    document.documentElement.style.setProperty('--primary-light', currentColorPreset.light)
   }, [])
 
   useEffect(() => {
-    load()
+    if (isAuthenticated) {
+      load()
+    }
   }, [currentMonth])
 
   useEffect(() => {
