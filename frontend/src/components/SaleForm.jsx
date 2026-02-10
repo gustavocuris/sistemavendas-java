@@ -7,7 +7,7 @@ const DESFECHO_OPTIONS = [
   { value: 'belavista', label: 'Coleta na Loja do Bela Vista' }
 ];
 
-const empty = { date:'', client:'', phone:'', product:'', unit_price:0, quantity:1, tire_type:'new', desfecho:'entrega' }
+const empty = { date:'', client:'', phone:'', product:'', unit_price:0, quantity:1, tire_type:'new', desfecho:'entrega', base_trade: false }
 
 export default function SaleForm({ onCreate, onUpdate, editing, currentMonth }) {
   const [form, setForm] = useState(empty)
@@ -276,7 +276,7 @@ const formatDateFull = (value) => {
           <button
             type="button"
             className={`tire-type-btn ${form.tire_type === 'new' ? 'active' : ''}`}
-            onClick={() => setForm({...form, tire_type: 'new'})}
+            onClick={() => setForm({...form, tire_type: 'new', base_trade: false})}
             title="Pneu Novo"
           >
             Pneu Novo
@@ -292,7 +292,7 @@ const formatDateFull = (value) => {
           <button
             type="button"
             className={`tire-type-btn ${form.tire_type === 'recapping' ? 'active' : ''}`}
-            onClick={() => setForm({...form, tire_type: 'recapping'})}
+            onClick={() => setForm({...form, tire_type: 'recapping', base_trade: false})}
             title="Recapagem de Pneu"
           >
             Recapagem
@@ -300,13 +300,25 @@ const formatDateFull = (value) => {
           <button
             type="button"
             className={`tire-type-btn ${form.tire_type === 'service' ? 'active' : ''}`}
-            onClick={() => setForm({...form, tire_type: 'service'})}
+            onClick={() => setForm({...form, tire_type: 'service', base_trade: false})}
             title="Serviço Borracharia"
           >
             SV Borracharia
           </button>
         </div>
       </div>
+      {form.tire_type === 'recap' && (
+        <div className="recap-trade">
+          <label className="recap-trade-label">
+            <input
+              type="checkbox"
+              checked={!!form.base_trade}
+              onChange={(e) => setForm({ ...form, base_trade: e.target.checked })}
+            />
+            Pneu a base de troca
+          </label>
+        </div>
+      )}
       <div className="form-group">
         <label>Desfecho</label>
         <select value={form.desfecho} onChange={e=>setForm({...form,desfecho:e.target.value})} required>
