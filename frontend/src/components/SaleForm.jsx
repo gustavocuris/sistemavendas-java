@@ -224,9 +224,20 @@ const formatDateFull = (value) => {
     }
   }
 
+  const clearForm = () => {
+    setForm(empty);
+    setPriceDisplay('0,00');
+    setItems([]);
+  };
+
   return (
     <form className="form" onSubmit={submit}>
-      <h2>{editing? 'Editar venda':'Nova venda'}</h2>
+      <div className="form-header">
+        <h2>{editing? 'Editar venda':'Nova venda'}</h2>
+        <button type="button" onClick={clearForm} className="btn-clear-form" title="Limpar formulário">
+          🗑️
+        </button>
+      </div>
       <div className="form-group">
         <label>Data</label>
         <DatePicker value={form.date||''} onChange={(date) => setForm({...form, date})} currentMonth={currentMonth} />
@@ -304,7 +315,6 @@ const formatDateFull = (value) => {
           </button>
         )}
         <button type="submit" className="btn-primary">{editing? 'Salvar': items.length > 0 ? 'Salvar Todos' : 'Adicionar'}</button>
-        <button type="button" onClick={()=>{setForm(empty); setPriceDisplay('0,00'); setItems([])}} className="btn-secondary">Limpar</button>
       </div>
       
       {items.length > 0 && (
