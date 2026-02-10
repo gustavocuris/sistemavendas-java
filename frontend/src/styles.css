@@ -671,7 +671,7 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 18px;
   font-weight: 900;
   color: var(--primary-color);
   font-size: 0.85em;
@@ -682,8 +682,8 @@ h1 {
 }
 
 .recap-trade input {
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   accent-color: var(--primary-color);
   border-radius: 4px;
   cursor: pointer;
