@@ -26,20 +26,42 @@ export default function App(){
   const [sales, setSales] = useState([])
   const [editing, setEditing] = useState(null)
   const [commissions, setCommissions] = useState({ new: 5, recap: 8, recapping: 10, service: 0 })
-  const [darkMode, setDarkMode] = useState(false)
-  const [primaryColor, setPrimaryColor] = useState(PRESET_COLORS[0].hex)
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode')
+    return saved === 'true'
+  })
+  const [primaryColor, setPrimaryColor] = useState(() => {
+    const saved = localStorage.getItem('primaryColor')
+    return saved || PRESET_COLORS[0].hex
+  })
   const [showColorPicker, setShowColorPicker] = useState(false)
   const [availableMonths, setAvailableMonths] = useState([])
   const [monthsWithData, setMonthsWithData] = useState([])
   const [currentMonth, setCurrentMonth] = useState(() => {
+    const saved = localStorage.getItem('currentMonth')
+    if (saved) {
+      return saved
+    }
     const now = new Date()
     const year = now.getFullYear()
     const month = String(now.getMonth() + 1).padStart(2, '0')
     return `${year}-${month}`
   })
   const [showMonthSelector, setShowMonthSelector] = useState(false)
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1)
+  const [selectedYear, setSelectedYear] = useState(() => {
+    const saved = localStorage.getItem('currentMonth')
+    if (saved) {
+      return parseInt(saved.split('-')[0])
+    }
+    return new Date().getFullYear()
+  })
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const saved = localStorage.getItem('currentMonth')
+    if (saved) {
+      return parseInt(saved.split('-')[1])
+    }
+    return new Date().getMonth() + 1
+  })
   const [showChart, setShowChart] = useState(false)
   const [chartRefresh, setChartRefresh] = useState(0)
   const [showNotes, setShowNotes] = useState(false)
@@ -96,7 +118,12 @@ export default function App(){
     } else {
       document.body.classList.remove('dark-mode')
     }
+    localStorage.setItem('darkMode', darkMode.toString())
   }, [darkMode])
+
+  useEffect(() => {
+    localStorage.setItem('currentMonth', currentMonth)
+  }, [currentMonth])
 
   useEffect(() => {
     // Encontrar a cor presente para obter variações
@@ -105,6 +132,8 @@ export default function App(){
     document.documentElement.style.setProperty('--primary-color', currentColorPreset.hex)
     document.documentElement.style.setProperty('--primary-dark', currentColorPreset.dark)
     document.documentElement.style.setProperty('--primary-light', currentColorPreset.light)
+    
+    localStorage.setItem('primaryColor', primaryColor)
   }, [primaryColor])
 
   const applyColor = (colorHex) => {
