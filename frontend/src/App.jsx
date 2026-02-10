@@ -66,6 +66,27 @@ export default function App(){
   const [chartRefresh, setChartRefresh] = useState(0)
   const [showNotes, setShowNotes] = useState(false)
 
+  const hexToRgbString = (hex) => {
+    if (!hex) return '0, 0, 0'
+    const raw = hex.replace('#', '')
+    const full = raw.length === 3 ? raw.split('').map((c) => `${c}${c}`).join('') : raw
+    const intValue = parseInt(full, 16)
+    if (Number.isNaN(intValue)) return '0, 0, 0'
+    const r = (intValue >> 16) & 255
+    const g = (intValue >> 8) & 255
+    const b = intValue & 255
+    return `${r}, ${g}, ${b}`
+  }
+
+  const applyColorPreset = (preset) => {
+    document.documentElement.style.setProperty('--primary-color', preset.hex)
+    document.documentElement.style.setProperty('--primary-dark', preset.dark)
+    document.documentElement.style.setProperty('--primary-light', preset.light)
+    document.documentElement.style.setProperty('--primary-color-rgb', hexToRgbString(preset.hex))
+    document.documentElement.style.setProperty('--primary-dark-rgb', hexToRgbString(preset.dark))
+    document.documentElement.style.setProperty('--primary-light-rgb', hexToRgbString(preset.light))
+  }
+
   const handleLogin = () => {
     setIsAuthenticated(true)
     localStorage.setItem('authenticated', 'true')
@@ -127,9 +148,7 @@ export default function App(){
     
     // Aplicar cor primária
     const currentColorPreset = PRESET_COLORS.find(c => c.hex === primaryColor) || PRESET_COLORS[0]
-    document.documentElement.style.setProperty('--primary-color', currentColorPreset.hex)
-    document.documentElement.style.setProperty('--primary-dark', currentColorPreset.dark)
-    document.documentElement.style.setProperty('--primary-light', currentColorPreset.light)
+    applyColorPreset(currentColorPreset)
   }, [])
 
   useEffect(() => {
@@ -154,10 +173,7 @@ export default function App(){
   useEffect(() => {
     // Encontrar a cor presente para obter variações
     const currentColorPreset = PRESET_COLORS.find(c => c.hex === primaryColor) || PRESET_COLORS[0]
-    
-    document.documentElement.style.setProperty('--primary-color', currentColorPreset.hex)
-    document.documentElement.style.setProperty('--primary-dark', currentColorPreset.dark)
-    document.documentElement.style.setProperty('--primary-light', currentColorPreset.light)
+    applyColorPreset(currentColorPreset)
     
     localStorage.setItem('primaryColor', primaryColor)
   }, [primaryColor])
