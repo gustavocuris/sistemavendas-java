@@ -1823,17 +1823,17 @@ h1 {
 }
 
 .dark-mode .list th {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-  color: white;
-  border-bottom-color: var(--primary-light);
+  background: #1a1a1a;
+  color: #ffffff;
+  border-bottom-color: #3a3a3a;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
 
 .dark-mode .list td {
-  border-bottom-color: #3d3d3d;
-  color: #e0e0e0;
+  border-bottom-color: #3a3a3a;
+  color: #ffffff;
 }
 
 .dark-mode .list tbody tr {
@@ -1842,19 +1842,18 @@ h1 {
 }
 
 .dark-mode .list tbody tr:hover {
-  background: linear-gradient(90deg, rgba(var(--primary-light-rgb), 0.12) 0%, #1a1a1a 100%);
-  border-left: 4px solid var(--primary-light);
-  box-shadow: 0 2px 8px rgba(74, 222, 128, 0.1);
+  background: #222222;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
 }
 
 .dark-mode .list tbody tr:nth-child(even) {
-  background-color: #111827;
+  background-color: #262626;
 }
 
 .dark-mode .list tfoot {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-  border-top-color: var(--primary-light);
-  box-shadow: 0 -2px 8px rgba(255, 255, 255, 0.2);
+  background: #1a1a1a;
+  border-top-color: #3a3a3a;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .dark-mode .list tfoot td {
