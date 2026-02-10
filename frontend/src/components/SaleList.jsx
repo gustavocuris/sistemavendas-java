@@ -28,10 +28,14 @@ export default function SaleList({ sales, onEdit, onDelete }){
   const [isAscending, setIsAscending] = useState(false)
   
   const sortedSales = [...sales].sort((a, b) => {
+    // Converte YYYY-MM-DD para timestamp para comparação
+    const dateA = new Date(a.date).getTime()
+    const dateB = new Date(b.date).getTime()
+    
     if (isAscending) {
-      return a.id - b.id
+      return dateA - dateB // Antigas para novas
     } else {
-      return b.id - a.id
+      return dateB - dateA // Novas para antigas
     }
   })
   
