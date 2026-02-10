@@ -3,9 +3,15 @@ import React, { useState } from 'react'
 const tireTypeLabel = { new: 'Novo', recap: 'Recapado', recapping: 'Recapagem', service: 'Sv Borracharia' }
 const desfechoLabel = { entrega: 'Entrega ao Cliente', piratininga: 'Coleta Piratininga', belavista: 'Coleta Bela Vista' }
 
-const getTireTypeLabel = (sale) => {
+const getTireTypeNode = (sale) => {
   const baseLabel = tireTypeLabel[sale.tire_type] || sale.tire_type
-  if (sale.tire_type === 'recap' && sale.base_trade) return `${baseLabel} BT`
+  if (sale.tire_type === 'recap' && sale.base_trade) {
+    return (
+      <span className="tire-type-with-bt">
+        {baseLabel} <span className="bt-badge">BT</span>
+      </span>
+    )
+  }
   return baseLabel
 }
 
@@ -72,7 +78,7 @@ export default function SaleList({ sales, onEdit, onDelete }){
                 <td>{s.product}</td>
                 <td>{formatBRL(s.unit_price)}</td>
                 <td>{s.quantity}</td>
-                <td>{getTireTypeLabel(s)}</td>
+                <td>{getTireTypeNode(s)}</td>
                 <td>{desfechoLabel[s.desfecho] || s.desfecho || '-'}</td>
                 <td>{formatBRL(s.total)}</td>
                 <td className="actions-cell">
