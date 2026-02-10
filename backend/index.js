@@ -3,10 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import db from './db.js';
+import db from './db-mongo.js';
 
 dotenv.config();
 
@@ -28,39 +25,35 @@ app.use(cors({
 
 app.use(express.json());
 
-// Auth storage (simple file-based for now)
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const authDataDir = path.join(__dirname, 'data');
-const authFilePath = path.join(authDataDir, 'auth.json');
-
 function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
 
-function ensureAuthFile() {
-  if (!fs.existsSync(authDataDir)) {
-    fs.mkdirSync(authDataDir, { recursive: true });
-  }
-
-  if (!fs.existsSync(authFilePath)) {
-    const initialAuth = {
+async function getAuthData() {
+  let authData = await db.getAuth();
+  if (!authData) {
+    authData = {
       username: 'Intercap Pneus',
       passwordHash: hashPassword('IPN2026@'),
       resetToken: null,
       resetTokenExpires: null
     };
-    fs.writeFileSync(authFilePath, JSON.stringify(initialAuth, null, 2));
+    await db.setAuth(authData);
   }
+  return authData;
 }
 
-function loadAuth() {
-  ensureAuthFile();
-  return JSON.parse(fs.readFileSync(authFilePath, 'utf-8'));
+async function saveAuth(authData) {
+  await db.setAuth({
+    username: authData.username,
+    passwordHash: authData.passwordHash,
+    resetToken: authData.resetToken || null,
+    resetTokenExpires: authData.resetTokenExpires || null
+  });
 }
 
-function saveAuth(authData) {
-  fs.writeFileSync(authFilePath, JSON.stringify(authData, null, 2));
-}
+await db.read();
+await getAuthData();
 
 // Helper to get current month in YYYY-MM format
 function getCurrentMonth() {
@@ -84,14 +77,14 @@ app.get('/api/months', (req, res) => {
 });
 
 // Login endpoint
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
   const { username, password } = req.body || {};
 
   if (!username || !password) {
     return res.status(400).json({ message: 'Login e senha sao obrigatorios' });
   }
 
-  const authData = loadAuth();
+  const authData = await getAuthData();
   const passwordHash = hashPassword(password);
 
   console.log('=== LOGIN DEBUG ===');
@@ -582,7 +575,7 @@ app.post('/api/forgot-password', async (req, res) => {
       });
     }
 
-    const authData = loadAuth();
+    const authData = await getAuthData();
 
     // Gerar token simples (tempo + random)
     const resetToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
@@ -591,7 +584,7 @@ app.post('/api/forgot-password', async (req, res) => {
 
     authData.resetToken = resetToken;
     authData.resetTokenExpires = resetExpires;
-    saveAuth(authData);
+    await saveAuth(authData);
 
     const transporter = createTransporter();
 
@@ -671,14 +664,14 @@ app.post('/api/forgot-password', async (req, res) => {
 });
 
 // Reset password endpoint
-app.post('/api/reset-password', (req, res) => {
+app.post('/api/reset-password', async (req, res) => {
   const { token, newPassword } = req.body || {};
 
   if (!token || !newPassword) {
     return res.status(400).json({ message: 'Token e nova senha sao obrigatorios' });
   }
 
-  const authData = loadAuth();
+  const authData = await getAuthData();
 
   if (!authData.resetToken || authData.resetToken !== token) {
     return res.status(400).json({ message: 'Token invalido' });
@@ -691,7 +684,7 @@ app.post('/api/reset-password', (req, res) => {
   authData.passwordHash = hashPassword(newPassword);
   authData.resetToken = null;
   authData.resetTokenExpires = null;
-  saveAuth(authData);
+  await saveAuth(authData);
 
   return res.status(200).json({ success: true, message: 'Senha alterada com sucesso' });
 });
