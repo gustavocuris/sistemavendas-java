@@ -1029,8 +1029,8 @@ h1 {
 
 .list td {
   padding: 13px 12px;
-  border-bottom: 1px solid #d8d8d8;
-  color: #1a202c;
+  border-bottom: 1px solid #3a3a3a;
+  color: #ffffff;
   font-weight: 500;
   font-size: 0.85em;
   line-height: 1.4;
@@ -1047,17 +1047,17 @@ h1 {
 
 .list tbody tr {
   transition: all 0.2s ease;
-  background: #ffffff;
+  background: #1a1a1a;
   height: auto;
 }
 
 .list tbody tr:hover {
-  background: #f5f5f5;
-  box-shadow: 0 2px 6px rgba(30, 113, 69, 0.08);
+  background: #222222;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
 }
 
 .list tbody tr:nth-child(even) {
-  background: #fafafa;
+  background: #262626;
 }
 
 .list tfoot {
