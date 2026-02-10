@@ -12,14 +12,17 @@ const empty = { date:'', client:'', phone:'', product:'', unit_price:0, quantity
 export default function SaleForm({ onCreate, onUpdate, editing, currentMonth }) {
   const [form, setForm] = useState(empty)
   const [priceDisplay, setPriceDisplay] = useState('0,00')
+  const [items, setItems] = useState([]) // Múltiplos itens para salvar juntos
 
   useEffect(() => {
     if (editing) {
       setForm(editing)
       setPriceDisplay(formatPrice(Math.round(editing.unit_price * 100)))
+      setItems([]) // Limpar itens ao editar
     } else {
       setForm(empty)
       setPriceDisplay('0,00')
+      setItems([])
     }
   }, [editing])
 
@@ -97,26 +100,98 @@ const formatDateFull = (value) => {
   return `${parseInt(day)} de ${monthName} de ${year}`
 }
 
-  const submit = (e)=>{
-    e.preventDefault()
-    
-    // Validar data
+  const addItem = () => {
+    // Validar campos necessários
     if (!form.date) {
       alert('Data inválida. Selecione uma data no calendário')
       return
     }
-    
-    // Validar telefone (10-11 dígitos)
+    if (!form.client.trim()) {
+      alert('Cliente é obrigatório')
+      return
+    }
     const phoneNums = form.phone.replace(/\D/g, '')
     if (phoneNums.length < 10 || phoneNums.length > 11) {
       alert('Telefone inválido. Deve ter DDD (2 dígitos) + 8 ou 9 dígitos')
       return
     }
-    
-    const payload = { ...form, unit_price: parsePrice(priceDisplay), quantity: Number(form.quantity), month: currentMonth }
-    if(editing) onUpdate(editing.id, payload); else onCreate(payload)
-    setForm(empty)
+    if (!form.product.trim()) {
+      alert('Produto é obrigatório')
+      return
+    }
+    if (parsePrice(priceDisplay) <= 0) {
+      alert('Valor unitário deve ser maior que zero')
+      return
+    }
+
+    // Adicionar item à lista
+    const newItem = {
+      ...form,
+      unit_price: parsePrice(priceDisplay),
+      quantity: Number(form.quantity)
+    }
+    setItems([...items, newItem])
+
+    // Resetar apenas produto, preço e quantidade (mantém data, cliente, telefone, tipo e desfecho)
+    setForm({
+      ...form,
+      product: '',
+      unit_price: 0,
+      quantity: 1
+    })
     setPriceDisplay('0,00')
+  }
+
+  const removeItem = (index) => {
+    setItems(items.filter((_, i) => i !== index))
+  }
+
+  const submit = (e)=>{
+    e.preventDefault()
+    
+    // Se não houver itens acumulados, salvar apenas o atual
+    if (items.length === 0) {
+      // Validar data
+      if (!form.date) {
+        alert('Data inválida. Selecione uma data no calendário')
+        return
+      }
+      
+      // Validar telefone (10-11 dígitos)
+      const phoneNums = form.phone.replace(/\D/g, '')
+      if (phoneNums.length < 10 || phoneNums.length > 11) {
+        alert('Telefone inválido. Deve ter DDD (2 dígitos) + 8 ou 9 dígitos')
+        return
+      }
+      
+      const payload = { ...form, unit_price: parsePrice(priceDisplay), quantity: Number(form.quantity), month: currentMonth }
+      if(editing) onUpdate(editing.id, payload); else onCreate(payload)
+      setForm(empty)
+      setPriceDisplay('0,00')
+    } else {
+      // Salvar todos os itens acumulados + o atual (se preenchido)
+      let allItems = [...items]
+      
+      // Se o formulário atual estiver preenchido, incluir também
+      if (form.product.trim() && parsePrice(priceDisplay) > 0) {
+        allItems.push({
+          ...form,
+          unit_price: parsePrice(priceDisplay),
+          quantity: Number(form.quantity)
+        })
+      }
+
+      // Salvar todos
+      allItems.forEach(item => {
+        const payload = { ...item, month: currentMonth }
+        onCreate(payload)
+      })
+
+      // Limpar tudo
+      setItems([])
+      setForm(empty)
+      setPriceDisplay('0,00')
+    }
   }
 
   const handlePriceChange = (e) => {
@@ -223,9 +298,31 @@ const formatDateFull = (value) => {
         </select>
       </div>
       <div className="actions">
-        <button type="submit" className="btn-primary">{editing? 'Salvar':'Adicionar'}</button>
-        <button type="button" onClick={()=>setForm(empty)} className="btn-secondary">Limpar</button>
+        {!editing && (
+          <button type="button" onClick={addItem} className="btn-add-item" title="Adicionar mais um item para o mesmo cliente">
+            + Itens
+          </button>
+        )}
+        <button type="submit" className="btn-primary">{editing? 'Salvar': items.length > 0 ? 'Salvar Todos' : 'Adicionar'}</button>
+        <button type="button" onClick={()=>{setForm(empty); setPriceDisplay('0,00'); setItems([])}} className="btn-secondary">Limpar</button>
       </div>
+      
+      {items.length > 0 && (
+        <div className="items-preview">
+          <h3>Itens a serem salvos ({items.length})</h3>
+          <div className="items-list">
+            {items.map((item, idx) => (
+              <div key={idx} className="item-preview">
+                <div className="item-info">
+                  <strong>{item.product}</strong>
+                  <span>{item.quantity}x R$ {formatPrice(Math.round(item.unit_price * 100))}</span>
+                </div>
+                <button type="button" onClick={() => removeItem(idx)} className="btn-remove-item" title="Remover item">×</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </form>
   )
 }
