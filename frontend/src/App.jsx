@@ -64,6 +64,7 @@ export default function App(){
   const [showChart, setShowChart] = useState(false)
   const [chartRefresh, setChartRefresh] = useState(0)
   const [showNotes, setShowNotes] = useState(false)
+  const [confirmState, setConfirmState] = useState({ open: false, message: '', onConfirm: null })
 
   const hexToRgbString = (hex) => {
     if (!hex) return '0, 0, 0'
@@ -108,8 +109,25 @@ export default function App(){
   }
 
   const handleLogout = () => {
-    setIsAuthenticated(false)
-    localStorage.removeItem('authenticated')
+    openConfirm('Deseja realmente sair do sistema?', () => {
+      setIsAuthenticated(false)
+      localStorage.removeItem('authenticated')
+    })
+  }
+
+  const openConfirm = (message, onConfirm) => {
+    setConfirmState({ open: true, message, onConfirm })
+  }
+
+  const closeConfirm = () => {
+    setConfirmState({ open: false, message: '', onConfirm: null })
+  }
+
+  const handleConfirm = async () => {
+    if (confirmState.onConfirm) {
+      await confirmState.onConfirm()
+    }
+    closeConfirm()
   }
 
   // Se não estiver autenticado, mostra tela de login
@@ -209,15 +227,17 @@ export default function App(){
     await load()
     setChartRefresh(prev => prev + 1)
   }
-  const remove = async (id)=>{
-    await axios.delete(`${API}/sales/${id}?month=${currentMonth}`)
-    await load()
-    // Após deletar, recarrega para verificar se ficou vazio
-    const res = await axios.get(`${API}/sales?month=${currentMonth}`)
-    if (res.data.length === 0) {
-      setMonthsWithData(prev => prev.filter(m => m !== currentMonth))
-    }
-    setChartRefresh(prev => prev + 1)
+  const remove = (id)=>{
+    openConfirm('Deseja realmente apagar essa venda?', async () => {
+      await axios.delete(`${API}/sales/${id}?month=${currentMonth}`)
+      await load()
+      // Após deletar, recarrega para verificar se ficou vazio
+      const res = await axios.get(`${API}/sales?month=${currentMonth}`)
+      if (res.data.length === 0) {
+        setMonthsWithData(prev => prev.filter(m => m !== currentMonth))
+      }
+      setChartRefresh(prev => prev + 1)
+    })
   }
 
   const handleCopy = (sale) => {
@@ -410,6 +430,25 @@ export default function App(){
       <CommissionSummary sales={sales} commissions={commissions} onCommissionChange={handleCommissionChange} />
       {showChart && <ChartView year={selectedYear} onClose={() => setShowChart(false)} refreshKey={chartRefresh} primaryColor={primaryColor} darkMode={darkMode} />}
       <NotesPanel isOpen={showNotes} onClose={() => setShowNotes(false)} darkMode={darkMode} currentMonth={currentMonth} onSaleAdded={load} onMonthChange={setCurrentMonth} />
+      {confirmState.open && (
+        <div className="modal-overlay">
+          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+            <div className="modal-header">
+              <h3 id="confirm-title">CONFIRMAÇÃO</h3>
+              <button className="modal-close" onClick={closeConfirm} aria-label="Fechar">
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <p>{confirmState.message}</p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn-secondary" type="button" onClick={closeConfirm}>CANCELAR</button>
+              <button className="btn-primary" type="button" onClick={handleConfirm}>SIM</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
