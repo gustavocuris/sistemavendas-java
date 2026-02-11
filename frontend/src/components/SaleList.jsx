@@ -45,23 +45,17 @@ const formatDateFull = (value) => {
 export default function SaleList({ sales, onEdit, onDelete, onCopy }){
   const [isAscending, setIsAscending] = useState(false)
   
-  const sortedSales = sales
-    .map((sale, index) => ({ sale, index }))
-    .sort((a, b) => {
-      // Converte YYYY-MM-DD para timestamp para comparação
-      const dateA = new Date(a.sale.date).getTime()
-      const dateB = new Date(b.sale.date).getTime()
-
-      if (dateA === dateB) {
-        return a.index - b.index
-      }
-
-      if (isAscending) {
-        return dateA - dateB // Antigas para novas
-      }
+  const sortedSales = [...sales].sort((a, b) => {
+    // Converte YYYY-MM-DD para timestamp para comparação
+    const dateA = new Date(a.date).getTime()
+    const dateB = new Date(b.date).getTime()
+    
+    if (isAscending) {
+      return dateA - dateB // Antigas para novas
+    } else {
       return dateB - dateA // Novas para antigas
-    })
-    .map(({ sale }) => sale)
+    }
+  })
   
   const totalAll = sortedSales.reduce((s,i)=>s+Number(i.total||0),0)
   return (
