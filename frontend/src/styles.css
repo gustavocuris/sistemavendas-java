@@ -1761,13 +1761,13 @@ h1 {
 .dark-mode .trade-toggle.active {
   background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
   border-color: var(--primary-light);
-  color: #0b0b0b;
+  color: #ffffff;
 }
 
 .dark-mode .trade-toggle.active .trade-check {
   border-color: rgba(0, 0, 0, 0.6);
   background: rgba(0, 0, 0, 0.15);
-  color: #0b0b0b;
+  color: #ffffff;
 }
 
 .dark-mode .form input,
