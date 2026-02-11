@@ -9,7 +9,7 @@ const DESFECHO_OPTIONS = [
 
 const empty = { date:'', client:'', phone:'', product:'', unit_price:0, quantity:1, tire_type:'new', desfecho:'', base_trade: false, tread_type: '' }
 
-export default function SaleForm({ onCreate, onUpdate, editing, currentMonth, copiedSale, onPaste }) {
+export default function SaleForm({ onCreate, onUpdate, editing, currentMonth, copiedSale, onPaste, pastedSale, onPasteApplied }) {
   const [form, setForm] = useState(empty)
   const [priceDisplay, setPriceDisplay] = useState('0,00')
   const [items, setItems] = useState([]) // Múltiplos itens para salvar juntos
@@ -25,6 +25,15 @@ export default function SaleForm({ onCreate, onUpdate, editing, currentMonth, co
       setItems([])
     }
   }, [editing])
+
+  useEffect(() => {
+    if (pastedSale) {
+      setForm(pastedSale)
+      setPriceDisplay(formatPrice(Math.round((pastedSale.unit_price || 0) * 100)))
+      setItems([])
+      if (onPasteApplied) onPasteApplied()
+    }
+  }, [pastedSale])
 
   // Formata número como moeda com 2 casas decimais e ponto de milhares: 5 = 0,05 | 250 = 2,50 | 1250 = 12,50 | 125000 = 1.250,00
   const formatPrice = (value) => {

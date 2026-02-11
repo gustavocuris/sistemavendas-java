@@ -24,6 +24,7 @@ export default function App(){
   const [sales, setSales] = useState([])
   const [editing, setEditing] = useState(null)
   const [copiedSale, setCopiedSale] = useState(null)
+  const [pastedSale, setPastedSale] = useState(null)
   const [commissions, setCommissions] = useState({ new: 5, recap: 8, recapping: 10, service: 0 })
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode')
@@ -249,7 +250,8 @@ export default function App(){
   const handlePaste = () => {
     if (copiedSale) {
       // Preenche o formulário com os dados copiados (sem id, para criar nova venda)
-      setEditing({ ...copiedSale, date: currentMonth + '-01' })
+      setEditing(null)
+      setPastedSale({ ...copiedSale, date: currentMonth + '-01' })
       // Remove o copiedSale após colar para que o botão desapareça
       setCopiedSale(null)
     }
@@ -424,7 +426,16 @@ export default function App(){
         </div>
       </div>
       <div className="grid">
-        <SaleForm onCreate={create} onUpdate={update} editing={editing} currentMonth={currentMonth} copiedSale={copiedSale} onPaste={handlePaste} />
+        <SaleForm
+          onCreate={create}
+          onUpdate={update}
+          editing={editing}
+          currentMonth={currentMonth}
+          copiedSale={copiedSale}
+          pastedSale={pastedSale}
+          onPasteApplied={() => setPastedSale(null)}
+          onPaste={handlePaste}
+        />
         <SaleList sales={sales} onEdit={setEditing} onDelete={remove} onCopy={handleCopy} />
       </div>
       <CommissionSummary sales={sales} commissions={commissions} onCommissionChange={handleCommissionChange} />
