@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import DatePicker from './DatePicker'
 
 const DESFECHO_OPTIONS = [
-  { value: 'entrega', label: 'Entrega ao Cliente' },
-  { value: 'piratininga', label: 'Montado na Loja do Piratininga' },
-  { value: 'belavista', label: 'Montado na Loja do Bela Vista' }
+  { value: 'entrega', label: 'ENTREGA AO CLIENTE' },
+  { value: 'piratininga', label: 'MONTADO NA LOJA DO PIRATININGA' },
+  { value: 'belavista', label: 'MONTADO NA LOJA DO BELA VISTA' }
 ];
 
 const empty = { date:'', client:'', phone:'', product:'', unit_price:0, quantity:1, tire_type:'new', desfecho:'entrega', base_trade: false, tread_type: '' }
@@ -352,10 +352,10 @@ const formatDateFull = (value) => {
             onChange={(e) => setForm({ ...form, tread_type: e.target.value })}
             required
           >
-            <option value="">Selecione</option>
-            <option value="LISO">Liso</option>
-            <option value="MISTO">Misto</option>
-            <option value="BORRACHUDO">Borrachudo</option>
+            <option value="">SELECIONE</option>
+            <option value="LISO">LISO</option>
+            <option value="MISTO">MISTO</option>
+            <option value="BORRACHUDO">BORRACHUDO</option>
           </select>
         </div>
       )}
