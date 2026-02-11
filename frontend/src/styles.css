@@ -1072,8 +1072,8 @@ h1 {
 }
 
 .btn-copy-mini {
-  background: transparent;
-  color: #9ca3af;
+  background: transparent !important;
+  color: #9ca3af !important;
   border: none;
   padding: 2px;
   border-radius: 3px;
@@ -1089,7 +1089,8 @@ h1 {
 
 .btn-copy-mini:hover {
   opacity: 1;
-  color: #6b7280;
+  color: #6b7280 !important;
+  background: transparent !important;
   transform: scale(1.2);
 }
 
@@ -2154,13 +2155,14 @@ h1 {
 }
 
 .dark-mode .btn-copy-mini {
-  background: transparent;
-  color: #9ca3af;
+  background: transparent !important;
+  color: #9ca3af !important;
   opacity: 0.6;
 }
 
 .dark-mode .btn-copy-mini:hover {
-  color: #d1d5db;
+  color: #d1d5db !important;
+  background: transparent !important;
   opacity: 1;
 }
 
