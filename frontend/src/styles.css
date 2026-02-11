@@ -1151,7 +1151,7 @@ h1 {
   padding: 13px 12px;
   border-bottom: 1px solid rgba(var(--primary-color-rgb), 0.2);
   color: var(--primary-dark);
-  font-weight: 500;
+  font-weight: 700;
   font-size: 0.85em;
   line-height: 1.4;
   text-align: left;
@@ -1169,6 +1169,7 @@ h1 {
   transition: all 0.2s ease;
   background: #ffffff;
   height: auto;
+  font-weight: 700;
 }
 
 .list tbody tr:hover {
@@ -2032,11 +2033,13 @@ h1 {
 .dark-mode .list td {
   border-bottom-color: rgba(var(--primary-light-rgb), 0.2);
   color: #ffffff;
+  font-weight: 700;
 }
 
 .dark-mode .list tbody tr {
   background: #1a1a1a;
   transition: all 0.2s ease;
+  font-weight: 700;
 }
 
 .dark-mode .list tbody tr:hover {
