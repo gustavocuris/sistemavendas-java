@@ -1072,25 +1072,25 @@ h1 {
 }
 
 .btn-copy-mini {
-  background: #0891b2;
-  color: white;
+  background: transparent;
+  color: #9ca3af;
   border: none;
-  padding: 3px;
+  padding: 2px;
   border-radius: 3px;
   cursor: pointer;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.6;
-  width: 20px;
-  height: 20px;
+  opacity: 0.5;
+  width: 18px;
+  height: 18px;
 }
 
 .btn-copy-mini:hover {
   opacity: 1;
-  background: #0e7490;
-  transform: scale(1.15);
+  color: #6b7280;
+  transform: scale(1.2);
 }
 
 .btn-copy-mini:active {
@@ -2154,12 +2154,13 @@ h1 {
 }
 
 .dark-mode .btn-copy-mini {
-  background: #0891b2;
-  opacity: 0.7;
+  background: transparent;
+  color: #9ca3af;
+  opacity: 0.6;
 }
 
 .dark-mode .btn-copy-mini:hover {
-  background: #06b6d4;
+  color: #d1d5db;
   opacity: 1;
 }
 
