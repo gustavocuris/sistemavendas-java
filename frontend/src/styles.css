@@ -1708,7 +1708,7 @@ h1 {
 
 /* DARK MODE */
 .dark-mode h1 {
-  color: #f0f0f0;
+  color: var(--primary-light);
 }
 
 .dark-mode .form {
@@ -1718,7 +1718,7 @@ h1 {
 }
 
 .dark-mode .form h2 {
-  color: #f0f0f0;
+  color: var(--primary-light);
   border-bottom: 1px solid #3d3d3d;
 }
 
@@ -1834,7 +1834,7 @@ h1 {
 }
 
 .dark-mode .list h2 {
-  color: #f0f0f0;
+  color: var(--primary-light);
 }
 
 .dark-mode .btn-sort {
@@ -2004,7 +2004,7 @@ h1 {
 }
 
 .dark-mode .modal-header h3 {
-  color: #f0f0f0;
+  color: var(--primary-light);
 }
 
 .dark-mode .modal-body {
@@ -2028,7 +2028,7 @@ h1 {
 }
 
 .dark-mode .commission-summary h2 {
-  color: #f0f0f0;
+  color: var(--primary-light);
   border-bottom-color: var(--primary-light);
   padding-bottom: 16px;
 }
@@ -2723,7 +2723,7 @@ h1 {
 }
 
 .dark-mode .chart-header h2 {
-  color: #f0f0f0;
+  color: var(--primary-light);
 }
 
 .chart-close-btn {
@@ -3064,7 +3064,7 @@ h1 {
 }
 
 .flow-modal.dark-mode .flow-header h2 {
-  color: white;
+  color: var(--primary-light);
 }
 
 .flow-modal.dark-mode .flow-month-indicator {
