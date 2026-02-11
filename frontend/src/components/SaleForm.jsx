@@ -320,6 +320,20 @@ const formatDateFull = (value) => {
           </button>
         </div>
       </div>
+      {form.tire_type === 'recap' && (
+        <div className="recap-trade">
+          <button
+            type="button"
+            className={`trade-toggle ${form.base_trade ? 'active' : ''}`}
+            onClick={() => setForm({ ...form, base_trade: !form.base_trade })}
+            title="Pneu a base de troca"
+            aria-pressed={!!form.base_trade}
+          >
+            <span className="trade-check">✓</span>
+            <span className="trade-text">Pneu a base de troca</span>
+          </button>
+        </div>
+      )}
       {['new', 'recap', 'recapping'].includes(form.tire_type) && (
         <div className="form-group">
           <label>Desenho do Pneu</label>
@@ -333,20 +347,6 @@ const formatDateFull = (value) => {
             <option value="MISTO">Misto</option>
             <option value="BORRACHUDO">Borrachudo</option>
           </select>
-        </div>
-      )}
-      {form.tire_type === 'recap' && (
-        <div className="recap-trade">
-          <button
-            type="button"
-            className={`trade-toggle ${form.base_trade ? 'active' : ''}`}
-            onClick={() => setForm({ ...form, base_trade: !form.base_trade })}
-            title="Pneu a base de troca"
-            aria-pressed={!!form.base_trade}
-          >
-            <span className="trade-check">✓</span>
-            <span className="trade-text">Pneu a base de troca</span>
-          </button>
         </div>
       )}
       <div className="form-group">
