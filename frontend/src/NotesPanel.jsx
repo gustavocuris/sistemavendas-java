@@ -287,7 +287,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                 <input type="text" placeholder="Valor (R$)" value={priceDisplayComprar} onChange={(e) => setPriceDisplayComprar(formatPrice(e.target.value))} />
                 <input type="number" placeholder="Quantidade" value={formComprar.quantity} onChange={(e) => setFormComprar({ ...formComprar, quantity: e.target.value })} min="1" />
                 <select value={formComprar.desfecho} onChange={(e) => setFormComprar({ ...formComprar, desfecho: e.target.value })}>
-                  <option value="">SELECIONE</option>
+                  <option value="" disabled hidden>SELECIONE</option>
                   {DESFECHO_OPTIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
                 </select>
                 <div className="flow-form-actions">
@@ -391,7 +391,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                 <input type="number" placeholder="Quantidade" value={formPagar.quantity} onChange={(e) => setFormPagar({ ...formPagar, quantity: e.target.value })} min="1" />
                 <input type="date" placeholder="Data" value={formPagar.date} onChange={(e) => setFormPagar({ ...formPagar, date: e.target.value })} />
                 <select value={formPagar.desfecho} onChange={(e) => setFormPagar({ ...formPagar, desfecho: e.target.value })}>
-                  <option value="">SELECIONE</option>
+                  <option value="" disabled hidden>SELECIONE</option>
                   {DESFECHO_OPTIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
                 </select>
                 <div className="flow-form-actions">

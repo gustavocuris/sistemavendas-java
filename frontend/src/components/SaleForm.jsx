@@ -362,7 +362,7 @@ const formatDateFull = (value) => {
       <div className="form-group">
         <label>DESFECHO</label>
         <select value={form.desfecho} onChange={e=>setForm({...form,desfecho:e.target.value})} required>
-          <option value="">SELECIONE</option>
+          <option value="" disabled hidden>SELECIONE</option>
           {DESFECHO_OPTIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
         </select>
       </div>
