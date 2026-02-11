@@ -105,7 +105,17 @@ export default function SaleList({ sales, onEdit, onDelete, onCopy, copiedSale, 
           <tbody>
             {sortedSales.map(s=> (
               <tr key={s.id}>
-                <td title={formatDateFull(s.date)}>{formatDate(s.date)}</td>
+                <td title={formatDateFull(s.date)}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <button onClick={()=>onCopy(s)} className="btn-copy-mini" title="Copiar registro">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                    </button>
+                    <span>{formatDate(s.date)}</span>
+                  </div>
+                </td>
                 <td>{s.client}</td>
                 <td>{s.phone}</td>
                 <td>{formatProduct(s)}</td>
@@ -115,12 +125,6 @@ export default function SaleList({ sales, onEdit, onDelete, onCopy, copiedSale, 
                 <td>{desfechoLabel[s.desfecho] || s.desfecho || '-'}</td>
                 <td>{formatBRL(s.total)}</td>
                 <td className="actions-cell">
-                  <button onClick={()=>onCopy(s)} className="btn-copy" title="Copiar registro">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                  </button>
                   <button onClick={()=>onEdit(s)} className="btn-edit">Editar</button>
                   <button onClick={()=>onDelete(s.id)} className="btn-delete">Excluir</button>
                 </td>
