@@ -62,33 +62,45 @@ export default function SaleList({ sales, onEdit, onDelete, onCopy, copiedSale, 
     <div className="list">
       <div className="list-header-with-sort">
         <h2>Vendas</h2>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          {copiedSale && (
-            <button 
-              onClick={onPaste}
-              className="btn-paste"
-              title="Colar registro copiado"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '4px' }}>
-                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-              </svg>
-              Colar
-            </button>
-          )}
-          <button 
-            onClick={() => setIsAscending(!isAscending)}
-            className="btn-sort"
-            title={isAscending ? "Ordenar: Novas para Antigas" : "Ordenar: Antigas para Novas"}
-          >
-            {isAscending ? '↑' : '↓'}
-          </button>
-        </div>
+        <button 
+          onClick={() => setIsAscending(!isAscending)}
+          className="btn-sort"
+          title={isAscending ? "Ordenar: Novas para Antigas" : "Ordenar: Antigas para Novas"}
+        >
+          {isAscending ? '↑' : '↓'}
+        </button>
       </div>
       <div className="list-wrapper">
         <table>
           <thead>
-            <tr><th>Data</th><th>Cliente</th><th>Telefone</th><th>PRODUTO/SERVIÇO</th><th>Unit.</th><th>Qtd</th><th>Tipo de Venda</th><th>Desfecho</th><th>Total</th><th>Ações</th></tr>
+            <tr>
+              <th>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span>Data</span>
+                  {copiedSale && (
+                    <button 
+                      onClick={onPaste}
+                      className="btn-paste-mini"
+                      title="Colar registro copiado"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </th>
+              <th>Cliente</th>
+              <th>Telefone</th>
+              <th>PRODUTO/SERVIÇO</th>
+              <th>Unit.</th>
+              <th>Qtd</th>
+              <th>Tipo de Venda</th>
+              <th>Desfecho</th>
+              <th>Total</th>
+              <th>Ações</th>
+            </tr>
           </thead>
           <tbody>
             {sortedSales.map(s=> (

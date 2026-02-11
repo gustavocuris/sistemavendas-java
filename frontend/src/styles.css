@@ -1017,6 +1017,32 @@ h1 {
   transform: translateY(0);
 }
 
+.btn-paste-mini {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  width: 22px;
+  height: 22px;
+}
+
+.btn-paste-mini:hover {
+  opacity: 1;
+  background: var(--primary-light);
+  transform: scale(1.1);
+}
+
+.btn-paste-mini:active {
+  transform: scale(0.95);
+}
+
 .list-wrapper {
   overflow-x: auto;
   overflow-y: auto;
@@ -2048,6 +2074,16 @@ h1 {
 .dark-mode .btn-paste:hover {
   background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
   box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.5);
+}
+
+.dark-mode .btn-paste-mini {
+  background: var(--primary-color);
+  opacity: 0.8;
+}
+
+.dark-mode .btn-paste-mini:hover {
+  background: var(--primary-light);
+  opacity: 1;
 }
 
 .dark-mode .btn-delete {
