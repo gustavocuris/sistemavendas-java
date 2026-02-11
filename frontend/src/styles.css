@@ -1073,7 +1073,7 @@ h1 {
 
 .btn-copy-mini {
   background: transparent !important;
-  color: #9ca3af !important;
+  color: #4b5563 !important;
   border: none;
   padding: 2px;
   border-radius: 3px;
@@ -1082,7 +1082,7 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.5;
+  opacity: 0.85;
   width: 18px;
   height: 18px;
 }
