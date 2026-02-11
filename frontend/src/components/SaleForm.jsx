@@ -269,7 +269,7 @@ const formatDateFull = (value) => {
         <input type="text" inputMode="numeric" value={form.phone} onChange={handlePhoneChange} placeholder="(XX) XXXXX-XXXX" required/>
       </div>
       <div className="form-group">
-        <label>Produto</label>
+        <label>PRODUTO/SERVIÇO</label>
         <input value={form.product} onChange={e=>setForm({...form,product:e.target.value})} required/>
       </div>
       <div className="form-group">

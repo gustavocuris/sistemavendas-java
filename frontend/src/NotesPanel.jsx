@@ -265,7 +265,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
               <form className="flow-form" onSubmit={handleAddComprar}>
                 <input type="text" placeholder="Cliente" value={formComprar.client} onChange={(e) => setFormComprar({ ...formComprar, client: e.target.value })} />
                 <input type="tel" placeholder="(XX) XXXXX-XXXX" value={formComprar.phone} onChange={(e) => setFormComprar({ ...formComprar, phone: formatPhone(e.target.value) })} />
-                <input type="text" placeholder="Produto/Pneu" value={formComprar.product} onChange={(e) => setFormComprar({ ...formComprar, product: e.target.value })} />
+                <input type="text" placeholder="PRODUTO/SERVIÇO" value={formComprar.product} onChange={(e) => setFormComprar({ ...formComprar, product: e.target.value })} />
                 <select value={formComprar.tire_type} onChange={(e) => {
                   const nextType = e.target.value;
                   setFormComprar({ ...formComprar, tire_type: nextType, base_trade: nextType === 'recap' ? !!formComprar.base_trade : false });
@@ -314,7 +314,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                         <th style={{ width: '40px' }}>#</th>
                         <th>Cliente</th>
                         <th>Telefone</th>
-                        <th>Produto</th>
+                        <th>PRODUTO/SERVIÇO</th>
                         <th>Tipo</th>
                         <th style={{ minWidth: '100px' }}>Valor</th>
                         <th style={{ width: '60px' }}>Qtd</th>
@@ -367,7 +367,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
               <form className="flow-form" onSubmit={handleAddPagar}>
                 <input type="text" placeholder="Cliente" value={formPagar.client} onChange={(e) => setFormPagar({ ...formPagar, client: e.target.value })} />
                 <input type="tel" placeholder="(XX) XXXXX-XXXX" value={formPagar.phone} onChange={(e) => setFormPagar({ ...formPagar, phone: formatPhone(e.target.value) })} />
-                <input type="text" placeholder="Produto/Pneu" value={formPagar.product} onChange={(e) => setFormPagar({ ...formPagar, product: e.target.value })} />
+                <input type="text" placeholder="PRODUTO/SERVIÇO" value={formPagar.product} onChange={(e) => setFormPagar({ ...formPagar, product: e.target.value })} />
                 <select value={formPagar.tire_type} onChange={(e) => {
                   const nextType = e.target.value;
                   setFormPagar({ ...formPagar, tire_type: nextType, base_trade: nextType === 'recap' ? !!formPagar.base_trade : false });
@@ -417,7 +417,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                         <th style={{ width: '40px' }}>#</th>
                         <th>Cliente</th>
                         <th>Telefone</th>
-                        <th>Produto</th>
+                        <th>PRODUTO/SERVIÇO</th>
                         <th>Tipo</th>
                         <th style={{ minWidth: '100px' }}>Valor</th>
                         <th style={{ width: '60px' }}>Qtd</th>

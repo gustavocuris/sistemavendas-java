@@ -73,7 +73,7 @@ export default function SaleList({ sales, onEdit, onDelete }){
       <div className="list-wrapper">
         <table>
           <thead>
-            <tr><th>Data</th><th>Cliente</th><th>Telefone</th><th>Produto</th><th>Unit.</th><th>Qtd</th><th>Tipo de Venda</th><th>Desfecho</th><th>Total</th><th>Ações</th></tr>
+            <tr><th>Data</th><th>Cliente</th><th>Telefone</th><th>PRODUTO/SERVIÇO</th><th>Unit.</th><th>Qtd</th><th>Tipo de Venda</th><th>Desfecho</th><th>Total</th><th>Ações</th></tr>
           </thead>
           <tbody>
             {sortedSales.map(s=> (
