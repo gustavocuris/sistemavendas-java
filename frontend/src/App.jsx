@@ -230,6 +230,8 @@ export default function App(){
     if (copiedSale) {
       // Preenche o formulário com os dados copiados (sem id, para criar nova venda)
       setEditing({ ...copiedSale, date: currentMonth + '-01' })
+      // Remove o copiedSale após colar para que o botão desapareça
+      setCopiedSale(null)
     }
   }
 
