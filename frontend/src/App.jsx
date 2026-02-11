@@ -77,6 +77,7 @@ export default function App(){
   }
 
   const normalizeHex = (value) => (value || '').toLowerCase()
+  const normalizeThemeName = (value) => (value || '').toLowerCase().replace(/\s+/g, '-')
 
   const applyColorTheme = (hex) => {
     const preset = PRESET_COLORS.find((c) => c.hex.toLowerCase() === normalizeHex(hex))
@@ -85,6 +86,7 @@ export default function App(){
     const darkHex = resolvedPreset.dark || baseHex
     const lightHex = resolvedPreset.light || baseHex
 
+    document.body.dataset.theme = normalizeThemeName(resolvedPreset.name)
     document.documentElement.style.setProperty('--primary-color', baseHex)
     document.documentElement.style.setProperty('--primary-dark', darkHex)
     document.documentElement.style.setProperty('--primary-light', lightHex)

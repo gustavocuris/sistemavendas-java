@@ -2726,6 +2726,16 @@ h1 {
   color: var(--primary-light);
 }
 
+.dark-mode[data-theme="all-black"] h1,
+.dark-mode[data-theme="all-black"] .form h2,
+.dark-mode[data-theme="all-black"] .list h2,
+.dark-mode[data-theme="all-black"] .modal-header h3,
+.dark-mode[data-theme="all-black"] .commission-summary h2,
+.dark-mode[data-theme="all-black"] .chart-header h2,
+.dark-mode[data-theme="all-black"] .flow-modal .flow-header h2 {
+  color: #d1d5db;
+}
+
 .chart-close-btn {
   background: transparent;
   border: 2px solid #e2e8f0;
