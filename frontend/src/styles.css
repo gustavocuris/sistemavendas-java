@@ -2046,7 +2046,7 @@ h1 {
 }
 
 .dark-mode .commission-row {
-  background: #0f0f10;
+  background: #141416;
   border-bottom-color: rgba(var(--primary-light-rgb), 0.2);
   color: #f0f0f0;
   transition: all 0.2s ease;
@@ -2058,7 +2058,7 @@ h1 {
 }
 
 .dark-mode .commission-row:nth-child(even) {
-  background-color: #1f1f22;
+  background-color: #1a1a1d;
 }
 
 .dark-mode .cell-name {
