@@ -691,20 +691,13 @@ h1 {
 
 .trade-toggle .trade-check {
   display: none;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  border: 2px solid rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.2);
-  font-size: 0.8em;
+  font-size: 0.95em;
   font-weight: 900;
   line-height: 1;
 }
 
 .trade-toggle.active .trade-check {
-  display: inline-flex;
+  display: inline;
 }
 
 .trade-toggle .trade-text {
