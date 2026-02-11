@@ -13,9 +13,7 @@ const PRESET_COLORS = [
   { name: 'Verde', hex: '#1e7145', dark: '#0f4620', light: '#4ade80' },
   { name: 'Azul', hex: '#0d47a1', dark: '#051541', light: '#2196f3' },
   { name: 'Vermelho', hex: '#d32f2f', dark: '#7f1d1d', light: '#ef4444' },
-  { name: 'Laranja', hex: '#f57c00', dark: '#7a2e00', light: '#ff9800' },
   { name: 'Roxo', hex: '#6a1b9a', dark: '#360853', light: '#9c27b0' },
-  { name: 'Amarelo', hex: '#f9a825', dark: '#7d5c1d', light: '#ffc107' },
   { name: 'All Black', hex: '#1a1a1a', dark: '#0d0d0d', light: '#2d2d2d' },
 ]
 
@@ -78,13 +76,21 @@ export default function App(){
     return `${r}, ${g}, ${b}`
   }
 
-  const applyColorPreset = (preset) => {
-    document.documentElement.style.setProperty('--primary-color', preset.hex)
-    document.documentElement.style.setProperty('--primary-dark', preset.dark)
-    document.documentElement.style.setProperty('--primary-light', preset.light)
-    document.documentElement.style.setProperty('--primary-color-rgb', hexToRgbString(preset.hex))
-    document.documentElement.style.setProperty('--primary-dark-rgb', hexToRgbString(preset.dark))
-    document.documentElement.style.setProperty('--primary-light-rgb', hexToRgbString(preset.light))
+  const normalizeHex = (value) => (value || '').toLowerCase()
+
+  const applyColorTheme = (hex) => {
+    const preset = PRESET_COLORS.find((c) => c.hex.toLowerCase() === normalizeHex(hex))
+    const resolvedPreset = preset || PRESET_COLORS[0]
+    const baseHex = resolvedPreset.hex
+    const darkHex = resolvedPreset.dark || baseHex
+    const lightHex = resolvedPreset.light || baseHex
+
+    document.documentElement.style.setProperty('--primary-color', baseHex)
+    document.documentElement.style.setProperty('--primary-dark', darkHex)
+    document.documentElement.style.setProperty('--primary-light', lightHex)
+    document.documentElement.style.setProperty('--primary-color-rgb', hexToRgbString(baseHex))
+    document.documentElement.style.setProperty('--primary-dark-rgb', hexToRgbString(darkHex))
+    document.documentElement.style.setProperty('--primary-light-rgb', hexToRgbString(lightHex))
   }
 
   const handleLogin = () => {
@@ -147,8 +153,7 @@ export default function App(){
     }
     
     // Aplicar cor primária
-    const currentColorPreset = PRESET_COLORS.find(c => c.hex === primaryColor) || PRESET_COLORS[0]
-    applyColorPreset(currentColorPreset)
+    applyColorTheme(primaryColor)
   }, [])
 
   useEffect(() => {
@@ -172,8 +177,7 @@ export default function App(){
 
   useEffect(() => {
     // Encontrar a cor presente para obter variações
-    const currentColorPreset = PRESET_COLORS.find(c => c.hex === primaryColor) || PRESET_COLORS[0]
-    applyColorPreset(currentColorPreset)
+    applyColorTheme(primaryColor)
     
     localStorage.setItem('primaryColor', primaryColor)
   }, [primaryColor])
