@@ -1352,7 +1352,7 @@ h1 {
 }
 
 .commission-row:nth-child(even) {
-  background: rgba(var(--primary-color-rgb), 0.08);
+  background: white;
 }
 
 .cell-name {
@@ -2058,6 +2058,10 @@ h1 {
 }
 
 .dark-mode .commission-row:nth-child(even) {
+  background-color: #1a1a1a;
+}
+
+.dark-mode[data-theme="all-black"] .commission-row:nth-child(even) {
   background-color: rgba(var(--primary-color-rgb), 0.28);
 }
 
