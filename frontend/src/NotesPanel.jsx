@@ -12,8 +12,8 @@ const TIRE_TYPES = [
 
 const DESFECHO_OPTIONS = [
   { value: 'entrega', label: 'Entrega ao Cliente' },
-  { value: 'piratininga', label: 'Coleta na Loja do Piratininga' },
-  { value: 'belavista', label: 'Coleta na Loja do Bela Vista' }
+  { value: 'piratininga', label: 'Montado na Loja do Piratininga' },
+  { value: 'belavista', label: 'Montado na Loja do Bela Vista' }
 ];
 
 function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMonthChange }) {

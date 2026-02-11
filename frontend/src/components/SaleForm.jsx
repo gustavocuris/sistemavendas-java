@@ -3,8 +3,8 @@ import DatePicker from './DatePicker'
 
 const DESFECHO_OPTIONS = [
   { value: 'entrega', label: 'Entrega ao Cliente' },
-  { value: 'piratininga', label: 'Coleta na Loja do Piratininga' },
-  { value: 'belavista', label: 'Coleta na Loja do Bela Vista' }
+  { value: 'piratininga', label: 'Montado na Loja do Piratininga' },
+  { value: 'belavista', label: 'Montado na Loja do Bela Vista' }
 ];
 
 const empty = { date:'', client:'', phone:'', product:'', unit_price:0, quantity:1, tire_type:'new', desfecho:'entrega', base_trade: false, tread_type: '' }
@@ -346,7 +346,7 @@ const formatDateFull = (value) => {
       )}
       {['new', 'recap', 'recapping'].includes(form.tire_type) && (
         <div className="form-group">
-          <label>Desenho do Pneu</label>
+          <label>DESENHO DO PNEU</label>
           <select
             value={form.tread_type}
             onChange={(e) => setForm({ ...form, tread_type: e.target.value })}
@@ -360,7 +360,7 @@ const formatDateFull = (value) => {
         </div>
       )}
       <div className="form-group">
-        <label>Desfecho</label>
+        <label>DESFECHO</label>
         <select value={form.desfecho} onChange={e=>setForm({...form,desfecho:e.target.value})} required>
           {DESFECHO_OPTIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
         </select>
