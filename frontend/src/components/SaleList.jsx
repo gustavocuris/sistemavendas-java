@@ -19,6 +19,12 @@ const formatBRL = (value) => {
   return Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+const formatProduct = (sale) => {
+  const base = sale.product || ''
+  if (!sale.tread_type) return base
+  return `${base} (${sale.tread_type})`
+}
+
 // Formata data: YYYY-MM-DD → dd/mm/yyyy
 const formatDate = (value) => {
   if (!value) return ''
@@ -75,7 +81,7 @@ export default function SaleList({ sales, onEdit, onDelete }){
                 <td title={formatDateFull(s.date)}>{formatDate(s.date)}</td>
                 <td>{s.client}</td>
                 <td>{s.phone}</td>
-                <td>{s.product}</td>
+                <td>{formatProduct(s)}</td>
                 <td>{formatBRL(s.unit_price)}</td>
                 <td>{s.quantity}</td>
                 <td>{getTireTypeNode(s)}</td>

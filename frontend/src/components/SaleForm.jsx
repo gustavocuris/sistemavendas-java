@@ -7,7 +7,7 @@ const DESFECHO_OPTIONS = [
   { value: 'belavista', label: 'Coleta na Loja do Bela Vista' }
 ];
 
-const empty = { date:'', client:'', phone:'', product:'', unit_price:0, quantity:1, tire_type:'new', desfecho:'entrega', base_trade: false }
+const empty = { date:'', client:'', phone:'', product:'', unit_price:0, quantity:1, tire_type:'new', desfecho:'entrega', base_trade: false, tread_type: '' }
 
 export default function SaleForm({ onCreate, onUpdate, editing, currentMonth }) {
   const [form, setForm] = useState(empty)
@@ -119,6 +119,10 @@ const formatDateFull = (value) => {
       alert('Produto é obrigatório')
       return
     }
+    if (['new', 'recap', 'recapping'].includes(form.tire_type) && !form.tread_type) {
+      alert('Selecione o tipo de desenho (Liso, Misto ou Borrachudo)')
+      return
+    }
     if (parsePrice(priceDisplay) <= 0) {
       alert('Valor unitário deve ser maior que zero')
       return
@@ -163,6 +167,11 @@ const formatDateFull = (value) => {
         alert('Telefone inválido. Deve ter DDD (2 dígitos) + 8 ou 9 dígitos')
         return
       }
+
+      if (['new', 'recap', 'recapping'].includes(form.tire_type) && !form.tread_type) {
+        alert('Selecione o tipo de desenho (Liso, Misto ou Borrachudo)')
+        return
+      }
       
       const payload = { ...form, unit_price: parsePrice(priceDisplay), quantity: Number(form.quantity), month: currentMonth }
       if(editing) onUpdate(editing.id, payload); else onCreate(payload)
@@ -174,6 +183,10 @@ const formatDateFull = (value) => {
       
       // Se o formulário atual estiver preenchido, incluir também
       if (form.product.trim() && parsePrice(priceDisplay) > 0) {
+        if (['new', 'recap', 'recapping'].includes(form.tire_type) && !form.tread_type) {
+          alert('Selecione o tipo de desenho (Liso, Misto ou Borrachudo)')
+          return
+        }
         allItems.push({
           ...form,
           unit_price: parsePrice(priceDisplay),
@@ -300,13 +313,28 @@ const formatDateFull = (value) => {
           <button
             type="button"
             className={`tire-type-btn ${form.tire_type === 'service' ? 'active' : ''}`}
-            onClick={() => setForm({...form, tire_type: 'service', base_trade: false})}
+            onClick={() => setForm({...form, tire_type: 'service', base_trade: false, tread_type: ''})}
             title="Serviço Borracharia"
           >
             SV Borracharia
           </button>
         </div>
       </div>
+      {['new', 'recap', 'recapping'].includes(form.tire_type) && (
+        <div className="form-group">
+          <label>Desenho do Pneu</label>
+          <select
+            value={form.tread_type}
+            onChange={(e) => setForm({ ...form, tread_type: e.target.value })}
+            required
+          >
+            <option value="">Selecione</option>
+            <option value="LISO">Liso</option>
+            <option value="MISTO">Misto</option>
+            <option value="BORRACHUDO">Borrachudo</option>
+          </select>
+        </div>
+      )}
       {form.tire_type === 'recap' && (
         <div className="recap-trade">
           <button

@@ -136,9 +136,13 @@ app.get('/api/sales', (req, res) => {
 
 // Create sale
 app.post('/api/sales', async (req, res) => {
-  const { date, client, phone, product, unit_price, quantity, tire_type, desfecho, month, base_trade } = req.body;
+  const { date, client, phone, product, unit_price, quantity, tire_type, desfecho, month, base_trade, tread_type } = req.body;
   if (!date || !client || !product || unit_price == null || quantity == null || !tire_type) {
     return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  if (['new', 'recap', 'recapping'].includes(tire_type) && !tread_type) {
+    return res.status(400).json({ error: 'Tread type is required for this tire type' });
   }
   
   const qty = Number(quantity);
@@ -168,6 +172,7 @@ app.post('/api/sales', async (req, res) => {
     quantity: qty,
     tire_type,
     base_trade: !!base_trade,
+    tread_type: tread_type || '',
     desfecho: desfecho || 'entrega',
     total
   };
@@ -179,7 +184,7 @@ app.post('/api/sales', async (req, res) => {
 // Update sale
 app.put('/api/sales/:id', async (req, res) => {
   const { id } = req.params;
-  const { date, client, phone, product, unit_price, quantity, tire_type, desfecho, month, base_trade } = req.body;
+  const { date, client, phone, product, unit_price, quantity, tire_type, desfecho, month, base_trade, tread_type } = req.body;
   
   const qty = Number(quantity);
   if (!Number.isInteger(qty) || qty < 1) {
@@ -196,6 +201,10 @@ app.put('/api/sales/:id', async (req, res) => {
   const total = Number(unit_price) * qty;
   const saleIndex = monthData.sales.findIndex(s => s.id == id);
   if (saleIndex === -1) return res.status(404).json({ error: 'Not found' });
+
+  if (['new', 'recap', 'recapping'].includes(tire_type) && !tread_type) {
+    return res.status(400).json({ error: 'Tread type is required for this tire type' });
+  }
   
   monthData.sales[saleIndex] = {
     id: Number(id),
@@ -207,6 +216,7 @@ app.put('/api/sales/:id', async (req, res) => {
     quantity: qty,
     tire_type,
     base_trade: !!base_trade,
+    tread_type: tread_type || '',
     desfecho: desfecho || 'entrega',
     total
   };
