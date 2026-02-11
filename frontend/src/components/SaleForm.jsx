@@ -7,7 +7,7 @@ const DESFECHO_OPTIONS = [
   { value: 'belavista', label: 'MONTADO NA LOJA DO BELA VISTA' }
 ];
 
-const empty = { date:'', client:'', phone:'', product:'', unit_price:0, quantity:1, tire_type:'new', desfecho:'entrega', base_trade: false, tread_type: '' }
+const empty = { date:'', client:'', phone:'', product:'', unit_price:0, quantity:1, tire_type:'new', desfecho:'', base_trade: false, tread_type: '' }
 
 export default function SaleForm({ onCreate, onUpdate, editing, currentMonth, copiedSale, onPaste }) {
   const [form, setForm] = useState(empty)
@@ -352,7 +352,7 @@ const formatDateFull = (value) => {
             onChange={(e) => setForm({ ...form, tread_type: e.target.value })}
             required
           >
-            <option value="">SELECIONE</option>
+            <option value="" disabled hidden>SELECIONE</option>
             <option value="LISO">LISO</option>
             <option value="MISTO">MISTO</option>
             <option value="BORRACHUDO">BORRACHUDO</option>
@@ -362,7 +362,7 @@ const formatDateFull = (value) => {
       <div className="form-group">
         <label>DESFECHO</label>
         <select value={form.desfecho} onChange={e=>setForm({...form,desfecho:e.target.value})} required>
-          <option value="">SELECIONE</option>
+          <option value="" disabled hidden>SELECIONE</option>
           {DESFECHO_OPTIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
         </select>
       </div>

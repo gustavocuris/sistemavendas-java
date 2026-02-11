@@ -22,13 +22,13 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
   const [faltaPagar, setFaltaPagar] = useState([]);
 
   const [formComprar, setFormComprar] = useState({
-    client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', desfecho: 'entrega', base_trade: false
+    client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', desfecho: '', base_trade: false
   });
   const [priceDisplayComprar, setPriceDisplayComprar] = useState('0,00');
   const [editingComprar, setEditingComprar] = useState(null);
 
   const [formPagar, setFormPagar] = useState({
-    client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', date: '', desfecho: 'entrega', base_trade: false
+    client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', date: '', desfecho: '', base_trade: false
   });
   const [priceDisplayPagar, setPriceDisplayPagar] = useState('0,00');
   const [editingPagar, setEditingPagar] = useState(null);
@@ -287,7 +287,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                 <input type="text" placeholder="Valor (R$)" value={priceDisplayComprar} onChange={(e) => setPriceDisplayComprar(formatPrice(e.target.value))} />
                 <input type="number" placeholder="Quantidade" value={formComprar.quantity} onChange={(e) => setFormComprar({ ...formComprar, quantity: e.target.value })} min="1" />
                 <select value={formComprar.desfecho} onChange={(e) => setFormComprar({ ...formComprar, desfecho: e.target.value })}>
-                  <option value="">SELECIONE</option>
+                  <option value="" disabled hidden>SELECIONE</option>
                   {DESFECHO_OPTIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
                 </select>
                 <div className="flow-form-actions">
@@ -391,7 +391,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                 <input type="number" placeholder="Quantidade" value={formPagar.quantity} onChange={(e) => setFormPagar({ ...formPagar, quantity: e.target.value })} min="1" />
                 <input type="date" placeholder="Data" value={formPagar.date} onChange={(e) => setFormPagar({ ...formPagar, date: e.target.value })} />
                 <select value={formPagar.desfecho} onChange={(e) => setFormPagar({ ...formPagar, desfecho: e.target.value })}>
-                  <option value="">SELECIONE</option>
+                  <option value="" disabled hidden>SELECIONE</option>
                   {DESFECHO_OPTIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
                 </select>
                 <div className="flow-form-actions">
