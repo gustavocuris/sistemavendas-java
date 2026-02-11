@@ -309,14 +309,16 @@ const formatDateFull = (value) => {
       </div>
       {form.tire_type === 'recap' && (
         <div className="recap-trade">
-          <label className="recap-trade-label">
-            <input
-              type="checkbox"
-              checked={!!form.base_trade}
-              onChange={(e) => setForm({ ...form, base_trade: e.target.checked })}
-            />
-            Pneu a base de troca
-          </label>
+          <button
+            type="button"
+            className={`trade-toggle ${form.base_trade ? 'active' : ''}`}
+            onClick={() => setForm({ ...form, base_trade: !form.base_trade })}
+            title="Pneu a base de troca"
+            aria-pressed={!!form.base_trade}
+          >
+            <span className="trade-check">✓</span>
+            <span className="trade-text">Pneu a base de troca</span>
+          </button>
         </div>
       )}
       <div className="form-group">

@@ -654,49 +654,61 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  width: fit-content;
+}
+
+.trade-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   padding: 8px 12px;
   border: 2px solid var(--primary-color);
   border-radius: 6px;
   background: rgba(var(--primary-color-rgb), 0.05);
   box-shadow: 0 2px 6px rgba(var(--primary-color-rgb), 0.15);
-  transition: all 0.3s ease;
-  width: fit-content;
+  font-weight: 900;
+  color: var(--primary-color);
+  font-size: 0.95em;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
 }
 
-.recap-trade:hover {
+.trade-toggle:hover {
   box-shadow: 0 4px 10px rgba(var(--primary-color-rgb), 0.25);
   transform: translateY(-1px);
 }
 
-.recap-trade-label {
-  display: inline-flex;
+.trade-toggle.active {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  border-color: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.3);
+}
+
+.trade-toggle .trade-check {
+  display: none;
   align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 0.8em;
   font-weight: 900;
-  color: var(--primary-color);
-  font-size: 1em;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  line-height: 1;
+}
+
+.trade-toggle.active .trade-check {
+  display: inline-flex;
+}
+
+.trade-toggle .trade-text {
   line-height: 1.2;
-  cursor: pointer;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.recap-trade input {
-  width: 14px;
-  height: 14px;
-  accent-color: var(--primary-color);
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 2px solid var(--primary-color);
-  background: #ffffff;
-  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.25);
-}
-
-.recap-trade input:hover {
-  transform: scale(1.1);
 }
 
 .tire-type-btn {
@@ -1738,25 +1750,30 @@ h1 {
 }
 
 .dark-mode .recap-trade {
+  box-shadow: none;
+}
+
+.dark-mode .trade-toggle {
   background: rgba(var(--primary-light-rgb), 0.08);
-  border: 2px solid var(--primary-light);
+  border-color: var(--primary-light);
+  color: var(--primary-light);
   box-shadow: 0 2px 6px rgba(var(--primary-light-rgb), 0.2);
 }
 
-.dark-mode .recap-trade:hover {
+.dark-mode .trade-toggle:hover {
   box-shadow: 0 4px 10px rgba(var(--primary-light-rgb), 0.3);
 }
 
-.dark-mode .recap-trade-label {
-  color: var(--primary-light);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+.dark-mode .trade-toggle.active {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+  border-color: var(--primary-light);
+  color: #0b0b0b;
 }
 
-.dark-mode .recap-trade input {
-  accent-color: var(--primary-light);
-  border: 2px solid var(--primary-light);
-  background: #0b0b0b;
-  box-shadow: 0 0 0 2px rgba(var(--primary-light-rgb), 0.25);
+.dark-mode .trade-toggle.active .trade-check {
+  border-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.15);
+  color: #0b0b0b;
 }
 
 .dark-mode .form input,
@@ -3191,19 +3208,19 @@ h1 {
 }
 
 .flow-bt {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   font-size: 12px;
   font-weight: 800;
-  color: var(--primary-color);
+  text-transform: none;
+  letter-spacing: 0.2px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  box-shadow: none;
   white-space: nowrap;
 }
 
-.flow-bt input {
-  width: 12px;
-  height: 12px;
-  accent-color: var(--primary-color);
+.flow-bt.trade-toggle:hover {
+  transform: none;
+  box-shadow: 0 2px 6px rgba(var(--primary-color-rgb), 0.2);
 }
 
 .flow-form input[type="month"],
@@ -3227,10 +3244,7 @@ h1 {
 
 .flow-modal.dark-mode .flow-bt {
   color: white;
-}
-
-.flow-modal.dark-mode .flow-bt input {
-  accent-color: white;
+  border-color: var(--primary-light);
 }
 
 .flow-modal.dark-mode .flow-form input[type="month"],

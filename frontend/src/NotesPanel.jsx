@@ -273,10 +273,16 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                   {TIRE_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
                 {formComprar.tire_type === 'recap' && (
-                  <label className="flow-bt">
-                    <input type="checkbox" checked={!!formComprar.base_trade} onChange={(e) => setFormComprar({ ...formComprar, base_trade: e.target.checked })} />
-                    Pneu a base de troca
-                  </label>
+                  <button
+                    type="button"
+                    className={`flow-bt trade-toggle ${formComprar.base_trade ? 'active' : ''}`}
+                    onClick={() => setFormComprar({ ...formComprar, base_trade: !formComprar.base_trade })}
+                    title="Pneu a base de troca"
+                    aria-pressed={!!formComprar.base_trade}
+                  >
+                    <span className="trade-check">✓</span>
+                    <span className="trade-text">Pneu a base de troca</span>
+                  </button>
                 )}
                 <input type="text" placeholder="Valor (R$)" value={priceDisplayComprar} onChange={(e) => setPriceDisplayComprar(formatPrice(e.target.value))} />
                 <input type="number" placeholder="Quantidade" value={formComprar.quantity} onChange={(e) => setFormComprar({ ...formComprar, quantity: e.target.value })} min="1" />
@@ -369,10 +375,16 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                   {TIRE_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
                 {formPagar.tire_type === 'recap' && (
-                  <label className="flow-bt">
-                    <input type="checkbox" checked={!!formPagar.base_trade} onChange={(e) => setFormPagar({ ...formPagar, base_trade: e.target.checked })} />
-                    Pneu a base de troca
-                  </label>
+                  <button
+                    type="button"
+                    className={`flow-bt trade-toggle ${formPagar.base_trade ? 'active' : ''}`}
+                    onClick={() => setFormPagar({ ...formPagar, base_trade: !formPagar.base_trade })}
+                    title="Pneu a base de troca"
+                    aria-pressed={!!formPagar.base_trade}
+                  >
+                    <span className="trade-check">✓</span>
+                    <span className="trade-text">Pneu a base de troca</span>
+                  </button>
                 )}
                 <input type="text" placeholder="Valor (R$)" value={priceDisplayPagar} onChange={(e) => setPriceDisplayPagar(formatPrice(e.target.value))} />
                 <input type="number" placeholder="Quantidade" value={formPagar.quantity} onChange={(e) => setFormPagar({ ...formPagar, quantity: e.target.value })} min="1" />
