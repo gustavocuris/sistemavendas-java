@@ -402,8 +402,8 @@ export default function App(){
         </div>
       </div>
       <div className="grid">
-        <SaleForm onCreate={create} onUpdate={update} editing={editing} currentMonth={currentMonth} />
-        <SaleList sales={sales} onEdit={setEditing} onDelete={remove} onCopy={handleCopy} copiedSale={copiedSale} onPaste={handlePaste} />
+        <SaleForm onCreate={create} onUpdate={update} editing={editing} currentMonth={currentMonth} copiedSale={copiedSale} onPaste={handlePaste} />
+        <SaleList sales={sales} onEdit={setEditing} onDelete={remove} onCopy={handleCopy} />
       </div>
       <CommissionSummary sales={sales} commissions={commissions} onCommissionChange={handleCommissionChange} />
       {showChart && <ChartView year={selectedYear} onClose={() => setShowChart(false)} refreshKey={chartRefresh} primaryColor={primaryColor} darkMode={darkMode} />}

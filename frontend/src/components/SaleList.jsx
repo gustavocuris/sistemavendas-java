@@ -42,7 +42,7 @@ const formatDateFull = (value) => {
   return `${parseInt(day)} de ${monthName} de ${year}`
 }
 
-export default function SaleList({ sales, onEdit, onDelete, onCopy, copiedSale, onPaste }){
+export default function SaleList({ sales, onEdit, onDelete, onCopy }){
   const [isAscending, setIsAscending] = useState(false)
   
   const sortedSales = [...sales].sort((a, b) => {
@@ -74,23 +74,7 @@ export default function SaleList({ sales, onEdit, onDelete, onCopy, copiedSale, 
         <table>
           <thead>
             <tr>
-              <th>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <span>Data</span>
-                  {copiedSale && (
-                    <button 
-                      onClick={onPaste}
-                      className="btn-paste-mini"
-                      title="Colar registro copiado"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                      </svg>
-                    </button>
-                  )}
-                </div>
-              </th>
+              <th>Data</th>
               <th>Cliente</th>
               <th>Telefone</th>
               <th>PRODUTO/SERVIÇO</th>
