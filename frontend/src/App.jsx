@@ -251,7 +251,7 @@ export default function App(){
     if (copiedSale) {
       // Preenche o formulário com os dados copiados (sem id, para criar nova venda)
       setEditing(null)
-      setPastedSale({ ...copiedSale, date: currentMonth + '-01' })
+      setPastedSale({ ...copiedSale, date: '' })
       // Remove o copiedSale após colar para que o botão desapareça
       setCopiedSale(null)
     }
