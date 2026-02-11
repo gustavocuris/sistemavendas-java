@@ -23,6 +23,7 @@ export default function App(){
   })
   const [sales, setSales] = useState([])
   const [editing, setEditing] = useState(null)
+  const [copiedSale, setCopiedSale] = useState(null)
   const [commissions, setCommissions] = useState({ new: 5, recap: 8, recapping: 10, service: 0 })
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode')
@@ -219,6 +220,19 @@ export default function App(){
     setChartRefresh(prev => prev + 1)
   }
 
+  const handleCopy = (sale) => {
+    // Remove id e mantém os outros dados
+    const { id, ...saleData } = sale
+    setCopiedSale(saleData)
+  }
+
+  const handlePaste = () => {
+    if (copiedSale) {
+      // Preenche o formulário com os dados copiados (sem id, para criar nova venda)
+      setEditing({ ...copiedSale, date: currentMonth + '-01' })
+    }
+  }
+
   const createNewMonth = async (monthNum, year) => {
     const monthStr = `${year}-${String(monthNum).padStart(2, '0')}`
     try {
@@ -389,7 +403,7 @@ export default function App(){
       </div>
       <div className="grid">
         <SaleForm onCreate={create} onUpdate={update} editing={editing} currentMonth={currentMonth} />
-        <SaleList sales={sales} onEdit={setEditing} onDelete={remove} />
+        <SaleList sales={sales} onEdit={setEditing} onDelete={remove} onCopy={handleCopy} copiedSale={copiedSale} onPaste={handlePaste} />
       </div>
       <CommissionSummary sales={sales} commissions={commissions} onCommissionChange={handleCommissionChange} />
       {showChart && <ChartView year={selectedYear} onClose={() => setShowChart(false)} refreshKey={chartRefresh} primaryColor={primaryColor} darkMode={darkMode} />}

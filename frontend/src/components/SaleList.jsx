@@ -42,7 +42,7 @@ const formatDateFull = (value) => {
   return `${parseInt(day)} de ${monthName} de ${year}`
 }
 
-export default function SaleList({ sales, onEdit, onDelete }){
+export default function SaleList({ sales, onEdit, onDelete, onCopy, copiedSale, onPaste }){
   const [isAscending, setIsAscending] = useState(false)
   
   const sortedSales = [...sales].sort((a, b) => {
@@ -62,13 +62,28 @@ export default function SaleList({ sales, onEdit, onDelete }){
     <div className="list">
       <div className="list-header-with-sort">
         <h2>Vendas</h2>
-        <button 
-          onClick={() => setIsAscending(!isAscending)}
-          className="btn-sort"
-          title={isAscending ? "Ordenar: Novas para Antigas" : "Ordenar: Antigas para Novas"}
-        >
-          {isAscending ? '↑' : '↓'}
-        </button>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          {copiedSale && (
+            <button 
+              onClick={onPaste}
+              className="btn-paste"
+              title="Colar registro copiado"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '4px' }}>
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              </svg>
+              Colar
+            </button>
+          )}
+          <button 
+            onClick={() => setIsAscending(!isAscending)}
+            className="btn-sort"
+            title={isAscending ? "Ordenar: Novas para Antigas" : "Ordenar: Antigas para Novas"}
+          >
+            {isAscending ? '↑' : '↓'}
+          </button>
+        </div>
       </div>
       <div className="list-wrapper">
         <table>
@@ -88,6 +103,12 @@ export default function SaleList({ sales, onEdit, onDelete }){
                 <td>{desfechoLabel[s.desfecho] || s.desfecho || '-'}</td>
                 <td>{formatBRL(s.total)}</td>
                 <td className="actions-cell">
+                  <button onClick={()=>onCopy(s)} className="btn-copy" title="Copiar registro">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
                   <button onClick={()=>onEdit(s)} className="btn-edit">Editar</button>
                   <button onClick={()=>onDelete(s.id)} className="btn-delete">Excluir</button>
                 </td>
