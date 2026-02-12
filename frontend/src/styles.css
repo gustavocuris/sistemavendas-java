@@ -1567,8 +1567,9 @@ h1 {
 }
 
 .commission-footer div:first-child {
-  text-align: right;
+  text-align: left;
   padding-right: 12px;
+  grid-column: 1 / 4;
 }
 
 .amount-total {
@@ -1577,6 +1578,7 @@ h1 {
   font-weight: 900;
   color: white;
   font-family: 'Courier New', monospace;
+  grid-column: 4;
 }
 
 .commission-header div:nth-child(2),
