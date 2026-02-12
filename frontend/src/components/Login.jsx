@@ -425,11 +425,13 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #0f6b3a 0%, #0b4f2a 50%, #073a1f 100%);
+          background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 50%, #ecfdf5 100%);
           padding: 20px;
           position: relative;
           overflow: hidden;
-          --primary-color: #16a34a;
+          --primary-color: #0ec258;
+          --primary-dark: #35ad11;
+          --primary-light: #34e400;
         }
 
         .login-container.dark-mode {
@@ -464,9 +466,15 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         .login-blob-2 {
           width: 400px;
           height: 400px;
-          background: rgba(19, 157, 88, 0.2);
+          background: rgba(14, 194, 88, 0.25);
           bottom: -150px;
           left: -50px;
+          animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(20px); }
         }
 
         .login-box {
@@ -505,17 +513,18 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .login-logo {
           display: block;
-          height: 160px;
+          height: 200px;
           width: auto;
-          max-width: 320px;
-          margin: 0 auto 16px;
+          max-width: 400px;
+          margin: 0 auto 24px;
+          filter: drop-shadow(0 8px 16px rgba(14, 194, 88, 0.15));
         }
 
         .login-header h1 {
           margin: 12px 0 8px 0;
           font-size: 32px;
           font-weight: 800;
-          color: #0a3d62;
+          color: #0ec258;
           letter-spacing: -0.5px;
         }
 
@@ -552,7 +561,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           gap: 8px;
           font-weight: 700;
           font-size: 14px;
-          color: #0a3d62;
+          color: #35ad11;
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -590,13 +599,13 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         .login-input:focus {
           outline: none;
           border-color: var(--primary-color);
-          box-shadow: 0 0 0 4px rgba(22, 126, 219, 0.15);
-          background: #f8f9ff;
+          box-shadow: 0 0 0 4px rgba(14, 194, 88, 0.2);
+          background: #f0fdf4;
         }
 
         .dark-mode .login-input:focus {
-          background: #0f1419;
-          box-shadow: 0 0 0 4px rgba(22, 126, 219, 0.25);
+          background: #0d1f17;
+          box-shadow: 0 0 0 4px rgba(14, 194, 88, 0.3);
         }
 
         .password-input {
@@ -705,7 +714,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           justify-content: center;
           gap: 10px;
           padding: 16px 24px;
-          background: linear-gradient(135deg, var(--primary-color) 0%, #0a5ba6 100%);
+          background: linear-gradient(135deg, var(--primary-color) 0%, #35ad11 100%);
           color: white;
           border: none;
           border-radius: 12px;
@@ -716,14 +725,14 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           margin-top: 8px;
           text-transform: uppercase;
           letter-spacing: 0.5px;
-          box-shadow: 0 4px 15px rgba(22, 126, 219, 0.3);
+          box-shadow: 0 4px 15px rgba(14, 194, 88, 0.3);
           position: relative;
           overflow: hidden;
         }
 
         .btn-login:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(22, 126, 219, 0.4);
+          box-shadow: 0 8px 25px rgba(14, 194, 88, 0.4);
         }
 
         .btn-login:active:not(:disabled) {
@@ -870,7 +879,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           }
 
           .login-logo {
-            height: 140px;
+            height: 170px;
             width: auto;
           }
 
