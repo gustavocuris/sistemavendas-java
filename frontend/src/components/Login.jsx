@@ -505,9 +505,9 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .login-logo {
           display: block;
-          height: 88px;
+          height: 160px;
           width: auto;
-          max-width: 240px;
+          max-width: 320px;
           margin: 0 auto 16px;
         }
 
@@ -870,7 +870,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           }
 
           .login-logo {
-            height: 72px;
+            height: 140px;
             width: auto;
           }
 
