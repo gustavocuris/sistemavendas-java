@@ -2856,7 +2856,7 @@ h1 {
 }
 
 .dark-mode .current-month {
-  color: var(--primary-light);
+  color: #f0f0f0;
   font-weight: 900;
 }
 
@@ -3109,7 +3109,7 @@ h1 {
 }
 
 .dark-mode .stat-label {
-  color: #b0b0b0;
+  color: #e0e0e0;
 }
 
 .stat-value {
