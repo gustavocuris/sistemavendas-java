@@ -444,7 +444,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           border-radius: 50%;
           top: -100px;
           right: -50px;
-          animation: float 8s ease-in-out infinite;
+          animation: float 8s ease-in-out infinite, pulse-large 6s ease-in-out infinite;
         }
 
         .login-container::after {
@@ -456,7 +456,12 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           border-radius: 50%;
           bottom: -80px;
           left: -50px;
-          animation: float 10s ease-in-out infinite reverse;
+          animation: float 10s ease-in-out infinite reverse, pulse-large 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes pulse-large {
+          0%, 100% { transform: scale(1); opacity: 0.4; }
+          50% { transform: scale(1.15); opacity: 0.7; }
         }
 
         .login-container.dark-mode {
@@ -486,7 +491,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           background: rgba(255, 255, 255, 0.3);
           top: -200px;
           right: -100px;
-          animation: float 15s ease-in-out infinite;
+          animation: float 15s ease-in-out infinite, pulse-blob 8s ease-in-out infinite;
         }
 
         .login-blob-2 {
@@ -495,7 +500,12 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           background: rgba(14, 194, 88, 0.35);
           bottom: -150px;
           left: -50px;
-          animation: float 12s ease-in-out infinite reverse;
+          animation: float 12s ease-in-out infinite reverse, pulse-blob 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes pulse-blob {
+          0%, 100% { filter: blur(80px); opacity: 0.15; }
+          50% { filter: blur(60px); opacity: 0.25; }
         }
 
         @keyframes float {
@@ -519,7 +529,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           background: radial-gradient(circle, rgba(52, 228, 0, 0.3) 0%, transparent 70%);
           top: 10%;
           left: 5%;
-          animation: orb-move-1 20s ease-in-out infinite;
+          animation: orb-move-1 20s ease-in-out infinite, orb-pulse-1 6s ease-in-out infinite;
         }
 
         .login-orb-2 {
@@ -528,7 +538,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           background: radial-gradient(circle, rgba(14, 194, 88, 0.25) 0%, transparent 70%);
           bottom: 10%;
           right: 8%;
-          animation: orb-move-2 25s ease-in-out infinite;
+          animation: orb-move-2 25s ease-in-out infinite, orb-pulse-2 8s ease-in-out infinite;
         }
 
         .login-orb-3 {
@@ -538,7 +548,22 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          animation: orb-move-3 30s ease-in-out infinite;
+          animation: orb-move-3 30s ease-in-out infinite, orb-pulse-3 7s ease-in-out infinite;
+        }
+
+        @keyframes orb-pulse-1 {
+          0%, 100% { opacity: 0.5; filter: blur(50px); }
+          50% { opacity: 0.8; filter: blur(30px); }
+        }
+
+        @keyframes orb-pulse-2 {
+          0%, 100% { opacity: 0.4; filter: blur(50px); }
+          50% { opacity: 0.7; filter: blur(35px); }
+        }
+
+        @keyframes orb-pulse-3 {
+          0%, 100% { opacity: 0.5; filter: blur(50px); }
+          50% { opacity: 0.75; filter: blur(40px); }
         }
 
         @keyframes orb-move-1 {
@@ -571,10 +596,15 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           width: 100%;
           max-width: 500px;
           padding: 60px 50px;
-          animation: slideUp 0.6s ease-out;
+          animation: slideUp 0.6s ease-out, glow-pulse 4s ease-in-out infinite;
           position: relative;
           z-index: 10;
           border: 1px solid rgba(14, 194, 88, 0.1);
+        }
+
+        @keyframes glow-pulse {
+          0%, 100% { box-shadow: 0 8px 32px 0 rgba(14, 194, 88, 0.2), 0 0 0 1px rgba(14, 194, 88, 0.1); }
+          50% { box-shadow: 0 8px 40px 0 rgba(14, 194, 88, 0.35), 0 0 0 1px rgba(14, 194, 88, 0.2); }
         }
 
         .dark-mode .login-box {
@@ -607,7 +637,15 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           max-width: 360px;
           margin: 0 auto;
           filter: drop-shadow(0 6px 20px rgba(14, 194, 88, 0.3));
-          animation: fadeInScale 0.8s ease-out, float 4s ease-in-out infinite;
+          animation: fadeInScale 0.8s ease-out, breathing 4s ease-in-out infinite;
+        }
+
+        @keyframes breathing {
+          0% { transform: scale(1); }
+          25% { transform: scale(1.08); }
+          50% { transform: scale(0.95); }
+          75% { transform: scale(1.05); }
+          100% { transform: scale(1); }
         }
 
         @keyframes fadeInScale {
