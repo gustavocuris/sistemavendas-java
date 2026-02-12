@@ -243,7 +243,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Intercap Pneus"
+                placeholder=""
                 required
                 autoFocus
                 className="login-input"
@@ -261,10 +261,10 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
               <div className="password-input">
                 <input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type="text"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder=""
                   required
                   className="login-input"
                 />
@@ -417,7 +417,6 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         {/* Footer */}
         <div className="login-footer">
           <p>Sistema de Gestão de Vendas • v1.0</p>
-          <p className="login-footer-secondary">Intercap Pneus © 2026</p>
         </div>
       </div>
 
@@ -637,7 +636,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           max-width: 360px;
           margin: 0 auto;
           filter: drop-shadow(0 6px 20px rgba(14, 194, 88, 0.3));
-          animation: fadeInScale 0.8s ease-out, breathing 4s ease-in-out infinite;
+          animation: fadeInScale 0.8s ease-out, breathing 6s ease-in-out infinite;
         }
 
         @keyframes breathing {
