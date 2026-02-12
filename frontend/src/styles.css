@@ -1799,6 +1799,7 @@ h1 {
   .list tfoot .total-label {
     font-size: 1em;
     padding-right: 12px;
+    font-weight: 900;
   }
 
   .list tfoot .total-amount {
