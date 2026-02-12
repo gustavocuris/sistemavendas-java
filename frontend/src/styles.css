@@ -1203,7 +1203,7 @@ h1 {
 
 .list tfoot .total-label {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 0.95em;
+  font-size: 1.5em;
   letter-spacing: 0.8px;
   padding-right: 16px;
   text-align: right;
@@ -1795,7 +1795,7 @@ h1 {
   }
 
   .list tfoot .total-label {
-    font-size: 0.9em;
+    font-size: 1.35em;
     padding-right: 12px;
   }
 
