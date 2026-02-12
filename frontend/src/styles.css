@@ -1194,7 +1194,7 @@ h1 {
 }
 
 .list tfoot td {
-  padding: 14px 12px;
+  padding: 18px 12px;
   color: white;
   font-size: 0.85em;
   text-transform: uppercase;
@@ -1203,7 +1203,7 @@ h1 {
 
 .list tfoot .total-label {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 0.75em;
+  font-size: 0.95em;
   letter-spacing: 0.8px;
   padding-right: 16px;
   text-align: right;
@@ -1211,7 +1211,7 @@ h1 {
 
 .list tfoot .total-amount {
   color: white;
-  font-size: 1.1em;
+  font-size: 1.5em;
   font-weight: 950;
   font-family: 'Courier New', 'Courier', monospace;
   text-align: right;
@@ -1790,17 +1790,17 @@ h1 {
   }
 
   .list tfoot td {
-    padding: 14px 10px;
+    padding: 16px 10px;
     font-size: 0.9em;
   }
 
   .list tfoot .total-label {
-    font-size: 0.85em;
+    font-size: 0.9em;
     padding-right: 12px;
   }
 
   .list tfoot .total-amount {
-    font-size: 1.3em;
+    font-size: 1.35em;
     padding: 0 10px;
   }
 
