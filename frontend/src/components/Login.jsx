@@ -127,23 +127,18 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
   return (
       <div className={`login-container ${darkMode ? 'dark-mode' : ''}`}>
-      {/* Animated grid background */}
-      <div className="grid-background">
-        <div className="grid-line"></div>
-        <div className="grid-line"></div>
-        <div className="grid-line"></div>
-        <div className="grid-line"></div>
-        <div className="grid-line"></div>
-      </div>
-
-      {/* Floating particles */}
-      <div className="particles">
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
+      {/* Animated Van Gogh style background */}
+      <div className="starry-background"></div>
+      <div className="dark-overlay"></div>
+      
+      {/* Swirling orbs */}
+      <div className="swirl-container">
+        <div className="swirl swirl-1"></div>
+        <div className="swirl swirl-2"></div>
+        <div className="swirl swirl-3"></div>
+        <div className="swirl swirl-4"></div>
+        <div className="swirl swirl-5"></div>
+        <div className="swirl swirl-6"></div>
       </div>
 
       <div className="login-box">
@@ -423,7 +418,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #0a0e14;
+          background: #0a1a0f;
           position: relative;
           overflow: hidden;
           --primary-color: #2ecc71;
@@ -431,100 +426,135 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           --primary-dark: #27ae60;
         }
 
-        /* Animated grid background */
-        .grid-background {
+        /* Van Gogh Starry Night inspired background */
+        .starry-background {
+          position: absolute;
+          top: -10%;
+          left: -10%;
+          width: 120%;
+          height: 120%;
+          background: 
+            radial-gradient(circle at 20% 30%, rgba(180, 255, 100, 0.4) 0%, transparent 8%),
+            radial-gradient(circle at 80% 20%, rgba(150, 255, 120, 0.35) 0%, transparent 10%),
+            radial-gradient(circle at 60% 60%, rgba(200, 255, 80, 0.3) 0%, transparent 12%),
+            radial-gradient(circle at 30% 80%, rgba(160, 255, 110, 0.4) 0%, transparent 9%),
+            radial-gradient(circle at 85% 75%, rgba(170, 255, 90, 0.35) 0%, transparent 11%),
+            radial-gradient(circle at 15% 50%, rgba(190, 255, 100, 0.3) 0%, transparent 7%),
+            linear-gradient(135deg, #0d3b1a 0%, #1a5c2e 30%, #0f4d23 60%, #08341a 100%);
+          animation: starryMove 60s ease-in-out infinite;
+          filter: blur(1px);
+        }
+
+        @keyframes starryMove {
+          0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+          25% { transform: translate(-3%, 2%) rotate(1deg) scale(1.05); }
+          50% { transform: translate(2%, -3%) rotate(-1deg) scale(1.08); }
+          75% { transform: translate(-2%, 3%) rotate(0.5deg) scale(1.03); }
+        }
+
+        /* Dark overlay */
+        .dark-overlay {
           position: absolute;
           top: 0;
           left: 0;
-          right: 0;
-          bottom: 0;
-          background-image: 
-            linear-gradient(rgba(46, 204, 113, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(46, 204, 113, 0.05) 1px, transparent 1px);
-          background-size: 100px 100px;
-          animation: gridMove 20s linear infinite;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.65);
+          z-index: 1;
         }
 
-        @keyframes gridMove {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(100px, 100px); }
-        }
-
-        /* Floating particles */
-        .particles {
+        /* Swirling effects */
+        .swirl-container {
           position: absolute;
           width: 100%;
           height: 100%;
+          z-index: 2;
           overflow: hidden;
         }
 
-        .particle {
+        .swirl {
           position: absolute;
-          width: 4px;
-          height: 4px;
-          background: var(--primary-light);
           border-radius: 50%;
-          box-shadow: 0 0 10px var(--primary-light);
-          animation: particleFloat 15s infinite ease-in-out;
+          background: radial-gradient(circle, rgba(180, 255, 120, 0.15) 0%, transparent 70%);
+          filter: blur(40px);
         }
 
-        .particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; animation-duration: 12s; }
-        .particle:nth-child(2) { left: 80%; top: 30%; animation-delay: 2s; animation-duration: 15s; }
-        .particle:nth-child(3) { left: 30%; top: 70%; animation-delay: 4s; animation-duration: 18s; }
-        .particle:nth-child(4) { left: 70%; top: 60%; animation-delay: 1s; animation-duration: 14s; }
-        .particle:nth-child(5) { left: 50%; top: 40%; animation-delay: 3s; animation-duration: 16s; }
-        .particle:nth-child(6) { left: 20%; top: 80%; animation-delay: 5s; animation-duration: 13s; }
-
-        @keyframes particleFloat {
-          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-          25% { transform: translate(40px, -40px) scale(1.5); opacity: 0.8; }
-          50% { transform: translate(-30px, -80px) scale(1); opacity: 0.4; }
-          75% { transform: translate(20px, -120px) scale(1.2); opacity: 0.6; }
+        .swirl-1 {
+          width: 300px;
+          height: 300px;
+          top: 15%;
+          left: 20%;
+          animation: swirlRotate1 25s ease-in-out infinite;
         }
 
-        .login-container::before {
-          content: '';
-          position: absolute;
-          width: 800px;
-          height: 800px;
-          background: radial-gradient(circle, rgba(46, 204, 113, 0.15) 0%, transparent 70%);
-          border-radius: 50%;
-          top: -400px;
-          right: -200px;
-          animation: glow 8s ease-in-out infinite;
+        .swirl-2 {
+          width: 250px;
+          height: 250px;
+          top: 20%;
+          right: 15%;
+          animation: swirlRotate2 30s ease-in-out infinite reverse;
         }
 
-        .login-container::after {
-          content: '';
-          position: absolute;
-          width: 600px;
-          height: 600px;
-          background: radial-gradient(circle, rgba(82, 255, 163, 0.1) 0%, transparent 70%);
-          border-radius: 50%;
-          bottom: -300px;
-          left: -150px;
-          animation: glow 10s ease-in-out infinite reverse;
+        .swirl-3 {
+          width: 350px;
+          height: 350px;
+          bottom: 20%;
+          left: 10%;
+          animation: swirlRotate1 35s ease-in-out infinite;
         }
 
-        @keyframes glow {
-          0%, 100% { transform: scale(1); opacity: 0.3; }
-          50% { transform: scale(1.2); opacity: 0.6; }
+        .swirl-4 {
+          width: 200px;
+          height: 200px;
+          bottom: 15%;
+          right: 20%;
+          animation: swirlRotate2 28s ease-in-out infinite;
+        }
+
+        .swirl-5 {
+          width: 280px;
+          height: 280px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          animation: swirlRotate1 32s ease-in-out infinite reverse;
+        }
+
+        .swirl-6 {
+          width: 180px;
+          height: 180px;
+          top: 10%;
+          left: 50%;
+          animation: swirlRotate2 22s ease-in-out infinite;
+        }
+
+        @keyframes swirlRotate1 {
+          0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.3; }
+          25% { transform: rotate(90deg) scale(1.2); opacity: 0.5; }
+          50% { transform: rotate(180deg) scale(1.1); opacity: 0.4; }
+          75% { transform: rotate(270deg) scale(1.15); opacity: 0.45; }
+        }
+
+        @keyframes swirlRotate2 {
+          0%, 100% { transform: rotate(360deg) scale(1); opacity: 0.35; }
+          33% { transform: rotate(240deg) scale(1.15); opacity: 0.5; }
+          66% { transform: rotate(120deg) scale(1.08); opacity: 0.42; }
         }
 
         .login-box {
           position: relative;
-          z-index: 10;
+          z-index: 100;
           width: 100%;
           max-width: 480px;
           padding: 60px 50px;
-          background: rgba(15, 20, 28, 0.85);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(46, 204, 113, 0.2);
+          background: rgba(15, 20, 28, 0.9);
+          backdrop-filter: blur(25px);
+          border: 1px solid rgba(46, 204, 113, 0.3);
           border-radius: 24px;
           box-shadow: 
-            0 20px 60px rgba(0, 0, 0, 0.5),
-            0 0 80px rgba(46, 204, 113, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            0 20px 60px rgba(0, 0, 0, 0.7),
+            0 0 80px rgba(46, 204, 113, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
           animation: boxEntry 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
@@ -587,136 +617,6 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           left: -50px;
           animation: float 10s ease-in-out infinite reverse, pulse-large 8s ease-in-out infinite reverse;
         }
-
-        @keyframes pulse-large {
-          0%, 100% { transform: scale(1); opacity: 0.4; }
-          50% { transform: scale(1.15); opacity: 0.7; }
-        }
-
-        .login-container.dark-mode {
-          background: linear-gradient(135deg, #0a1117 0%, #0d1218 50%, #010409 100%);
-        }
-
-        .login-background {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          z-index: 0;
-          overflow: hidden;
-        }
-
-        .login-blob {
-          position: absolute;
-          border-radius: 50%;
-          filter: blur(80px);
-          opacity: 0.15;
-        }
-
-        .login-blob-1 {
-          width: 500px;
-          height: 500px;
-          background: rgba(255, 255, 255, 0.3);
-          top: -200px;
-          right: -100px;
-          animation: float 15s ease-in-out infinite, pulse-blob 8s ease-in-out infinite;
-        }
-
-        .login-blob-2 {
-          width: 400px;
-          height: 400px;
-          background: rgba(14, 194, 88, 0.35);
-          bottom: -150px;
-          left: -50px;
-          animation: float 12s ease-in-out infinite reverse, pulse-blob 10s ease-in-out infinite reverse;
-        }
-
-        @keyframes pulse-blob {
-          0%, 100% { filter: blur(80px); opacity: 0.15; }
-          50% { filter: blur(60px); opacity: 0.25; }
-        }
-
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); }
-          25% { transform: translateY(-30px) translateX(20px) scale(1.05); }
-          50% { transform: translateY(30px) translateX(-20px) scale(0.95); }
-          75% { transform: translateY(-20px) translateX(-30px) scale(1.02); }
-        }
-
-        .login-orb {
-          position: absolute;
-          border-radius: 50%;
-          filter: blur(50px);
-          opacity: 0.6;
-          mix-blend-mode: screen;
-        }
-
-        .login-orb-1 {
-          width: 350px;
-          height: 350px;
-          background: radial-gradient(circle, rgba(52, 228, 0, 0.3) 0%, transparent 70%);
-          top: 10%;
-          left: 5%;
-          animation: orb-move-1 20s ease-in-out infinite, orb-pulse-1 6s ease-in-out infinite;
-        }
-
-        .login-orb-2 {
-          width: 300px;
-          height: 300px;
-          background: radial-gradient(circle, rgba(14, 194, 88, 0.25) 0%, transparent 70%);
-          bottom: 10%;
-          right: 8%;
-          animation: orb-move-2 25s ease-in-out infinite, orb-pulse-2 8s ease-in-out infinite;
-        }
-
-        .login-orb-3 {
-          width: 250px;
-          height: 250px;
-          background: radial-gradient(circle, rgba(52, 173, 17, 0.2) 0%, transparent 70%);
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          animation: orb-move-3 30s ease-in-out infinite, orb-pulse-3 7s ease-in-out infinite;
-        }
-
-        @keyframes orb-pulse-1 {
-          0%, 100% { opacity: 0.5; filter: blur(50px); }
-          50% { opacity: 0.8; filter: blur(30px); }
-        }
-
-        @keyframes orb-pulse-2 {
-          0%, 100% { opacity: 0.4; filter: blur(50px); }
-          50% { opacity: 0.7; filter: blur(35px); }
-        }
-
-        @keyframes orb-pulse-3 {
-          0%, 100% { opacity: 0.5; filter: blur(50px); }
-          50% { opacity: 0.75; filter: blur(40px); }
-        }
-
-        @keyframes orb-move-1 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          25% { transform: translate(50px, -60px) scale(1.1); }
-          50% { transform: translate(80px, 40px) scale(0.9); }
-          75% { transform: translate(-30px, 70px) scale(1.05); }
-        }
-
-        @keyframes orb-move-2 {
-          0%, 100% { transform: translate(0, 0) scale(0.9); }
-          25% { transform: translate(-60px, 50px) scale(1); }
-          50% { transform: translate(40px, -70px) scale(1.1); }
-          75% { transform: translate(-70px, -40px) scale(0.95); }
-        }
-
-        @keyframes orb-move-3 {
-          0%, 100% { transform: translate(-50%, -50%) scale(1); }
-          20% { transform: translate(-50%, -50%) translate(-50px, 40px) scale(1.1); }
-          40% { transform: translate(-50%, -50%) translate(60px, -50px) scale(0.9); }
-          60% { transform: translate(-50%, -50%) translate(-40px, -60px) scale(1.05); }
-          80% { transform: translate(-50%, -50%) translate(50px, 50px) scale(1); }
-        }
-
         .login-box {
           background: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(20px);
