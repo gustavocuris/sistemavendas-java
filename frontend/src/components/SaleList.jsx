@@ -129,8 +129,8 @@ export default function SaleList({ sales, onEdit, onDelete, onCopy }){
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={8} className="total-label">FATURAMENTO TOTAL :</td>
-              <td colSpan={2} className="total-amount">R$ {formatBRL(totalAll)}</td>
+              <td colSpan={9} className="total-label">FATURAMENTO TOTAL :</td>
+              <td colSpan={1} className="total-amount">R$ {formatBRL(totalAll)}</td>
             </tr>
           </tfoot>
         </table>
