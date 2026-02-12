@@ -425,13 +425,36 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 50%, #ecfdf5 100%);
-          padding: 20px;
+          background: linear-gradient(135deg, #0c2818 0%, #1a4d2e 50%, #0f3a1f 100%);
           position: relative;
           overflow: hidden;
           --primary-color: #0ec258;
           --primary-dark: #35ad11;
           --primary-light: #34e400;
+        }
+
+        .login-container::before {
+          content: '';
+          position: absolute;
+          width: 400px;
+          height: 400px;
+          background: radial-gradient(circle, rgba(14, 194, 88, 0.1) 0%, transparent 70%);
+          border-radius: 50%;
+          top: -100px;
+          right: -50px;
+          animation: float 8s ease-in-out infinite;
+        }
+
+        .login-container::after {
+          content: '';
+          position: absolute;
+          width: 300px;
+          height: 300px;
+          background: radial-gradient(circle, rgba(52, 228, 0, 0.08) 0%, transparent 70%);
+          border-radius: 50%;
+          bottom: -80px;
+          left: -50px;
+          animation: float 10s ease-in-out infinite reverse;
         }
 
         .login-container.dark-mode {
@@ -478,21 +501,23 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .login-box {
-          background: white;
-          border-radius: 24px;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border-radius: 20px;
+          box-shadow: 0 8px 32px 0 rgba(14, 194, 88, 0.2), 0 0 0 1px rgba(14, 194, 88, 0.1);
           width: 100%;
-          max-width: 450px;
-          padding: 48px 40px;
-          animation: slideUp 0.5s ease-out;
+          max-width: 500px;
+          padding: 60px 50px;
+          animation: slideUp 0.6s ease-out;
           position: relative;
           z-index: 10;
-          backdrop-filter: blur(10px);
+          border: 1px solid rgba(14, 194, 88, 0.1);
         }
 
         .dark-mode .login-box {
-          background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+          background: rgba(26, 26, 46, 0.95);
+          box-shadow: 0 8px 32px 0 rgba(14, 194, 88, 0.15), 0 0 0 1px rgba(14, 194, 88, 0.2);
+          border: 1px solid rgba(14, 194, 88, 0.15);
         }
 
         @keyframes slideUp {
@@ -508,16 +533,40 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .login-header {
           text-align: center;
-          margin-bottom: 36px;
+          margin-bottom: 42px;
+          position: relative;
+        }
+
+        .login-header::after {
+          content: '';
+          position: absolute;
+          bottom: -20px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 60px;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
         }
 
         .login-logo {
           display: block;
-          height: 200px;
+          height: 120px;
           width: auto;
-          max-width: 400px;
-          margin: 0 auto 24px;
-          filter: drop-shadow(0 8px 16px rgba(14, 194, 88, 0.15));
+          max-width: 280px;
+          margin: 0 auto 32px;
+          filter: drop-shadow(0 4px 12px rgba(14, 194, 88, 0.2));
+          animation: fadeInScale 0.8s ease-out;
+        }
+
+        @keyframes fadeInScale {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
         }
 
         .login-header h1 {
@@ -534,9 +583,11 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .login-header p {
           margin: 0;
-          font-size: 15px;
-          color: #666;
+          font-size: 14px;
+          color: #888;
           font-weight: 500;
+          letter-spacing: 1px;
+          text-transform: uppercase;
         }
 
         .dark-mode .login-header p {
@@ -560,47 +611,54 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           align-items: center;
           gap: 8px;
           font-weight: 700;
-          font-size: 14px;
-          color: #35ad11;
+          font-size: 13px;
+          color: var(--primary-dark);
           text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        .dark-mode .form-group label {
-          color: #e0e0e0;
+          letter-spacing: 0.6px;
+          transition: all 0.3s ease;
         }
 
         .form-group label svg {
           color: var(--primary-color);
           flex-shrink: 0;
+          transition: all 0.3s ease;
+        }
+
+        .form-group:focus-within label {
+          color: var(--primary-color);
+        }
+
+        .form-group:focus-within label svg {
+          transform: scale(1.1);
         }
 
         .login-input {
           padding: 14px 18px;
-          border: 2px solid #e0e0e0;
-          border-radius: 12px;
-          font-size: 16px;
-          transition: all 0.3s;
-          background: white;
+          border: 2px solid #e8e8e8;
+          border-radius: 10px;
+          font-size: 15px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          background: #fafafa;
           color: #1a1a1a;
           font-weight: 500;
         }
 
         .dark-mode .login-input {
-          background: #0a1217;
-          border-color: #3a3a3a;
+          background: rgba(10, 18, 23, 0.8);
+          border-color: rgba(14, 194, 88, 0.2);
           color: #e0e0e0;
         }
 
         .login-input::placeholder {
-          color: #999;
+          color: #aaa;
         }
 
         .login-input:focus {
           outline: none;
           border-color: var(--primary-color);
-          box-shadow: 0 0 0 4px rgba(14, 194, 88, 0.2);
-          background: #f0fdf4;
+          box-shadow: 0 0 0 3px rgba(14, 194, 88, 0.1), inset 0 0 0 1px rgba(14, 194, 88, 0.05);
+          background: #fff;
+          transform: translateY(-1px);
         }
 
         .dark-mode .login-input:focus {
@@ -713,30 +771,45 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           align-items: center;
           justify-content: center;
           gap: 10px;
-          padding: 16px 24px;
-          background: linear-gradient(135deg, var(--primary-color) 0%, #35ad11 100%);
+          padding: 14px 32px;
+          background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
           color: white;
           border: none;
-          border-radius: 12px;
-          font-size: 16px;
+          border-radius: 10px;
+          font-size: 15px;
           font-weight: 700;
           cursor: pointer;
-          transition: all 0.3s;
-          margin-top: 8px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          margin-top: 12px;
           text-transform: uppercase;
-          letter-spacing: 0.5px;
+          letter-spacing: 0.8px;
           box-shadow: 0 4px 15px rgba(14, 194, 88, 0.3);
           position: relative;
           overflow: hidden;
         }
 
+        .btn-login::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: rgba(255, 255, 255, 0.2);
+          transition: left 0.5s ease;
+        }
+
+        .btn-login:hover:not(:disabled)::before {
+          left: 100%;
+        }
+
         .btn-login:hover:not(:disabled) {
-          transform: translateY(-2px);
+          transform: translateY(-3px);
           box-shadow: 0 8px 25px rgba(14, 194, 88, 0.4);
         }
 
         .btn-login:active:not(:disabled) {
-          transform: translateY(0);
+          transform: translateY(-1px);
         }
 
         .btn-login:disabled {
@@ -879,7 +952,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           }
 
           .login-logo {
-            height: 170px;
+            height: 110px;
             width: auto;
           }
 
