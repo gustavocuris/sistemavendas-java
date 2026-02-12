@@ -541,17 +541,38 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           position: relative;
           z-index: 100;
           width: 100%;
-          max-width: 480px;
-          padding: 60px 50px;
-          background: rgba(15, 20, 28, 0.9);
+          max-width: 750px;
+          padding: 50px 70px;
+          background: rgba(15, 20, 28, 0.92);
           backdrop-filter: blur(25px);
-          border: 1px solid rgba(46, 204, 113, 0.3);
-          border-radius: 24px;
+          border: 2px solid rgba(46, 204, 113, 0.4);
+          border-radius: 20px;
           box-shadow: 
             0 20px 60px rgba(0, 0, 0, 0.7),
-            0 0 80px rgba(46, 204, 113, 0.15),
+            0 0 40px rgba(46, 204, 113, 0.6),
+            0 0 80px rgba(46, 204, 113, 0.3),
+            inset 0 0 60px rgba(46, 204, 113, 0.1),
             inset 0 1px 0 rgba(255, 255, 255, 0.08);
-          animation: boxEntry 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+          animation: boxEntry 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), neonGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes neonGlow {
+          0%, 100% { 
+            box-shadow: 
+              0 20px 60px rgba(0, 0, 0, 0.7),
+              0 0 40px rgba(46, 204, 113, 0.6),
+              0 0 80px rgba(46, 204, 113, 0.3),
+              inset 0 0 60px rgba(46, 204, 113, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+          }
+          50% { 
+            box-shadow: 
+              0 20px 60px rgba(0, 0, 0, 0.7),
+              0 0 60px rgba(46, 204, 113, 0.8),
+              0 0 120px rgba(46, 204, 113, 0.5),
+              inset 0 0 80px rgba(46, 204, 113, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.12);
+          }
         }
 
         @keyframes boxEntry {
@@ -565,16 +586,17 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .login-title {
-          font-size: 42px;
+          font-size: 48px;
           font-weight: 900;
-          letter-spacing: 2px;
-          background: linear-gradient(135deg, #52ffa3 0%, #2ecc71 50%, #1abc9c 100%);
+          font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+          letter-spacing: 3px;
+          background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
           margin-bottom: 12px;
           animation: titleGlow 3s ease-in-out infinite;
-          text-shadow: 0 0 40px rgba(46, 204, 113, 0.3);
+          filter: drop-shadow(0 0 30px rgba(46, 204, 113, 0.5));
         }
 
         @keyframes titleGlow {
@@ -908,15 +930,16 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           letter-spacing: 1px;
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
           .login-box {
-            padding: 40px 30px;
+            max-width: 90%;
+            padding: 40px 35px;
             margin: 20px;
-            border-radius: 20px;
           }
 
           .login-title {
-            font-size: 32px;
+            font-size: 36px;
+            letter-spacing: 2px;
           }
 
           .login-subtitle {
