@@ -132,13 +132,15 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
       <div className="login-background">
         <div className="login-blob login-blob-1"></div>
         <div className="login-blob login-blob-2"></div>
+        <div className="login-orb login-orb-1"></div>
+        <div className="login-orb login-orb-2"></div>
+        <div className="login-orb login-orb-3"></div>
       </div>
 
       <div className="login-box">
         {/* Logo/Header */}
         <div className="login-header">
           <img className="login-logo" src="/login-logo.svg" alt="SV" />
-          <p>Sistema de Gestão de Vendas</p>
         </div>
 
         {/* Login Form */}
@@ -484,20 +486,81 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           background: rgba(255, 255, 255, 0.3);
           top: -200px;
           right: -100px;
+          animation: float 15s ease-in-out infinite;
         }
 
         .login-blob-2 {
           width: 400px;
           height: 400px;
-          background: rgba(14, 194, 88, 0.25);
+          background: rgba(14, 194, 88, 0.35);
           bottom: -150px;
           left: -50px;
-          animation: float 6s ease-in-out infinite;
+          animation: float 12s ease-in-out infinite reverse;
         }
 
         @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(20px); }
+          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); }
+          25% { transform: translateY(-30px) translateX(20px) scale(1.05); }
+          50% { transform: translateY(30px) translateX(-20px) scale(0.95); }
+          75% { transform: translateY(-20px) translateX(-30px) scale(1.02); }
+        }
+
+        .login-orb {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(50px);
+          opacity: 0.6;
+          mix-blend-mode: screen;
+        }
+
+        .login-orb-1 {
+          width: 350px;
+          height: 350px;
+          background: radial-gradient(circle, rgba(52, 228, 0, 0.3) 0%, transparent 70%);
+          top: 10%;
+          left: 5%;
+          animation: orb-move-1 20s ease-in-out infinite;
+        }
+
+        .login-orb-2 {
+          width: 300px;
+          height: 300px;
+          background: radial-gradient(circle, rgba(14, 194, 88, 0.25) 0%, transparent 70%);
+          bottom: 10%;
+          right: 8%;
+          animation: orb-move-2 25s ease-in-out infinite;
+        }
+
+        .login-orb-3 {
+          width: 250px;
+          height: 250px;
+          background: radial-gradient(circle, rgba(52, 173, 17, 0.2) 0%, transparent 70%);
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          animation: orb-move-3 30s ease-in-out infinite;
+        }
+
+        @keyframes orb-move-1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          25% { transform: translate(50px, -60px) scale(1.1); }
+          50% { transform: translate(80px, 40px) scale(0.9); }
+          75% { transform: translate(-30px, 70px) scale(1.05); }
+        }
+
+        @keyframes orb-move-2 {
+          0%, 100% { transform: translate(0, 0) scale(0.9); }
+          25% { transform: translate(-60px, 50px) scale(1); }
+          50% { transform: translate(40px, -70px) scale(1.1); }
+          75% { transform: translate(-70px, -40px) scale(0.95); }
+        }
+
+        @keyframes orb-move-3 {
+          0%, 100% { transform: translate(-50%, -50%) scale(1); }
+          20% { transform: translate(-50%, -50%) translate(-50px, 40px) scale(1.1); }
+          40% { transform: translate(-50%, -50%) translate(60px, -50px) scale(0.9); }
+          60% { transform: translate(-50%, -50%) translate(-40px, -60px) scale(1.05); }
+          80% { transform: translate(-50%, -50%) translate(50px, 50px) scale(1); }
         }
 
         .login-box {
@@ -533,29 +596,18 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .login-header {
           text-align: center;
-          margin-bottom: 42px;
+          margin-bottom: 48px;
           position: relative;
-        }
-
-        .login-header::after {
-          content: '';
-          position: absolute;
-          bottom: -20px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 60px;
-          height: 2px;
-          background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
         }
 
         .login-logo {
           display: block;
-          height: 120px;
+          height: 160px;
           width: auto;
-          max-width: 280px;
-          margin: 0 auto 32px;
-          filter: drop-shadow(0 4px 12px rgba(14, 194, 88, 0.2));
-          animation: fadeInScale 0.8s ease-out;
+          max-width: 360px;
+          margin: 0 auto;
+          filter: drop-shadow(0 6px 20px rgba(14, 194, 88, 0.3));
+          animation: fadeInScale 0.8s ease-out, float 4s ease-in-out infinite;
         }
 
         @keyframes fadeInScale {
@@ -952,7 +1004,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           }
 
           .login-logo {
-            height: 110px;
+            height: 130px;
             width: auto;
           }
 
