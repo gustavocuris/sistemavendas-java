@@ -1101,7 +1101,7 @@ h1 {
 .list-wrapper {
   overflow-x: auto;
   overflow-y: auto;
-  max-height: 680px;
+  min-height: 680px;
   flex: 1;
 }
 
