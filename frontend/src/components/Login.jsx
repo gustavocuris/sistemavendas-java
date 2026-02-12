@@ -137,7 +137,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
       <div className="login-box">
         {/* Logo/Header */}
         <div className="login-header">
-          <h1>Intercap Pneus</h1>
+          <img className="login-logo" src="/login-logo.svg" alt="SV" />
           <p>Sistema de Gestão de Vendas</p>
         </div>
 
@@ -503,6 +503,13 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           margin-bottom: 36px;
         }
 
+        .login-logo {
+          display: block;
+          height: 56px;
+          width: auto;
+          margin: 0 auto 12px;
+        }
+
         .login-header h1 {
           margin: 12px 0 8px 0;
           font-size: 32px;
@@ -862,8 +869,8 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           }
 
           .login-logo {
-            width: 60px;
-            height: 60px;
+            height: 48px;
+            width: auto;
           }
 
           .btn-login {
