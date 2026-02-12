@@ -25,6 +25,7 @@ export default function App(){
   const [editing, setEditing] = useState(null)
   const [copiedSale, setCopiedSale] = useState(null)
   const [pastedSale, setPastedSale] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [commissions, setCommissions] = useState({ new: 5, recap: 8, recapping: 10, service: 0 })
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode')
@@ -136,14 +137,21 @@ export default function App(){
     return <Login onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />
   }
 
-  const load = async ()=>{
-    const res = await axios.get(`${API}/sales?month=${currentMonth}`)
-    setSales(res.data)
-    // Atualiza lista de meses com dados
-    if (res.data.length > 0) {
-      setMonthsWithData(prev => 
-        prev.includes(currentMonth) ? prev : [...prev, currentMonth]
-      )
+  const load = async () => {
+    try {
+      setIsLoading(true)
+      const res = await axios.get(`${API}/sales?month=${currentMonth}`)
+      setSales(res.data)
+      // Atualiza lista de meses com dados
+      if (res.data.length > 0) {
+        setMonthsWithData(prev => 
+          prev.includes(currentMonth) ? prev : [...prev, currentMonth]
+        )
+      }
+    } catch (err) {
+      console.error('Erro ao carregar vendas:', err)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -230,7 +238,13 @@ export default function App(){
   }
   const remove = (id)=>{
     openConfirm('Deseja realmente apagar essa venda?', async () => {
-      await axios.delete(`${API}/sales/${id}?month=${currentMonth}`)
+      try {
+        await axios.delete(`${API}/sales/${id}?month=${currentMonth}`)
+      } catch (err) {
+        console.error('Erro ao deletar venda:', err)
+        alert('Erro ao deletar venda. Tente novamente.')
+        return
+      }
       await load()
       // Após deletar, recarrega para verificar se ficou vazio
       const res = await axios.get(`${API}/sales?month=${currentMonth}`)
