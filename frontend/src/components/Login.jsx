@@ -433,23 +433,19 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           left: -10%;
           width: 120%;
           height: 120%;
-          background: 
-            radial-gradient(circle at 20% 30%, rgba(180, 255, 100, 0.4) 0%, transparent 8%),
-            radial-gradient(circle at 80% 20%, rgba(150, 255, 120, 0.35) 0%, transparent 10%),
-            radial-gradient(circle at 60% 60%, rgba(200, 255, 80, 0.3) 0%, transparent 12%),
-            radial-gradient(circle at 30% 80%, rgba(160, 255, 110, 0.4) 0%, transparent 9%),
-            radial-gradient(circle at 85% 75%, rgba(170, 255, 90, 0.35) 0%, transparent 11%),
-            radial-gradient(circle at 15% 50%, rgba(190, 255, 100, 0.3) 0%, transparent 7%),
-            linear-gradient(135deg, #0d3b1a 0%, #1a5c2e 30%, #0f4d23 60%, #08341a 100%);
+          background-image: url('/starry-green.jpg');
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
           animation: starryMove 60s ease-in-out infinite;
-          filter: blur(1px);
+          filter: blur(0.5px);
         }
 
         @keyframes starryMove {
-          0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-          25% { transform: translate(-3%, 2%) rotate(1deg) scale(1.05); }
-          50% { transform: translate(2%, -3%) rotate(-1deg) scale(1.08); }
-          75% { transform: translate(-2%, 3%) rotate(0.5deg) scale(1.03); }
+          0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1.1); }
+          25% { transform: translate(-3%, 2%) rotate(1deg) scale(1.15); }
+          50% { transform: translate(2%, -3%) rotate(-1deg) scale(1.18); }
+          75% { transform: translate(-2%, 3%) rotate(0.5deg) scale(1.13); }
         }
 
         /* Dark overlay */
@@ -459,7 +455,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           left: 0;
           width: 100%;
           height: 100%;
-          background: rgba(0, 0, 0, 0.65);
+          background: rgba(0, 0, 0, 0.5);
           z-index: 1;
         }
 

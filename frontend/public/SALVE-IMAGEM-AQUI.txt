@@ -1,0 +1,13 @@
+==========================================
+  INSTRUÇÕES PARA ADICIONAR A IMAGEM
+==========================================
+
+1. Pegue a imagem do Van Gogh verde que você enviou
+2. Salve ela NESTA PASTA (frontend\public\) com o nome:
+   
+   starry-green.jpg
+
+3. A imagem vai aparecer automaticamente no fundo do login
+   com animação de movimento e overlay escuro!
+
+==========================================
