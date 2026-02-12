@@ -1203,10 +1203,12 @@ h1 {
 
 .list tfoot .total-label {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 1.5em;
+  font-size: 1em;
   letter-spacing: 0.8px;
   padding-right: 16px;
   text-align: right;
+  text-transform: uppercase;
+  font-weight: 900;
 }
 
 .list tfoot .total-amount {
@@ -1795,7 +1797,7 @@ h1 {
   }
 
   .list tfoot .total-label {
-    font-size: 1.35em;
+    font-size: 1em;
     padding-right: 12px;
   }
 
