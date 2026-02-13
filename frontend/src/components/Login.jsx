@@ -624,10 +624,10 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
         .login-box {
           background: #ffffff;
-          border-radius: 20px;
+          border-radius: 4px;
           width: 100%;
           max-width: 500px;
-          padding: 60px 50px;
+          padding: 40px 50px;
           animation: slideUp 0.6s ease-out;
           position: relative;
           z-index: 10;
@@ -657,16 +657,16 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .login-header {
           text-align: center;
-          margin-bottom: 48px;
+          margin-bottom: 32px;
           position: relative;
         }
 
         .login-logo {
           display: block;
-          height: 80px;
+          height: 60px;
           width: auto;
           max-width: 280px;
-          margin: 0 auto 24px auto;
+          margin: 0 auto 16px auto;
           filter: drop-shadow(0 2px 8px rgba(46, 204, 113, 0.2));
           transition: filter 0.3s ease;
         }
@@ -1011,7 +1011,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         @media (max-width: 768px) {
           .login-box {
             max-width: 90%;
-            padding: 40px 30px;
+            padding: 30px 30px;
           }
 
           .login-title {
