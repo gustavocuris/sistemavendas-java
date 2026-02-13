@@ -177,7 +177,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         {/* Header Section */}
         <div className="login-header">
           <img src="/logo-intercap.svg" alt="Intercap Pneus" className="login-logo" />
-          <h1 className="login-title">SISTEMA DE VENDAS</h1>
+          <h1 className="login-title neon-glow">SISTEMA DE VENDAS</h1>
           <div className="login-subtitle">Acesse sua conta</div>
         </div>
 
@@ -617,6 +617,43 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           color: #000;
           margin-bottom: 10px;
           text-shadow: none;
+        }
+
+        .login-title.neon-glow {
+          animation: neon-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes neon-pulse {
+          0%, 100% {
+            color: #1e7145;
+            text-shadow: 0 0 10px rgba(30, 113, 69, 0.5);
+          }
+          50% {
+            color: #2ecc71;
+            text-shadow: 
+              0 0 10px rgba(46, 204, 113, 0.8),
+              0 0 20px rgba(46, 204, 113, 0.6),
+              0 0 30px rgba(46, 204, 113, 0.4);
+          }
+        }
+
+        .dark-mode .login-title.neon-glow {
+          animation: neon-pulse-dark 2s ease-in-out infinite;
+        }
+
+        @keyframes neon-pulse-dark {
+          0%, 100% {
+            color: #1e7145;
+            text-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+          }
+          50% {
+            color: #2ecc71;
+            text-shadow: 
+              0 0 10px rgba(46, 204, 113, 0.9),
+              0 0 20px rgba(46, 204, 113, 0.7),
+              0 0 30px rgba(46, 204, 113, 0.5),
+              0 0 40px rgba(46, 204, 113, 0.3);
+          }
         }
 
         .login-subtitle {
