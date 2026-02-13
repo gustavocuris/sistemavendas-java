@@ -470,7 +470,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #ffffff;
+          background: #f5f5f5;
           position: relative;
           overflow: hidden;
           --primary-color: #2ecc71;
