@@ -418,7 +418,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #0a1a0f;
+          background: #ffffff;
           position: relative;
           overflow: hidden;
           --primary-color: #2ecc71;
@@ -428,178 +428,81 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         /* Van Gogh Starry Night inspired background */
         .starry-background {
-          position: absolute;
-          top: -10%;
-          left: -10%;
-          width: 120%;
-          height: 120%;
-          background-image: url('/starry-green.jpg');
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
-          animation: starryMove 60s ease-in-out infinite;
-          filter: blur(0.5px);
-        }
-
-        @keyframes starryMove {
-          0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1.1); }
-          25% { transform: translate(-3%, 2%) rotate(1deg) scale(1.15); }
-          50% { transform: translate(2%, -3%) rotate(-1deg) scale(1.18); }
-          75% { transform: translate(-2%, 3%) rotate(0.5deg) scale(1.13); }
+          display: none;
         }
 
         /* Dark overlay */
         .dark-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.5);
-          z-index: 1;
+          display: none;
         }
 
         /* Swirling effects */
         .swirl-container {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          z-index: 2;
-          overflow: hidden;
-        }
-
-        .swirl {
-          position: absolute;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(180, 255, 120, 0.15) 0%, transparent 70%);
-          filter: blur(40px);
-        }
-
-        .swirl-1 {
-          width: 300px;
-          height: 300px;
-          top: 15%;
-          left: 20%;
-          animation: swirlRotate1 25s ease-in-out infinite;
-        }
-
-        .swirl-2 {
-          width: 250px;
-          height: 250px;
-          top: 20%;
-          right: 15%;
-          animation: swirlRotate2 30s ease-in-out infinite reverse;
-        }
-
-        .swirl-3 {
-          width: 350px;
-          height: 350px;
-          bottom: 20%;
-          left: 10%;
-          animation: swirlRotate1 35s ease-in-out infinite;
-        }
-
-        .swirl-4 {
-          width: 200px;
-          height: 200px;
-          bottom: 15%;
-          right: 20%;
-          animation: swirlRotate2 28s ease-in-out infinite;
-        }
-
-        .swirl-5 {
-          width: 280px;
-          height: 280px;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          animation: swirlRotate1 32s ease-in-out infinite reverse;
-        }
-
-        .swirl-6 {
-          width: 180px;
-          height: 180px;
-          top: 10%;
-          left: 50%;
-          animation: swirlRotate2 22s ease-in-out infinite;
-        }
-
-        @keyframes swirlRotate1 {
-          0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.3; }
-          25% { transform: rotate(90deg) scale(1.2); opacity: 0.5; }
-          50% { transform: rotate(180deg) scale(1.1); opacity: 0.4; }
-          75% { transform: rotate(270deg) scale(1.15); opacity: 0.45; }
-        }
-
-        @keyframes swirlRotate2 {
-          0%, 100% { transform: rotate(360deg) scale(1); opacity: 0.35; }
-          33% { transform: rotate(240deg) scale(1.15); opacity: 0.5; }
-          66% { transform: rotate(120deg) scale(1.08); opacity: 0.42; }
+          display: none;
         }
 
         .login-box {
           position: relative;
           z-index: 100;
           width: 100%;
-          max-width: 900px;
-          display: flex;
-          border-radius: 24px;
-          overflow: hidden;
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(30px);
-          border: 1px solid rgba(255, 255, 255, 0.5);
+          max-width: 420px;
+          padding: 50px 40px;
+          background: #ffffff;
+          border-radius: 16px;
           box-shadow: 
-            0 8px 32px rgba(0, 0, 0, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 1);
-          animation: boxEntry 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            0 2px 16px rgba(0, 0, 0, 0.08),
+            0 0 1px rgba(0, 0, 0, 0.1);
+          animation: boxEntry 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes boxEntry {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
         }
 
         .login-box .login-header {
-          flex: 0 0 45%;
-          background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-          padding: 60px 50px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          color: white;
+          flex: initial;
+          background: none;
+          padding: 0;
+          display: block;
+          color: #333;
           text-align: center;
-          margin-bottom: 0;
+          margin-bottom: 40px;
         }
 
         .login-header {
           text-align: center;
-          margin-bottom: 24px;
+          margin-bottom: 40px;
         }
 
         .login-title {
-          font-size: 40px;
-          font-weight: 900;
+          font-size: 32px;
+          font-weight: 700;
           font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
-          letter-spacing: 1px;
-          margin-bottom: 16px;
-          color: white;
-          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+          letter-spacing: 0px;
+          color: #000;
+          margin-bottom: 10px;
+          text-shadow: none;
         }
 
         .login-subtitle {
           font-size: 14px;
-          color: rgba(255, 255, 255, 0.9);
-          font-weight: 500;
-          letter-spacing: 0.5px;
+          color: #999;
+          font-weight: 400;
+          letter-spacing: 0px;
         }
 
         .login-form {
-          flex: 1;
+          flex: initial;
           display: flex;
           flex-direction: column;
           gap: 20px;
-          padding: 60px 50px;
+          padding: 0;
         }
 
         .login-form-reset {
-          flex: 0 0 55%;
-          padding: 60px 50px;
+          flex: initial;
+          padding: 0;
         }
 
         .login-container::before {
@@ -720,22 +623,28 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           gap: 10px;
         }
 
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
         .form-group label {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 8px;
           font-weight: 600;
-          font-size: 13px;
+          font-size: 12px;
           color: #666;
           text-transform: uppercase;
-          letter-spacing: 1px;
+          letter-spacing: 0.5px;
           transition: all 0.3s ease;
         }
 
         .form-group label svg {
-          width: 18px;
-          height: 18px;
-          stroke: #2ecc71;
+          width: 16px;
+          height: 16px;
+          stroke: #999;
           transition: all 0.3s ease;
         }
 
@@ -745,31 +654,29 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .form-group:focus-within label svg {
           stroke: #2ecc71;
-          transform: scale(1.1);
         }
 
         .login-input {
           width: 100%;
-          padding: 14px 18px;
-          background: #f8f8f8;
+          padding: 12px 14px;
+          background: #f5f5f5;
           border: 1px solid #ddd;
-          border-radius: 12px;
+          border-radius: 8px;
           color: #333;
-          font-size: 15px;
+          font-size: 14px;
           font-weight: 500;
           outline: none;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.2s ease;
         }
 
         .login-input::placeholder {
-          color: #aaa;
+          color: #bbb;
         }
 
         .login-input:focus {
           background: #ffffff;
           border-color: #2ecc71;
-          box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1), 0 0 12px rgba(46, 204, 113, 0.2);
-          transform: translateY(-2px);
+          box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.05);
         }
 
         .login-alert {
@@ -802,49 +709,40 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .btn-login {
           width: 100%;
-          padding: 18px;
-          background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+          padding: 12px;
+          background: #2ecc71;
           color: #ffffff;
           border: none;
-          border-radius: 12px;
-          font-size: 15px;
+          border-radius: 8px;
+          font-size: 14px;
           font-weight: 700;
-          letter-spacing: 1px;
+          letter-spacing: 0.5px;
           text-transform: uppercase;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 10px;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          margin-top: 12px;
-          position: relative;
-          overflow: hidden;
-          box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+          gap: 8px;
+          transition: all 0.2s ease;
+          margin-top: 24px;
+          box-shadow: 0 2px 8px rgba(46, 204, 113, 0.2);
         }
 
         .btn-login::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-          transition: left 0.5s;
+          display: none;
         }
 
         .btn-login:hover::before {
-          left: 100%;
+          display: none;
         }
 
         .btn-login:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+          background: #27ae60;
+          box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
         }
 
         .btn-login:active {
-          transform: translateY(0);
+          transform: scale(0.98);
         }
 
         .btn-forgot-password {
@@ -922,37 +820,24 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         @media (max-width: 768px) {
           .login-box {
-            flex-direction: column;
             max-width: 90%;
+            padding: 40px 30px;
             margin: 20px auto;
           }
 
-          .login-box .login-header {
-            flex: 0 0 auto;
-            padding: 40px 30px;
-          }
-
           .login-title {
-            font-size: 32px;
-            letter-spacing: 1px;
-          }
-
-          .login-subtitle {
-            font-size: 13px;
-          }
-
-          .login-form {
-            padding: 40px 30px;
+            font-size: 28px;
           }
 
           .login-input {
-            padding: 12px 15px;
-            font-size: 14px;
+            padding: 11px 13px;
+            font-size: 13px;
           }
 
           .btn-login {
-            padding: 14px;
-            font-size: 14px;
+            padding: 11px;
+            font-size: 13px;
+            margin-top: 20px;
           }
         }
       `}</style>
