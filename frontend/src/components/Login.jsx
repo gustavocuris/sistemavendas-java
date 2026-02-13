@@ -929,7 +929,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         .btn-forgot-password {
           background: none;
           border: none;
-          color: #2ecc71;
+          color: #1e7e34;
           font-size: 13px;
           font-weight: 600;
           cursor: pointer;
@@ -941,7 +941,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .btn-forgot-password:hover {
-          color: #27ae60;
+          color: #155d27;
           text-decoration-thickness: 2px;
         }
 
@@ -1002,7 +1002,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           margin-top: 40px;
           text-align: center;
           font-size: 12px;
-          color: rgba(46, 204, 113, 0.5);
+          color: #666;
           font-weight: 500;
           letter-spacing: 1px;
         }
