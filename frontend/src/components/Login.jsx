@@ -698,12 +698,18 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           margin: 12px 0 8px 0;
           font-size: 28px;
           font-weight: 700;
-          color: #333;
+          background: linear-gradient(135deg, #52ffa3 0%, #2ecc71 50%, #27ae60 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
           letter-spacing: -0.5px;
         }
 
         .dark-mode .login-header h1 {
-          color: #ffffff;
+          background: linear-gradient(135deg, #52ffa3 0%, #2ecc71 50%, #27ae60 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .login-subtitle {
@@ -740,29 +746,31 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           gap: 8px;
           font-weight: 600;
           font-size: 12px;
-          color: #666;
+          background: linear-gradient(135deg, #52ffa3 0%, #2ecc71 50%, #27ae60 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
           text-transform: uppercase;
           letter-spacing: 0.5px;
           transition: all 0.3s ease;
         }
 
         .dark-mode .form-group label {
-          color: #ccc;
+          background: linear-gradient(135deg, #52ffa3 0%, #2ecc71 50%, #27ae60 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .form-group label svg {
           width: 16px;
           height: 16px;
-          stroke: #999;
+          stroke: #2ecc71;
           transition: all 0.3s ease;
         }
 
-        .form-group:focus-within label {
-          color: #2ecc71;
-        }
-
         .form-group:focus-within label svg {
-          stroke: #2ecc71;
+          stroke: #52ffa3;
         }
 
         .login-input {
