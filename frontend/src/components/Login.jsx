@@ -558,26 +558,23 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           animation: float 10s ease-in-out infinite reverse, pulse-large 8s ease-in-out infinite reverse;
         }
         .login-box {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(20px);
+          background: #ffffff;
           border-radius: 20px;
-          box-shadow: 0 8px 32px 0 rgba(14, 194, 88, 0.2), 0 0 0 1px rgba(14, 194, 88, 0.1);
           width: 100%;
           max-width: 500px;
           padding: 60px 50px;
-          animation: slideUp 0.6s ease-out, glow-pulse 4s ease-in-out infinite;
+          animation: slideUp 0.6s ease-out;
           position: relative;
           z-index: 10;
         }
 
         @keyframes glow-pulse {
-          0%, 100% { box-shadow: 0 8px 32px 0 rgba(14, 194, 88, 0.2), 0 0 0 1px rgba(14, 194, 88, 0.1); }
-          50% { box-shadow: 0 8px 40px 0 rgba(14, 194, 88, 0.35), 0 0 0 1px rgba(14, 194, 88, 0.2); }
+          0%, 100% { }
+          50% { }
         }
 
         .dark-mode .login-box {
-          background: rgba(26, 26, 46, 0.95);
-          box-shadow: 0 8px 32px 0 rgba(14, 194, 88, 0.15), 0 0 0 1px rgba(14, 194, 88, 0.2);
+          background: #ffffff;
         }
 
         @keyframes slideUp {
