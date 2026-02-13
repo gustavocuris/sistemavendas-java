@@ -770,7 +770,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           width: 100%;
           padding: 12px 14px;
           background: #f5f5f5;
-          border: 1px solid #ddd;
+          border: 1px solid #999;
           border-radius: 8px;
           color: #333;
           font-size: 14px;
@@ -781,7 +781,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .dark-mode .login-input {
           background: #1a1a1a;
-          border-color: #444;
+          border-color: #555;
           color: #ffffff;
         }
 
@@ -791,14 +791,14 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .login-input:focus {
           background: #ffffff;
-          border-color: #2ecc71;
-          box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.05);
+          border-color: #1e7e34;
+          box-shadow: 0 0 0 3px rgba(30, 126, 52, 0.1);
         }
 
         .dark-mode .login-input:focus {
           background: #1a1a1a;
-          border-color: #2ecc71;
-          box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.15);
+          border-color: #229954;
+          box-shadow: 0 0 0 3px rgba(34, 153, 84, 0.15);
         }
 
         .password-input-wrapper {
@@ -891,7 +891,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         .btn-login {
           width: 100%;
           padding: 12px;
-          background: #2ecc71;
+          background: #1e7e34;
           color: #ffffff;
           border: none;
           border-radius: 8px;
@@ -906,7 +906,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           gap: 8px;
           transition: all 0.2s ease;
           margin-top: 24px;
-          box-shadow: 0 2px 8px rgba(46, 204, 113, 0.2);
+          box-shadow: 0 2px 8px rgba(30, 126, 52, 0.3);
         }
 
         .btn-login::before {
@@ -918,8 +918,8 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .btn-login:hover {
-          background: #27ae60;
-          box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+          background: #155d27;
+          box-shadow: 0 4px 12px rgba(30, 126, 52, 0.4);
         }
 
         .btn-login:active {
