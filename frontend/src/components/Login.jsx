@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
 export default function Login({ onLogin, primaryColor, darkMode }) {
+  console.log('Login component mounted, onLogin:', typeof onLogin)
+  
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -33,19 +35,25 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
     setError('')
     setSuccess('')
 
+    console.log('Login enviado:', { username: username.trim(), API })
+
     try {
       const response = await axios.post(`${API}/login`, {
         username: username.trim(),
         password
       })
 
+      console.log('Resposta do login:', response.status)
+
       if (response.status === 200) {
         setSuccess('Login realizado com sucesso! ✓')
         setTimeout(() => {
+          console.log('Chamando onLogin()')
           onLogin()
         }, 500)
       }
     } catch (err) {
+      console.error('Erro no login:', err)
       setError(err.response?.data?.message || 'Login ou senha incorretos')
       setPassword('')
     }
@@ -265,7 +273,10 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
             </button>
           </form>
         ) : (!showForgotPassword ? (
-          <form onSubmit={handleSubmit} className="login-form">
+          <form onSubmit={(e) => {
+            console.log('Form onSubmit triggered')
+            handleSubmit(e)
+          }} className="login-form">
             <div className="form-group">
               <label htmlFor="username">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -345,7 +356,13 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
               </div>
             )}
 
-            <button type="submit" className="btn-login">
+            <button 
+              type="submit" 
+              className="btn-login"
+              onClick={(e) => {
+                console.log('Botão de login clicado')
+              }}
+            >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
                 <polyline points="10 17 15 12 10 7"></polyline>
