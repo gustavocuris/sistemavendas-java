@@ -667,6 +667,11 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           position: relative;
           z-index: 10;
           transition: all 0.3s ease;
+          box-shadow: 
+            0 2px 16px rgba(0, 0, 0, 0.08),
+            0 0 1px rgba(0, 0, 0, 0.1),
+            0 0 30px 2px rgba(30, 113, 69, 0.3),
+            0 0 60px 4px rgba(15, 70, 32, 0.15);
         }
 
         .dark-mode .login-box {
