@@ -3809,10 +3809,18 @@ body.dark-mode .footer-content {
 }
 
 .footer-security,
-.footer-author {
+.footer-author,
+.footer-system {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.footer-system strong {
+  color: var(--primary-color);
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  font-size: 15px;
 }
 
 .footer-security svg {
