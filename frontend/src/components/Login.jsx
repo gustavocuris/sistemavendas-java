@@ -1039,7 +1039,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .login-footer {
-          margin-top: 40px;
+          margin-top: 20px;
           padding: 20px;
           background: rgba(255, 255, 255, 0.3);
           border-top: 1px solid rgba(203, 213, 225, 0.4);
