@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
 export default function Login({ onLogin, primaryColor, darkMode }) {
-  console.log('Login component mounted, onLogin:', typeof onLogin)
-  
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode')
     return saved === 'true'
@@ -34,8 +33,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
     e.preventDefault()
     setError('')
     setSuccess('')
-
-    console.log('Login enviado:', { username: username.trim(), API })
+    setIsLoading(true)
 
     try {
       const response = await axios.post(`${API}/login`, {
@@ -43,17 +41,15 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         password
       })
 
-      console.log('Resposta do login:', response.status)
-
       if (response.status === 200) {
         setSuccess('Login realizado com sucesso! ✓')
+        setIsLoading(false)
         setTimeout(() => {
-          console.log('Chamando onLogin()')
           onLogin()
-        }, 500)
+        }, 300)
       }
     } catch (err) {
-      console.error('Erro no login:', err)
+      setIsLoading(false)
       setError(err.response?.data?.message || 'Login ou senha incorretos')
       setPassword('')
     }
@@ -273,10 +269,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
             </button>
           </form>
         ) : (!showForgotPassword ? (
-          <form onSubmit={(e) => {
-            console.log('Form onSubmit triggered')
-            handleSubmit(e)
-          }} className="login-form">
+          <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
               <label htmlFor="username">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -359,16 +352,23 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
             <button 
               type="submit" 
               className="btn-login"
-              onClick={(e) => {
-                console.log('Botão de login clicado')
-              }}
+              disabled={isLoading}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                <polyline points="10 17 15 12 10 7"></polyline>
-                <line x1="15" y1="12" x2="3" y2="12"></line>
-              </svg>
-              Entrar no Sistema
+              {isLoading ? (
+                <>
+                  <div className="spinner"></div>
+                  Entrando...
+                </>
+              ) : (
+                <>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                    <polyline points="10 17 15 12 10 7"></polyline>
+                    <line x1="15" y1="12" x2="3" y2="12"></line>
+                  </svg>
+                  Entrar no Sistema
+                </>
+              )}
             </button>
 
             <button
@@ -929,6 +929,11 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           transition: all 0.2s ease;
           margin-top: 24px;
           box-shadow: 0 2px 8px rgba(30, 126, 52, 0.3);
+        }
+
+        .btn-login:disabled {
+          opacity: 0.8;
+          cursor: not-allowed;
         }
 
         .btn-login::before {
