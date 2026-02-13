@@ -142,7 +142,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
       </div>
 
       <div className="login-box">
-        {/* Modern Header with gradient text */}
+        {/* Header Section */}
         <div className="login-header">
           <h1 className="login-title">SISTEMA DE VENDAS</h1>
           <div className="login-subtitle">Acesse sua conta</div>
@@ -150,7 +150,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         {/* Login Form */}
         {resetToken ? (
-          <form onSubmit={handleResetPassword} className="login-form">
+          <form onSubmit={handleResetPassword} className="login-form login-form-reset">
             <div className="forgot-password-header">
               <h2>Nova Senha</h2>
             </div>
@@ -541,75 +541,65 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           position: relative;
           z-index: 100;
           width: 100%;
-          max-width: 750px;
-          padding: 50px 70px;
-          background: rgba(15, 20, 28, 0.92);
-          backdrop-filter: blur(25px);
-          border: 2px solid rgba(46, 204, 113, 0.4);
-          border-radius: 20px;
+          max-width: 900px;
+          display: flex;
+          border-radius: 24px;
+          overflow: hidden;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(30px);
+          border: 1px solid rgba(255, 255, 255, 0.5);
           box-shadow: 
-            0 20px 60px rgba(0, 0, 0, 0.7),
-            0 0 40px rgba(46, 204, 113, 0.6),
-            0 0 80px rgba(46, 204, 113, 0.3),
-            inset 0 0 60px rgba(46, 204, 113, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.08);
-          animation: boxEntry 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), neonGlow 2s ease-in-out infinite;
+            0 8px 32px rgba(0, 0, 0, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
+          animation: boxEntry 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        @keyframes neonGlow {
-          0%, 100% { 
-            box-shadow: 
-              0 20px 60px rgba(0, 0, 0, 0.7),
-              0 0 40px rgba(46, 204, 113, 0.6),
-              0 0 80px rgba(46, 204, 113, 0.3),
-              inset 0 0 60px rgba(46, 204, 113, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.08);
-          }
-          50% { 
-            box-shadow: 
-              0 20px 60px rgba(0, 0, 0, 0.7),
-              0 0 60px rgba(46, 204, 113, 0.8),
-              0 0 120px rgba(46, 204, 113, 0.5),
-              inset 0 0 80px rgba(46, 204, 113, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.12);
-          }
-        }
-
-        @keyframes boxEntry {
-          0% { opacity: 0; transform: translateY(30px) scale(0.95); }
-          100% { opacity: 1; transform: translateY(0) scale(1); }
+        .login-box .login-header {
+          flex: 0 0 45%;
+          background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+          padding: 60px 50px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          color: white;
+          text-align: center;
+          margin-bottom: 0;
         }
 
         .login-header {
           text-align: center;
-          margin-bottom: 48px;
+          margin-bottom: 24px;
         }
 
         .login-title {
-          font-size: 48px;
+          font-size: 40px;
           font-weight: 900;
           font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
-          letter-spacing: 3px;
-          background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          margin-bottom: 12px;
-          animation: titleGlow 3s ease-in-out infinite;
-          filter: drop-shadow(0 0 30px rgba(46, 204, 113, 0.5));
-        }
-
-        @keyframes titleGlow {
-          0%, 100% { filter: brightness(1); }
-          50% { filter: brightness(1.2); }
+          letter-spacing: 1px;
+          margin-bottom: 16px;
+          color: white;
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .login-subtitle {
           font-size: 14px;
-          color: rgba(46, 204, 113, 0.8);
+          color: rgba(255, 255, 255, 0.9);
           font-weight: 500;
-          letter-spacing: 3px;
-          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .login-form {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          padding: 60px 50px;
+        }
+
+        .login-form-reset {
+          flex: 0 0 55%;
+          padding: 60px 50px;
         }
 
         .login-container::before {
@@ -736,7 +726,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           gap: 10px;
           font-weight: 600;
           font-size: 13px;
-          color: var(--primary-color);
+          color: #666;
           text-transform: uppercase;
           letter-spacing: 1px;
           transition: all 0.3s ease;
@@ -745,26 +735,26 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         .form-group label svg {
           width: 18px;
           height: 18px;
-          stroke: var(--primary-color);
+          stroke: #2ecc71;
           transition: all 0.3s ease;
         }
 
         .form-group:focus-within label {
-          color: var(--primary-light);
+          color: #2ecc71;
         }
 
         .form-group:focus-within label svg {
-          stroke: var(--primary-light);
+          stroke: #2ecc71;
           transform: scale(1.1);
         }
 
         .login-input {
           width: 100%;
-          padding: 16px 20px;
-          background: rgba(255, 255, 255, 0.03);
-          border: 2px solid rgba(46, 204, 113, 0.2);
+          padding: 14px 18px;
+          background: #f8f8f8;
+          border: 1px solid #ddd;
           border-radius: 12px;
-          color: #ffffff;
+          color: #333;
           font-size: 15px;
           font-weight: 500;
           outline: none;
@@ -772,13 +762,13 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .login-input::placeholder {
-          color: rgba(255, 255, 255, 0.3);
+          color: #aaa;
         }
 
         .login-input:focus {
-          background: rgba(255, 255, 255, 0.05);
-          border-color: var(--primary-light);
-          box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1), 0 0 20px rgba(46, 204, 113, 0.2);
+          background: #ffffff;
+          border-color: #2ecc71;
+          box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1), 0 0 12px rgba(46, 204, 113, 0.2);
           transform: translateY(-2px);
         }
 
@@ -860,7 +850,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         .btn-forgot-password {
           background: none;
           border: none;
-          color: var(--primary-color);
+          color: #2ecc71;
           font-size: 13px;
           font-weight: 600;
           cursor: pointer;
@@ -872,7 +862,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .btn-forgot-password:hover {
-          color: var(--primary-light);
+          color: #27ae60;
           text-decoration-thickness: 2px;
         }
 
@@ -882,7 +872,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .forgot-password-header h2 {
           font-size: 26px;
-          color: var(--primary-light);
+          color: #2ecc71;
           margin-bottom: 8px;
           font-weight: 700;
         }
@@ -893,7 +883,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           gap: 8px;
           background: none;
           border: none;
-          color: var(--primary-color);
+          color: #2ecc71;
           font-size: 14px;
           font-weight: 600;
           cursor: pointer;
@@ -905,7 +895,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .btn-back-forgot:hover {
           background: rgba(46, 204, 113, 0.1);
-          color: var(--primary-light);
+          color: #27ae60;
         }
 
         .spinner {
@@ -932,27 +922,36 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         @media (max-width: 768px) {
           .login-box {
+            flex-direction: column;
             max-width: 90%;
-            padding: 40px 35px;
-            margin: 20px;
+            margin: 20px auto;
+          }
+
+          .login-box .login-header {
+            flex: 0 0 auto;
+            padding: 40px 30px;
           }
 
           .login-title {
-            font-size: 36px;
-            letter-spacing: 2px;
+            font-size: 32px;
+            letter-spacing: 1px;
           }
 
           .login-subtitle {
-            font-size: 12px;
+            font-size: 13px;
+          }
+
+          .login-form {
+            padding: 40px 30px;
           }
 
           .login-input {
-            padding: 14px 16px;
+            padding: 12px 15px;
             font-size: 14px;
           }
 
           .btn-login {
-            padding: 16px;
+            padding: 14px;
             font-size: 14px;
           }
         }
