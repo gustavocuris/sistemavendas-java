@@ -662,7 +662,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           border-radius: 4px;
           width: 100%;
           max-width: 500px;
-          padding: 40px 50px;
+          padding: 30px 40px;
           animation: slideUp 0.6s ease-out;
           position: relative;
           z-index: 10;
