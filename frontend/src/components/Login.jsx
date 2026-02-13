@@ -698,18 +698,12 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           margin: 12px 0 8px 0;
           font-size: 28px;
           font-weight: 700;
-          background: linear-gradient(135deg, #52ffa3 0%, #2ecc71 50%, #27ae60 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: #2ecc71;
           letter-spacing: -0.5px;
         }
 
         .dark-mode .login-header h1 {
-          background: linear-gradient(135deg, #52ffa3 0%, #2ecc71 50%, #27ae60 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: #2ecc71;
         }
 
         .login-subtitle {
@@ -800,6 +794,12 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           background: #ffffff;
           border-color: #2ecc71;
           box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.05);
+        }
+
+        .dark-mode .login-input:focus {
+          background: #1a1a1a;
+          border-color: #2ecc71;
+          box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.15);
         }
 
         .password-input-wrapper {
