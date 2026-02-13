@@ -154,11 +154,6 @@ export default function App(){
     closeConfirm()
   }
 
-  // Se não estiver autenticado, mostra tela de login
-  if (!isAuthenticated) {
-    return <Login onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />
-  }
-
   useEffect(()=>{ 
     if (isAuthenticated) {
       load()
@@ -205,6 +200,11 @@ export default function App(){
     
     localStorage.setItem('primaryColor', primaryColor)
   }, [primaryColor])
+
+  // Se não estiver autenticado, mostra tela de login
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />
+  }
 
   const applyColor = (colorHex) => {
     setPrimaryColor(colorHex)
