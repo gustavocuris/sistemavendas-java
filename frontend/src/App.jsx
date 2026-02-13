@@ -14,6 +14,7 @@ const PRESET_COLORS = [
   { name: 'Azul', hex: '#0d47a1', dark: '#051541', light: '#2196f3' },
   { name: 'Vermelho', hex: '#d32f2f', dark: '#7f1d1d', light: '#ef4444' },
   { name: 'Roxo', hex: '#6a1b9a', dark: '#360853', light: '#9c27b0' },
+  { name: 'Rosa Pink', hex: '#ec4899', dark: '#be185d', light: '#f472b6' },
   { name: 'All Black', hex: '#1a1a1a', dark: '#0d0d0d', light: '#2d2d2d' },
 ]
 
