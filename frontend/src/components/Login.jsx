@@ -635,8 +635,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .dark-mode .login-box {
-          background: #000000;
-          box-shadow: 0 0 0 2px #ffffff, 0 0 20px rgba(255, 255, 255, 0.5);
+          background: #1a1a1a;
         }
 
         @keyframes glow-pulse {
@@ -703,7 +702,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .dark-mode .login-header h1 {
-          color: #2ecc71;
+          color: #229954;
         }
 
         .login-subtitle {
@@ -750,7 +749,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .dark-mode .form-group label {
-          background: linear-gradient(135deg, #52ffa3 0%, #2ecc71 50%, #27ae60 100%);
+          background: linear-gradient(135deg, #27ae60 0%, #229954 50%, #1e7e45 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -764,7 +763,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .form-group:focus-within label svg {
-          stroke: #52ffa3;
+          stroke: #27ae60;
         }
 
         .login-input {
