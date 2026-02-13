@@ -201,11 +201,11 @@ export default function App(){
     localStorage.setItem('primaryColor', primaryColor)
   }, [primaryColor])
 
-  // Auto logout por inatividade (15 minutos)
+  // Auto logout por inatividade (10 minutos)
   useEffect(() => {
     if (!isAuthenticated) return
 
-    const INACTIVITY_TIME = 15 * 60 * 1000 // 15 minutos em milissegundos
+    const INACTIVITY_TIME = 10 * 60 * 1000 // 10 minutos em milissegundos
     let inactivityTimer
 
     const resetTimer = () => {
