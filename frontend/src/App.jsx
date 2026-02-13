@@ -99,6 +99,34 @@ export default function App(){
     document.documentElement.style.setProperty('--primary-light-rgb', hexToRgbString(lightHex))
   }
 
+  const load = async () => {
+    try {
+      setIsLoading(true)
+      const res = await axios.get(`${API}/sales?month=${currentMonth}`)
+      setSales(res.data)
+      // Atualiza lista de meses com dados
+      if (res.data.length > 0) {
+        setMonthsWithData(prev => 
+          prev.includes(currentMonth) ? prev : [...prev, currentMonth]
+        )
+      }
+    } catch (err) {
+      console.error('Erro ao carregar vendas:', err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const loadMonths = async () => {
+    const res = await axios.get(`${API}/months`)
+    setAvailableMonths(res.data)
+  }
+
+  const loadCommissions = async ()=>{
+    const res = await axios.get(`${API}/commissions`)
+    setCommissions(res.data)
+  }
+
   const handleLogin = () => {
     setIsAuthenticated(true)
     localStorage.setItem('authenticated', 'true')
@@ -129,34 +157,6 @@ export default function App(){
   // Se não estiver autenticado, mostra tela de login
   if (!isAuthenticated) {
     return <Login onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />
-  }
-
-  const load = async () => {
-    try {
-      setIsLoading(true)
-      const res = await axios.get(`${API}/sales?month=${currentMonth}`)
-      setSales(res.data)
-      // Atualiza lista de meses com dados
-      if (res.data.length > 0) {
-        setMonthsWithData(prev => 
-          prev.includes(currentMonth) ? prev : [...prev, currentMonth]
-        )
-      }
-    } catch (err) {
-      console.error('Erro ao carregar vendas:', err)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const loadMonths = async () => {
-    const res = await axios.get(`${API}/months`)
-    setAvailableMonths(res.data)
-  }
-
-  const loadCommissions = async ()=>{
-    const res = await axios.get(`${API}/commissions`)
-    setCommissions(res.data)
   }
 
   useEffect(()=>{ 
