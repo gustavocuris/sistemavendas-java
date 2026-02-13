@@ -568,7 +568,6 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           animation: slideUp 0.6s ease-out, glow-pulse 4s ease-in-out infinite;
           position: relative;
           z-index: 10;
-          border: 1px solid rgba(14, 194, 88, 0.1);
         }
 
         @keyframes glow-pulse {
@@ -579,7 +578,6 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         .dark-mode .login-box {
           background: rgba(26, 26, 46, 0.95);
           box-shadow: 0 8px 32px 0 rgba(14, 194, 88, 0.15), 0 0 0 1px rgba(14, 194, 88, 0.2);
-          border: 1px solid rgba(14, 194, 88, 0.15);
         }
 
         @keyframes slideUp {
