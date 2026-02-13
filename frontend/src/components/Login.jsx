@@ -29,17 +29,9 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
     setError('')
     setSuccess('')
 
-    // Validar se o username contém "intercap pneus" (case-insensitive)
-    const normalizedUsername = username.toLowerCase().trim()
-    if (!normalizedUsername.includes('intercap pneus')) {
-      setError('Usuário deve conter "intercap pneus"')
-      setPassword('')
-      return
-    }
-
     try {
       const response = await axios.post(`${API}/login`, {
-        username: normalizedUsername,
+        username: username.trim(),
         password
       })
 
