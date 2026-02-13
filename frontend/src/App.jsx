@@ -102,12 +102,6 @@ export default function App(){
   const handleLogin = () => {
     setIsAuthenticated(true)
     localStorage.setItem('authenticated', 'true')
-    // Recarregar dados após login
-    setTimeout(() => {
-      load()
-      loadCommissions()
-      loadMonths()
-    }, 0)
   }
 
   const handleLogout = () => {
