@@ -561,7 +561,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           background: #ffffff;
           border-radius: 20px;
           width: 100%;
-          max-width: 500px;
+          max-width: 100%;
           padding: 60px 50px;
           animation: slideUp 0.6s ease-out;
           position: relative;
@@ -882,9 +882,8 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         @media (max-width: 768px) {
           .login-box {
-            max-width: 90%;
+            max-width: 100%;
             padding: 40px 30px;
-            margin: 20px auto;
           }
 
           .login-title {
