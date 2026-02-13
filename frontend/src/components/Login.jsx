@@ -5,6 +5,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(darkMode || false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [showForgotPassword, setShowForgotPassword] = useState(false)
@@ -119,15 +120,38 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
   }
 
   useEffect(() => {
-    if (darkMode) {
+    if (isDarkMode) {
       document.body.classList.add('dark-mode')
     } else {
       document.body.classList.remove('dark-mode')
     }
-  }, [darkMode])
+  }, [isDarkMode])
 
   return (
-      <div className={`login-container ${darkMode ? 'dark-mode' : ''}`}>
+      <div className={`login-container ${isDarkMode ? 'dark-mode' : ''}`}>
+      {/* Dark Mode Toggle */}
+      <button className="dark-mode-toggle" onClick={() => {
+        setIsDarkMode(!isDarkMode);
+      }}>
+        {isDarkMode ? (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        ) : (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        )}
+      </button>
+
       {/* Animated Van Gogh style background */}
       <div className="starry-background"></div>
       <div className="dark-overlay"></div>
@@ -145,6 +169,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
       <div className="login-box">
         {/* Header Section */}
         <div className="login-header">
+          <img src="/logo-intercap.svg" alt="Intercap Pneus" className="login-logo" />
           <h1 className="login-title">SISTEMA DE VENDAS</h1>
           <div className="login-subtitle">Acesse sua conta</div>
         </div>
@@ -451,6 +476,48 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           --primary-color: #2ecc71;
           --primary-light: #52ffa3;
           --primary-dark: #27ae60;
+          transition: background 0.3s ease;
+        }
+
+        .login-container.dark-mode {
+          background: #000000;
+        }
+
+        .dark-mode-toggle {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: #ffffff;
+          border: 2px solid #e0e0e0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          z-index: 1000;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode-toggle:hover {
+          transform: scale(1.1);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .dark-mode .dark-mode-toggle {
+          background: #1a1a1a;
+          border-color: #ffffff;
+          box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .dark-mode-toggle svg {
+          color: #333;
+        }
+
+        .dark-mode .dark-mode-toggle svg {
+          color: #ffffff;
         }
 
         /* Van Gogh Starry Night inspired background */
@@ -564,15 +631,17 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           animation: slideUp 0.6s ease-out;
           position: relative;
           z-index: 10;
+          transition: all 0.3s ease;
+        }
+
+        .dark-mode .login-box {
+          background: #000000;
+          box-shadow: 0 0 0 2px #ffffff, 0 0 20px rgba(255, 255, 255, 0.5);
         }
 
         @keyframes glow-pulse {
           0%, 100% { }
           50% { }
-        }
-
-        .dark-mode .login-box {
-          background: #ffffff;
         }
 
         @keyframes slideUp {
@@ -594,12 +663,16 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .login-logo {
           display: block;
-          height: 160px;
+          height: 80px;
           width: auto;
-          max-width: 360px;
-          margin: 0 auto;
-          filter: drop-shadow(0 6px 20px rgba(14, 194, 88, 0.3));
-          animation: fadeInScale 0.8s ease-out, breathing 6s ease-in-out infinite;
+          max-width: 280px;
+          margin: 0 auto 24px auto;
+          filter: drop-shadow(0 2px 8px rgba(46, 204, 113, 0.2));
+          transition: filter 0.3s ease;
+        }
+
+        .dark-mode .login-logo {
+          filter: drop-shadow(0 2px 12px rgba(255, 255, 255, 0.3)) brightness(1.1);
         }
 
         @keyframes breathing {
@@ -623,14 +696,24 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .login-header h1 {
           margin: 12px 0 8px 0;
-          font-size: 32px;
-          font-weight: 800;
-          color: #0ec258;
+          font-size: 28px;
+          font-weight: 700;
+          color: #333;
           letter-spacing: -0.5px;
         }
 
         .dark-mode .login-header h1 {
           color: #ffffff;
+        }
+
+        .login-subtitle {
+          color: #666;
+          font-size: 14px;
+          margin-bottom: 32px;
+        }
+
+        .dark-mode .login-subtitle {
+          color: #ccc;
         }
 
         .login-form {
@@ -663,6 +746,10 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           transition: all 0.3s ease;
         }
 
+        .dark-mode .form-group label {
+          color: #ccc;
+        }
+
         .form-group label svg {
           width: 16px;
           height: 16px;
@@ -689,6 +776,12 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           font-weight: 500;
           outline: none;
           transition: all 0.2s ease;
+        }
+
+        .dark-mode .login-input {
+          background: #1a1a1a;
+          border-color: #444;
+          color: #ffffff;
         }
 
         .login-input::placeholder {
@@ -735,6 +828,15 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           background: rgba(46, 204, 113, 0.08);
         }
 
+        .dark-mode .btn-toggle-password {
+          color: #888;
+        }
+
+        .dark-mode .btn-toggle-password:hover {
+          color: #ffffff;
+          background: rgba(255, 255, 255, 0.1);
+        }
+
         .btn-toggle-password:active {
           background: rgba(46, 204, 113, 0.15);
         }
@@ -761,10 +863,22 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           border: 1px solid rgba(231, 76, 60, 0.3);
         }
 
+        .dark-mode .login-alert-error {
+          background: rgba(231, 76, 60, 0.2);
+          color: #ff6b6b;
+          border-color: rgba(231, 76, 60, 0.4);
+        }
+
         .login-alert-success {
           background: rgba(46, 204, 113, 0.15);
           color: var(--primary-light);
           border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .dark-mode .login-alert-success {
+          background: rgba(46, 204, 113, 0.2);
+          color: #2ecc71;
+          border-color: rgba(46, 204, 113, 0.4);
         }
 
         .btn-login {
@@ -822,6 +936,14 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         .btn-forgot-password:hover {
           color: #27ae60;
           text-decoration-thickness: 2px;
+        }
+
+        .dark-mode .btn-forgot-password {
+          color: #2ecc71;
+        }
+
+        .dark-mode .btn-forgot-password:hover {
+          color: #52ffa3;
         }
 
         .forgot-password-header {
