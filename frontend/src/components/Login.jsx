@@ -467,7 +467,22 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         {/* Footer */}
         <div className="login-footer">
-          <p>Sistema e vendas 2026</p>
+          <div className="login-footer-content">
+            <div className="footer-system">
+              <strong>SV SISTEMA DE VENDAS 2026</strong>
+            </div>
+            <div className="footer-divider">•</div>
+            <div className="footer-security">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <span>Security and Privacy Protected</span>
+            </div>
+            <div className="footer-divider">•</div>
+            <div className="footer-author">
+              Developed by <strong>Gustavo Curis de Francisco</strong>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1025,11 +1040,80 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .login-footer {
           margin-top: 40px;
-          text-align: center;
-          font-size: 12px;
-          color: #666;
-          font-weight: 500;
-          letter-spacing: 1px;
+          padding: 20px;
+          background: rgba(255, 255, 255, 0.3);
+          border-top: 1px solid rgba(203, 213, 225, 0.4);
+          border-radius: 12px;
+          backdrop-filter: blur(10px);
+        }
+
+        .dark-mode .login-footer {
+          background: rgba(26, 26, 26, 0.3);
+          border-top: 1px solid rgba(61, 61, 61, 0.4);
+        }
+
+        .login-footer-content {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
+          font-size: 13px;
+          color: #64748b;
+        }
+
+        .dark-mode .login-footer-content {
+          color: #94a3b8;
+        }
+
+        .footer-security,
+        .footer-author,
+        .footer-system {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .footer-system strong {
+          color: #1e7145;
+          font-weight: 900;
+          letter-spacing: 0.5px;
+          font-size: 14px;
+        }
+
+        .dark-mode .footer-system strong {
+          color: #1e7145;
+        }
+
+        .footer-security svg {
+          color: #1e7145;
+          opacity: 0.8;
+        }
+
+        .footer-divider {
+          color: #cbd5e1;
+          font-weight: bold;
+        }
+
+        .dark-mode .footer-divider {
+          color: #475569;
+        }
+
+        .footer-author strong {
+          color: #1e7145;
+          font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+          .login-footer-content {
+            flex-direction: column;
+            gap: 8px;
+            text-align: center;
+          }
+          
+          .footer-divider {
+            display: none;
+          }
         }
 
         @media (max-width: 768px) {
