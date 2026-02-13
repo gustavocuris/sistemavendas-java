@@ -620,49 +620,62 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .login-title.neon-glow {
-          background: linear-gradient(90deg, 
-            #1e7145 0%,
-            #1e7145 25%,
-            #2ecc71 50%,
-            #2ecc71 75%,
-            #1e7145 100%
-          );
-          background-size: 300% 100%;
-          background-position: 0% 0%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-          animation: battery-fill 20s linear infinite;
+          background: none;
+          color: #1e7145;
+          -webkit-background-clip: unset;
+          background-clip: unset;
+          -webkit-text-fill-color: unset;
+          animation: color-battery 20s linear infinite;
         }
 
-        @keyframes battery-fill {
+        @keyframes color-battery {
           0% {
-            background-position: -100% 0%;
+            color: #1e7145;
+            text-shadow: 0 0 5px rgba(30, 113, 69, 0.3);
           }
           25% {
-            background-position: 0% 0%;
+            color: #1e7145;
+            text-shadow: 0 0 5px rgba(30, 113, 69, 0.3);
           }
           50% {
-            background-position: 100% 0%;
+            color: #2ecc71;
+            text-shadow: 0 0 10px rgba(46, 204, 113, 0.8);
           }
           75% {
-            background-position: 200% 0%;
+            color: #2ecc71;
+            text-shadow: 0 0 10px rgba(46, 204, 113, 0.8);
           }
           100% {
-            background-position: 300% 0%;
+            color: #1e7145;
+            text-shadow: 0 0 5px rgba(30, 113, 69, 0.3);
           }
         }
 
         .dark-mode .login-title.neon-glow {
-          background: linear-gradient(90deg, 
-            #1e7145 0%,
-            #1e7145 25%,
-            #2ecc71 50%,
-            #2ecc71 75%,
-            #1e7145 100%
-          );
-          background-size: 300% 100%;
-          animation: battery-fill 20s linear infinite;
+          animation: color-battery-dark 20s linear infinite;
+        }
+
+        @keyframes color-battery-dark {
+          0% {
+            color: #1e7145;
+            text-shadow: 0 0 5px rgba(46, 204, 113, 0.4);
+          }
+          25% {
+            color: #1e7145;
+            text-shadow: 0 0 5px rgba(46, 204, 113, 0.4);
+          }
+          50% {
+            color: #2ecc71;
+            text-shadow: 0 0 15px rgba(46, 204, 113, 0.9);
+          }
+          75% {
+            color: #2ecc71;
+            text-shadow: 0 0 15px rgba(46, 204, 113, 0.9);
+          }
+          100% {
+            color: #1e7145;
+            text-shadow: 0 0 5px rgba(46, 204, 113, 0.4);
+          }
         }
 
         .login-subtitle {
