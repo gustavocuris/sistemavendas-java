@@ -620,39 +620,44 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .login-title.neon-glow {
-          animation: neon-pulse 2s ease-in-out infinite;
+          animation: neon-breath 20s ease-in-out infinite;
         }
 
-        @keyframes neon-pulse {
-          0%, 100% {
+        @keyframes neon-breath {
+          0%, 35% {
             color: #1e7145;
-            text-shadow: 0 0 10px rgba(30, 113, 69, 0.5);
+            text-shadow: 0 0 5px rgba(30, 113, 69, 0.3);
           }
           50% {
             color: #2ecc71;
             text-shadow: 
               0 0 10px rgba(46, 204, 113, 0.8),
-              0 0 20px rgba(46, 204, 113, 0.6),
-              0 0 30px rgba(46, 204, 113, 0.4);
+              0 0 20px rgba(46, 204, 113, 0.6);
+          }
+          65%, 100% {
+            color: #1e7145;
+            text-shadow: 0 0 5px rgba(30, 113, 69, 0.3);
           }
         }
 
         .dark-mode .login-title.neon-glow {
-          animation: neon-pulse-dark 2s ease-in-out infinite;
+          animation: neon-breath-dark 20s ease-in-out infinite;
         }
 
-        @keyframes neon-pulse-dark {
-          0%, 100% {
+        @keyframes neon-breath-dark {
+          0%, 35% {
             color: #1e7145;
-            text-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+            text-shadow: 0 0 5px rgba(46, 204, 113, 0.4);
           }
           50% {
             color: #2ecc71;
             text-shadow: 
-              0 0 10px rgba(46, 204, 113, 0.9),
-              0 0 20px rgba(46, 204, 113, 0.7),
-              0 0 30px rgba(46, 204, 113, 0.5),
-              0 0 40px rgba(46, 204, 113, 0.3);
+              0 0 15px rgba(46, 204, 113, 0.9),
+              0 0 30px rgba(46, 204, 113, 0.7);
+          }
+          65%, 100% {
+            color: #1e7145;
+            text-shadow: 0 0 5px rgba(46, 204, 113, 0.4);
           }
         }
 
