@@ -671,6 +671,11 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         .dark-mode .login-box {
           background: #1a1a1a;
+          box-shadow: 
+            0 2px 16px rgba(0, 0, 0, 0.3),
+            0 0 1px rgba(0, 0, 0, 0.2),
+            0 0 30px 2px rgba(46, 204, 113, 0.25),
+            0 0 60px 4px rgba(74, 222, 128, 0.15);
         }
 
         @keyframes glow-pulse {
