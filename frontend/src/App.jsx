@@ -201,6 +201,42 @@ export default function App(){
     localStorage.setItem('primaryColor', primaryColor)
   }, [primaryColor])
 
+  // Auto logout por inatividade (15 minutos)
+  useEffect(() => {
+    if (!isAuthenticated) return
+
+    const INACTIVITY_TIME = 15 * 60 * 1000 // 15 minutos em milissegundos
+    let inactivityTimer
+
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer)
+      inactivityTimer = setTimeout(() => {
+        // Logout automático
+        setIsAuthenticated(false)
+        localStorage.removeItem('authenticated')
+        alert('Sessão encerrada por inatividade.')
+      }, INACTIVITY_TIME)
+    }
+
+    // Eventos que indicam atividade do usuário
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click']
+    
+    events.forEach(event => {
+      document.addEventListener(event, resetTimer, true)
+    })
+
+    // Iniciar o timer
+    resetTimer()
+
+    // Cleanup: remover listeners e timer
+    return () => {
+      clearTimeout(inactivityTimer)
+      events.forEach(event => {
+        document.removeEventListener(event, resetTimer, true)
+      })
+    }
+  }, [isAuthenticated])
+
   const applyColor = (colorHex) => {
     setPrimaryColor(colorHex)
   }
