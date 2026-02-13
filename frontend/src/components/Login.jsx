@@ -620,44 +620,52 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .login-title.neon-glow {
-          animation: neon-breath 20s ease-in-out infinite;
+          background: linear-gradient(90deg, #2ecc71 0%, #1e7145 100%);
+          background-size: 200% 100%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: fill-battery 20s linear infinite;
         }
 
-        @keyframes neon-breath {
-          0%, 35% {
-            color: #1e7145;
-            text-shadow: 0 0 5px rgba(30, 113, 69, 0.3);
+        @keyframes fill-battery {
+          0% {
+            background-position: 100% 0%;
+          }
+          25% {
+            background-position: -100% 0%;
           }
           50% {
-            color: #2ecc71;
-            text-shadow: 
-              0 0 10px rgba(46, 204, 113, 0.8),
-              0 0 20px rgba(46, 204, 113, 0.6);
+            background-position: -100% 0%;
           }
-          65%, 100% {
-            color: #1e7145;
-            text-shadow: 0 0 5px rgba(30, 113, 69, 0.3);
+          75% {
+            background-position: 100% 0%;
+          }
+          100% {
+            background-position: 100% 0%;
           }
         }
 
         .dark-mode .login-title.neon-glow {
-          animation: neon-breath-dark 20s ease-in-out infinite;
+          background: linear-gradient(90deg, #2ecc71 0%, #1e7145 100%);
+          animation: fill-battery-dark 20s linear infinite;
         }
 
-        @keyframes neon-breath-dark {
-          0%, 35% {
-            color: #1e7145;
-            text-shadow: 0 0 5px rgba(46, 204, 113, 0.4);
+        @keyframes fill-battery-dark {
+          0% {
+            background-position: 100% 0%;
+          }
+          25% {
+            background-position: -100% 0%;
           }
           50% {
-            color: #2ecc71;
-            text-shadow: 
-              0 0 15px rgba(46, 204, 113, 0.9),
-              0 0 30px rgba(46, 204, 113, 0.7);
+            background-position: -100% 0%;
           }
-          65%, 100% {
-            color: #1e7145;
-            text-shadow: 0 0 5px rgba(46, 204, 113, 0.4);
+          75% {
+            background-position: 100% 0%;
+          }
+          100% {
+            background-position: 100% 0%;
           }
         }
 
