@@ -441,6 +441,12 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           box-sizing: border-box;
         }
 
+        body {
+          margin: 0;
+          padding: 0;
+          overflow-x: hidden;
+        }
+
         .login-container {
           min-height: 100vh;
           width: 100vw;
@@ -561,7 +567,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           background: #ffffff;
           border-radius: 20px;
           width: 100%;
-          max-width: 100%;
+          max-width: 500px;
           padding: 60px 50px;
           animation: slideUp 0.6s ease-out;
           position: relative;
@@ -882,7 +888,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
         @media (max-width: 768px) {
           .login-box {
-            max-width: 100%;
+            max-width: 90%;
             padding: 40px 30px;
           }
 
