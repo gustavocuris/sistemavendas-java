@@ -518,7 +518,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           background: #000000;
         }
 
-        .dark-mode-toggle {
+        .login-container .dark-mode-toggle {
           position: fixed;
           top: 20px;
           right: 20px;
@@ -534,6 +534,11 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           transition: all 0.3s ease;
           z-index: 1000;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .login-container::before,
+        .dark-mode .login-container::after {
+          display: none;
         }
 
         .dark-mode-toggle:hover {
