@@ -5,7 +5,10 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(darkMode || false)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode')
+    return saved === 'true'
+  })
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [showForgotPassword, setShowForgotPassword] = useState(false)
@@ -125,6 +128,8 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
     } else {
       document.body.classList.remove('dark-mode')
     }
+    // Salvar preferência de dark mode no localStorage
+    localStorage.setItem('darkMode', isDarkMode.toString())
   }, [isDarkMode])
 
   return (
