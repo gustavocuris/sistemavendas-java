@@ -620,53 +620,49 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         }
 
         .login-title.neon-glow {
-          background: linear-gradient(90deg, #2ecc71 0%, #1e7145 100%);
-          background-size: 200% 100%;
+          background: linear-gradient(90deg, 
+            #1e7145 0%,
+            #1e7145 25%,
+            #2ecc71 50%,
+            #2ecc71 75%,
+            #1e7145 100%
+          );
+          background-size: 300% 100%;
+          background-position: 0% 0%;
           -webkit-background-clip: text;
           background-clip: text;
           -webkit-text-fill-color: transparent;
-          animation: fill-battery 20s linear infinite;
+          animation: battery-fill 20s linear infinite;
         }
 
-        @keyframes fill-battery {
+        @keyframes battery-fill {
           0% {
-            background-position: 100% 0%;
+            background-position: -100% 0%;
           }
           25% {
-            background-position: -100% 0%;
+            background-position: 0% 0%;
           }
           50% {
-            background-position: -100% 0%;
+            background-position: 100% 0%;
           }
           75% {
-            background-position: 100% 0%;
+            background-position: 200% 0%;
           }
           100% {
-            background-position: 100% 0%;
+            background-position: 300% 0%;
           }
         }
 
         .dark-mode .login-title.neon-glow {
-          background: linear-gradient(90deg, #2ecc71 0%, #1e7145 100%);
-          animation: fill-battery-dark 20s linear infinite;
-        }
-
-        @keyframes fill-battery-dark {
-          0% {
-            background-position: 100% 0%;
-          }
-          25% {
-            background-position: -100% 0%;
-          }
-          50% {
-            background-position: -100% 0%;
-          }
-          75% {
-            background-position: 100% 0%;
-          }
-          100% {
-            background-position: 100% 0%;
-          }
+          background: linear-gradient(90deg, 
+            #1e7145 0%,
+            #1e7145 25%,
+            #2ecc71 50%,
+            #2ecc71 75%,
+            #1e7145 100%
+          );
+          background-size: 300% 100%;
+          animation: battery-fill 20s linear infinite;
         }
 
         .login-subtitle {
