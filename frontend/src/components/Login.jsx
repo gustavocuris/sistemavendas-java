@@ -697,7 +697,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           margin: 12px 0 8px 0;
           font-size: 28px;
           font-weight: 700;
-          color: #2ecc71;
+          color: #1e7e34;
           letter-spacing: -0.5px;
         }
 
@@ -739,7 +739,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
           gap: 8px;
           font-weight: 600;
           font-size: 12px;
-          background: linear-gradient(135deg, #52ffa3 0%, #2ecc71 50%, #27ae60 100%);
+          background: linear-gradient(135deg, #27ae60 0%, #229954 50%, #1e7e34 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -758,7 +758,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         .form-group label svg {
           width: 16px;
           height: 16px;
-          stroke: #2ecc71;
+          stroke: #229954;
           transition: all 0.3s ease;
         }
 
