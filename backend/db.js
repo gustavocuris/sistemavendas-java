@@ -43,13 +43,6 @@ class DB {
         const content = fs.readFileSync(this.filePath, 'utf-8');
         const loaded = JSON.parse(content);
         
-        // Se o arquivo existe mas está vazio/sem dados, tenta restaurar do backup
-        if (!loaded.months || Object.keys(loaded.months).length === 0) {
-          console.log('⚠️ sales.json vazio, tentando restaurar do backup...');
-          this.restoreFromBackup();
-          return;
-        }
-        
         // Migration: convert old format (flat sales) to new format (monthly)
         if (loaded.sales && !loaded.months) {
           console.log('Migrating data to monthly format...');
@@ -113,7 +106,13 @@ class DB {
       if (fs.existsSync(backupPath)) {
         console.log('✅ Restaurando dados do backup...');
         const backupContent = fs.readFileSync(backupPath, 'utf-8');
-        this.data = JSON.parse(backupContent);
+        const sanitizedBackupContent = backupContent
+          .split('\n')
+          .filter((line) => !line.trim().startsWith('#'))
+          .join('\n')
+          .trim();
+
+        this.data = JSON.parse(sanitizedBackupContent);
         this.save();
         console.log('✅ Dados restaurados com sucesso!');
       } else {
@@ -122,7 +121,6 @@ class DB {
       }
     } catch (error) {
       console.error('Erro ao restaurar backup:', error);
-      this.save();
     }
   }
 

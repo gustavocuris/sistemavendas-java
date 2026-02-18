@@ -10,7 +10,8 @@ import Login from './components/Login'
 import AdminPanel from './components/AdminPanel'
 import LoginManager from './components/LoginManager'
 
-const API = `${import.meta.env.VITE_API_URL}/api`
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+const API = `${API_BASE_URL}/api`
 
 const PRESET_COLORS = [
   { name: 'Verde', hex: '#1e7145', dark: '#0f4620', light: '#4ade80' },
@@ -133,7 +134,21 @@ export default function App() {
 
   const loadMonths = async () => {
     const res = await axios.get(`${API}/months`)
-    setAvailableMonths(res.data)
+    const months = Array.isArray(res.data) ? res.data : []
+    setAvailableMonths(months)
+    return months
+  }
+
+  const loadMonthsWithSales = async () => {
+    try {
+      const res = await axios.get(`${API}/months-with-sales`)
+      const months = Array.isArray(res.data) ? res.data : []
+      setMonthsWithData(months)
+      return months
+    } catch (err) {
+      setMonthsWithData([])
+      return []
+    }
   }
 
   const loadCommissions = async () => {
@@ -307,11 +322,20 @@ export default function App() {
           loadAdminCredentials()
         ])
       } else {
-        await Promise.all([
-          load(),
-          loadCommissions(),
-          loadMonths()
-        ])
+        await loadCommissions()
+        const [months, monthsWithSales] = await Promise.all([loadMonths(), loadMonthsWithSales()])
+
+        if (monthsWithSales.length > 0 && !monthsWithSales.includes(currentMonth)) {
+          setCurrentMonth(monthsWithSales[0])
+          return
+        }
+
+        if (months.length > 0 && !months.includes(currentMonth)) {
+          setCurrentMonth(months[0])
+          return
+        }
+
+        await load()
       }
     }
 
@@ -323,6 +347,15 @@ export default function App() {
       load()
     }
   }, [currentMonth, isAuthenticated, isAdmin])
+
+  useEffect(() => {
+    if (!currentMonth) return
+    const [year, month] = currentMonth.split('-')
+    const parsedYear = Number(year)
+    const parsedMonth = Number(month)
+    if (!Number.isNaN(parsedYear)) setSelectedYear(parsedYear)
+    if (!Number.isNaN(parsedMonth)) setSelectedMonth(parsedMonth)
+  }, [currentMonth])
 
   useEffect(() => {
     if (darkMode) {
@@ -448,7 +481,7 @@ export default function App() {
     }
   }
 
-  const handlePrevYear = () => setSelectedYear((prev) => Math.max(2026, prev - 1))
+  const handlePrevYear = () => setSelectedYear((prev) => prev - 1)
   const handleNextYear = () => setSelectedYear((prev) => prev + 1)
 
   const handleSelectMonth = (monthNum) => {

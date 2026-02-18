@@ -3,9 +3,18 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
-import db from './db.js';
 
 dotenv.config();
+
+const mongoUri = String(process.env.MONGODB_URI || '').trim();
+const shouldUseMongo = Boolean(mongoUri) && !mongoUri.includes('COLE_SUA_SENHA_AQUI');
+const { default: db } = shouldUseMongo ? await import('./db-mongo.js') : await import('./db.js');
+
+if (shouldUseMongo) {
+  console.log('Banco de dados ativo: MongoDB');
+} else {
+  console.log('Banco de dados ativo: Arquivo local (sales.json)');
+}
 
 const app = express();
 
@@ -91,13 +100,34 @@ function ensureUserData(userId) {
   return userData;
 }
 
+function hasBusinessData(userData) {
+  if (!userData) return false;
+
+  const hasSales = Object.values(userData.months || {}).some((monthData) => {
+    const sales = monthData?.sales || [];
+    return Array.isArray(sales) && sales.length > 0;
+  });
+
+  return hasSales || (userData.comprarDepois || []).length > 0 || (userData.faltaPagar || []).length > 0;
+}
+
 function migrateLegacyDataToAdmin() {
   ensureDataStructures();
   const adminData = ensureUserData(DEFAULT_ADMIN.id);
 
-  if (Object.keys(adminData.months || {}).length === 0 && Object.keys(db.data.months || {}).length > 0) {
-    adminData.months = JSON.parse(JSON.stringify(db.data.months));
-  }
+  Object.entries(db.data.months || {}).forEach(([monthKey, monthData]) => {
+    const rootSales = monthData?.sales || [];
+    const adminMonth = adminData.months?.[monthKey];
+    const adminSales = adminMonth?.sales || [];
+
+    if (rootSales.length === 0) return;
+
+    if (!adminMonth || adminSales.length === 0) {
+      adminData.months[monthKey] = {
+        sales: JSON.parse(JSON.stringify(rootSales))
+      };
+    }
+  });
 
   if ((adminData.comprarDepois || []).length === 0 && (db.data.comprarDepois || []).length > 0) {
     adminData.comprarDepois = JSON.parse(JSON.stringify(db.data.comprarDepois));
@@ -123,9 +153,20 @@ async function resolveRequestContext(req) {
 
   const requestedUserId = String(req.query.userId || req.headers['x-target-user-id'] || '').trim();
   const hasRequestedUser = requestedUserId && users.some((u) => u.id === requestedUserId);
-  const targetUserId = isAdmin && hasRequestedUser ? requestedUserId : (requester?.id || DEFAULT_ADMIN.id);
+  let targetUserId = isAdmin && hasRequestedUser ? requestedUserId : (requester?.id || DEFAULT_ADMIN.id);
 
-  const userData = ensureUserData(targetUserId);
+  let userData = ensureUserData(targetUserId);
+
+  const legacyUsername = String(authData.username || '').trim();
+  const isLegacyPrimaryUser = !isAdmin && requester?.username && legacyUsername && requester.username === legacyUsername;
+
+  if (isLegacyPrimaryUser && !hasBusinessData(userData)) {
+    const adminData = ensureUserData(DEFAULT_ADMIN.id);
+    if (hasBusinessData(adminData)) {
+      targetUserId = DEFAULT_ADMIN.id;
+      userData = adminData;
+    }
+  }
 
   return {
     authData,
@@ -251,6 +292,18 @@ app.get('/api/months', async (req, res) => {
   const ctx = await resolveRequestContext(req);
   const months = Object.keys(ctx.userData.months || {}).sort().reverse();
   res.json(months);
+});
+
+// Get only months that contain sales
+app.get('/api/months-with-sales', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  const monthsWithSales = Object.entries(ctx.userData.months || {})
+    .filter(([, monthData]) => Array.isArray(monthData?.sales) && monthData.sales.length > 0)
+    .map(([month]) => month)
+    .sort()
+    .reverse();
+
+  res.json(monthsWithSales);
 });
 
 // Login endpoint

@@ -14,7 +14,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const salesJsonFile = path.join(__dirname, 'backend/data/sales.json');
+const salesJsonFile = path.join(__dirname, '..', 'data', 'sales.json');
 
 // Conectar MongoDB
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/sistemavendas';
