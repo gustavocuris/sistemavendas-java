@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useCallback } from 'react'
 import axios from 'axios'
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import SaleForm from './components/SaleForm'
@@ -293,27 +293,33 @@ export default function App() {
       setCurrentUser(resolvedUser)
       localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
     }
+
+    // Carregar dados APÓS settar o header
+    const loadAfterAuth = async () => {
+      const isAdminUser = resolvedUser.role === 'admin'
+      
+      if (isAdminUser) {
+        await Promise.all([
+          loadAdminUsers(),
+          loadAdminSales(adminSearch),
+          loadAdminSummary(),
+          loadAdminAnnual(),
+          loadAdminCredentials()
+        ])
+      } else {
+        await Promise.all([
+          load(),
+          loadCommissions(),
+          loadMonths()
+        ])
+      }
+    }
+
+    loadAfterAuth()
   }, [isAuthenticated, currentUser])
 
   useEffect(() => {
-    if (!isAuthenticated) return
-
-    if (isAdmin) {
-      loadAdminUsers()
-      loadAdminSales(adminSearch)
-      loadAdminSummary()
-      loadAdminAnnual()
-      loadAdminCredentials()
-      return
-    }
-
-    load()
-    loadCommissions()
-    loadMonths()
-  }, [isAuthenticated, isAdmin, currentUser?.id])
-
-  useEffect(() => {
-    if (isAuthenticated && !isAdmin) {
+    if (isAuthenticated && !isAdmin && currentMonth) {
       load()
     }
   }, [currentMonth, isAuthenticated, isAdmin])
