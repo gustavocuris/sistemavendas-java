@@ -12,7 +12,21 @@ const MONGODB_URI = (
 ).trim();
 
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log('MongoDB conectado'))
+  .then(async () => {
+    console.log('MongoDB conectado');
+    try {
+      // Limpar duplicatas antigas
+      const auths = await Auth.find().sort({ createdAt: -1 }).exec();
+      if (auths.length > 1) {
+        const toKeep = auths[0]._id;
+        const toDelete = auths.slice(1).map(a => a._id);
+        await Auth.deleteMany({ _id: { $in: toDelete } });
+        console.log(`Limpas ${toDelete.length} autenticações duplicadas`);
+      }
+    } catch (err) {
+      console.error('Erro ao limpar duplicatas:', err);
+    }
+  })
   .catch(err => console.error('Erro MongoDB:', err));
 
 const appDataSchema = new mongoose.Schema({
@@ -22,7 +36,8 @@ const appDataSchema = new mongoose.Schema({
 });
 
 const authSchema = new mongoose.Schema({
-  username: { type: String, unique: true },
+  _type: { type: String, default: 'main', unique: true },
+  username: String,
   passwordHash: String,
   resetToken: String,
   resetTokenExpires: Date,
@@ -117,7 +132,7 @@ class DB {
 
   async getAuth() {
     try {
-      const auth = await Auth.findOne();
+      const auth = await Auth.findOne({ _type: 'main' });
       return auth || null;
     } catch (error) {
       console.error('Erro ao carregar auth:', error);
@@ -127,9 +142,8 @@ class DB {
 
   async setAuth(authData) {
     try {
-      const filter = authData?.username ? { username: authData.username } : {};
       await Auth.findOneAndUpdate(
-        filter,
+        { _type: 'main' },
         authData,
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
