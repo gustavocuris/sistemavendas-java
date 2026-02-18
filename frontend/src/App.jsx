@@ -117,13 +117,18 @@ export default function App() {
     document.documentElement.style.setProperty('--primary-light-rgb', hexToRgbString(lightHex))
   }
 
-  const load = async () => {
+  const load = async (monthOverride = null) => {
     try {
       setIsLoading(true)
-      const res = await axios.get(`${API}/sales?month=${currentMonth}`)
+      const monthToUse = monthOverride || currentMonth
+      if (!monthToUse) {
+        setSales([])
+        return
+      }
+      const res = await axios.get(`${API}/sales?month=${monthToUse}`)
       setSales(res.data)
       if (res.data.length > 0) {
-        setMonthsWithData((prev) => (prev.includes(currentMonth) ? prev : [...prev, currentMonth]))
+        setMonthsWithData((prev) => (prev.includes(monthToUse) ? prev : [...prev, monthToUse]))
       }
     } catch (err) {
       console.error('Erro ao carregar vendas:', err)
@@ -324,18 +329,13 @@ export default function App() {
       } else {
         await loadCommissions()
         const [months, monthsWithSales] = await Promise.all([loadMonths(), loadMonthsWithSales()])
+        const targetMonth = monthsWithSales[0] || months[0] || currentMonth
 
-        if (monthsWithSales.length > 0 && !monthsWithSales.includes(currentMonth)) {
-          setCurrentMonth(monthsWithSales[0])
-          return
+        if (targetMonth && targetMonth !== currentMonth) {
+          setCurrentMonth(targetMonth)
         }
 
-        if (months.length > 0 && !months.includes(currentMonth)) {
-          setCurrentMonth(months[0])
-          return
-        }
-
-        await load()
+        await load(targetMonth)
       }
     }
 
