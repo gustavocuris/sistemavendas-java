@@ -157,10 +157,7 @@ async function resolveRequestContext(req) {
 
   let userData = ensureUserData(targetUserId);
 
-  const legacyUsername = String(authData.username || '').trim();
-  const isLegacyPrimaryUser = !isAdmin && requester?.username && legacyUsername && requester.username === legacyUsername;
-
-  if (isLegacyPrimaryUser && !hasBusinessData(userData)) {
+  if (!isAdmin && !hasBusinessData(userData)) {
     const adminData = ensureUserData(DEFAULT_ADMIN.id);
     if (hasBusinessData(adminData)) {
       targetUserId = DEFAULT_ADMIN.id;
