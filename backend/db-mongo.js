@@ -127,8 +127,12 @@ class DB {
 
   async setAuth(authData) {
     try {
-      await Auth.deleteMany({});
-      await Auth.create(authData);
+      const filter = authData?.username ? { username: authData.username } : {};
+      await Auth.findOneAndUpdate(
+        filter,
+        authData,
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
       console.log('Autenticacao salva no MongoDB');
     } catch (error) {
       console.error('Erro ao salvar auth:', error);
