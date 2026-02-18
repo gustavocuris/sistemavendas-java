@@ -277,6 +277,10 @@ async function saveAuth(authData) {
   });
 }
 
+if (typeof db.init === 'function') {
+  await db.init();
+}
+
 await db.read();
 await getAuthData();
 migrateLegacyDataToAdmin();

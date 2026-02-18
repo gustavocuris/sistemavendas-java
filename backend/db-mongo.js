@@ -11,23 +11,17 @@ const MONGODB_URI = (
   'mongodb://localhost:27017/sistemavendas'
 ).trim();
 
+let mongoReady = false;
+
 mongoose.connect(MONGODB_URI)
-  .then(async () => {
+  .then(() => {
     console.log('MongoDB conectado');
-    try {
-      // Limpar duplicatas antigas
-      const auths = await Auth.find().sort({ createdAt: -1 }).exec();
-      if (auths.length > 1) {
-        const toKeep = auths[0]._id;
-        const toDelete = auths.slice(1).map(a => a._id);
-        await Auth.deleteMany({ _id: { $in: toDelete } });
-        console.log(`Limpas ${toDelete.length} autenticações duplicadas`);
-      }
-    } catch (err) {
-      console.error('Erro ao limpar duplicatas:', err);
-    }
+    mongoReady = true;
   })
-  .catch(err => console.error('Erro MongoDB:', err));
+  .catch(err => {
+    console.error('Erro MongoDB:', err);
+    mongoReady = true;
+  });
 
 const appDataSchema = new mongoose.Schema({
   key: { type: String, unique: true },
@@ -151,6 +145,48 @@ class DB {
     } catch (error) {
       console.error('Erro ao salvar auth:', error);
       throw error;
+    }
+  }
+
+  async init() {
+    try {
+      // Aguardar conexão estar pronta
+      let timeout = 0;
+      while (!mongoReady && timeout < 5000) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        timeout += 100;
+      }
+
+      if (!mongoReady) {
+        console.warn('MongoDB não está pronto para inicialização');
+        return;
+      }
+
+      // Remover índice antigo duplicado se existir
+      try {
+        const authIndexes = await Auth.collection.getIndexes();
+        if (authIndexes.username_1) {
+          await Auth.collection.dropIndex('username_1');
+          console.log('Índice antigo username_1 removido');
+        }
+      } catch (err) {
+        // Ignorar se não existir
+      }
+
+      // Verificar e limpar duplicatas
+      const auths = await Auth.find().exec();
+      if (auths.length > 0) {
+        console.log(`Encontradas ${auths.length} autenticações no Mongo`);
+        // Manter apenas um registro com _type: 'main'
+        const mainAuth = auths.find(a => a._type === 'main');
+        if (mainAuth && auths.length > 1) {
+          const toDelete = auths.filter(a => a._id.toString() !== mainAuth._id.toString());
+          await Auth.deleteMany({ _id: { $in: toDelete.map(a => a._id) } });
+          console.log(`Removidas ${toDelete.length} autenticações duplicadas`);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao inicializar:', error);
     }
   }
 }
