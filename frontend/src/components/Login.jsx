@@ -44,7 +44,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
       if (response.status === 200) {
         setSuccess('Login realizado com sucesso! ✓')
         // Chama onLogin imediatamente sem delay
-        onLogin()
+        onLogin(response.data?.user || null)
       }
     } catch (err) {
       setIsLoading(false)

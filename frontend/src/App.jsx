@@ -22,6 +22,14 @@ export default function App(){
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem('authenticated') === 'true'
   })
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('currentUser')
+      return saved ? JSON.parse(saved) : null
+    } catch {
+      return null
+    }
+  })
   const [sales, setSales] = useState([])
   const [editing, setEditing] = useState(null)
   const [copiedSale, setCopiedSale] = useState(null)
@@ -128,15 +136,23 @@ export default function App(){
     setCommissions(res.data)
   }
 
-  const handleLogin = () => {
+  const handleLogin = (user) => {
     setIsAuthenticated(true)
     localStorage.setItem('authenticated', 'true')
+
+    const resolvedUser = user || { id: 'adm', username: 'ADM', displayName: 'Administrador', role: 'admin' }
+    setCurrentUser(resolvedUser)
+    localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
+    axios.defaults.headers.common['x-user-id'] = resolvedUser.id
   }
 
   const handleLogout = () => {
     openConfirm('Deseja realmente sair do sistema?', () => {
       setIsAuthenticated(false)
+      setCurrentUser(null)
       localStorage.removeItem('authenticated')
+      localStorage.removeItem('currentUser')
+      delete axios.defaults.headers.common['x-user-id']
     })
   }
 
@@ -160,6 +176,21 @@ export default function App(){
       load()
       loadCommissions()
       loadMonths()
+      useEffect(() => {
+        if (!isAuthenticated) {
+          delete axios.defaults.headers.common['x-user-id']
+          return
+        }
+
+        const resolvedUser = currentUser || { id: 'adm', username: 'ADM', displayName: 'Administrador', role: 'admin' }
+        axios.defaults.headers.common['x-user-id'] = resolvedUser.id
+
+        if (!currentUser) {
+          setCurrentUser(resolvedUser)
+          localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
+        }
+      }, [isAuthenticated, currentUser])
+
     }
   }, [isAuthenticated])
 
@@ -214,7 +245,10 @@ export default function App(){
       inactivityTimer = setTimeout(() => {
         // Logout automático
         setIsAuthenticated(false)
+        setCurrentUser(null)
         localStorage.removeItem('authenticated')
+        localStorage.removeItem('currentUser')
+        delete axios.defaults.headers.common['x-user-id']
         alert('Sessão encerrada por inatividade.')
       }, INACTIVITY_TIME)
     }

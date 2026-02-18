@@ -20,6 +20,18 @@ const authSchema = new mongoose.Schema({
   passwordHash: String,
   resetToken: String,
   resetTokenExpires: Date,
+  users: [
+    {
+      id: String,
+      username: String,
+      displayName: String,
+      role: String,
+      passwordHash: String,
+      resetToken: String,
+      resetTokenExpires: Date,
+      createdAt: Date
+    }
+  ],
   createdAt: { type: Date, default: Date.now }
 });
 

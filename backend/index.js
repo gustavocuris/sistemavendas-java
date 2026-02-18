@@ -29,6 +29,113 @@ function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
 
+const DEFAULT_ADMIN = {
+  id: 'adm',
+  username: 'ADM',
+  displayName: 'Administrador',
+  role: 'admin',
+  passwordHash: hashPassword('ADM@Sv2026'),
+  resetToken: null,
+  resetTokenExpires: null,
+  createdAt: new Date().toISOString()
+};
+
+function defaultCommissions() {
+  return { new: 5, recap: 8, recapping: 10, service: 0 };
+}
+
+function createDefaultUserData() {
+  return {
+    months: {},
+    commissions: defaultCommissions(),
+    comprarDepois: [],
+    faltaPagar: []
+  };
+}
+
+function normalizeRole(role) {
+  return role === 'admin' ? 'admin' : 'user';
+}
+
+function sanitizeUser(user) {
+  if (!user) return null;
+  return {
+    id: user.id,
+    username: user.username,
+    displayName: user.displayName || user.username,
+    role: normalizeRole(user.role)
+  };
+}
+
+function ensureDataStructures() {
+  if (!db.data.months) db.data.months = {};
+  if (!db.data.commissions) db.data.commissions = defaultCommissions();
+  if (!Array.isArray(db.data.comprarDepois)) db.data.comprarDepois = [];
+  if (!Array.isArray(db.data.faltaPagar)) db.data.faltaPagar = [];
+  if (!db.data.userData) db.data.userData = {};
+}
+
+function ensureUserData(userId) {
+  ensureDataStructures();
+  if (!db.data.userData[userId]) {
+    db.data.userData[userId] = createDefaultUserData();
+  }
+
+  const userData = db.data.userData[userId];
+  if (!userData.months) userData.months = {};
+  if (!userData.commissions) userData.commissions = defaultCommissions();
+  if (!Array.isArray(userData.comprarDepois)) userData.comprarDepois = [];
+  if (!Array.isArray(userData.faltaPagar)) userData.faltaPagar = [];
+
+  return userData;
+}
+
+function migrateLegacyDataToAdmin() {
+  ensureDataStructures();
+  const adminData = ensureUserData(DEFAULT_ADMIN.id);
+
+  if (Object.keys(adminData.months || {}).length === 0 && Object.keys(db.data.months || {}).length > 0) {
+    adminData.months = JSON.parse(JSON.stringify(db.data.months));
+  }
+
+  if ((adminData.comprarDepois || []).length === 0 && (db.data.comprarDepois || []).length > 0) {
+    adminData.comprarDepois = JSON.parse(JSON.stringify(db.data.comprarDepois));
+  }
+
+  if ((adminData.faltaPagar || []).length === 0 && (db.data.faltaPagar || []).length > 0) {
+    adminData.faltaPagar = JSON.parse(JSON.stringify(db.data.faltaPagar));
+  }
+
+  if (!adminData.commissions && db.data.commissions) {
+    adminData.commissions = { ...db.data.commissions };
+  }
+}
+
+async function resolveRequestContext(req) {
+  const authData = await getAuthData();
+  const users = authData.users || [];
+
+  const headerUserId = String(req.headers['x-user-id'] || '').trim();
+  const requester = users.find((u) => u.id === headerUserId) || users.find((u) => u.id === DEFAULT_ADMIN.id) || users[0];
+  const requesterRole = normalizeRole(requester?.role);
+  const isAdmin = requesterRole === 'admin';
+
+  const requestedUserId = String(req.query.userId || req.headers['x-target-user-id'] || '').trim();
+  const hasRequestedUser = requestedUserId && users.some((u) => u.id === requestedUserId);
+  const targetUserId = isAdmin && hasRequestedUser ? requestedUserId : (requester?.id || DEFAULT_ADMIN.id);
+
+  const userData = ensureUserData(targetUserId);
+
+  return {
+    authData,
+    requester,
+    isAdmin,
+    targetUserId,
+    userData,
+    users
+  };
+}
+
 async function getAuthData() {
   let authData = await db.getAuth();
   if (!authData) {
@@ -36,11 +143,73 @@ async function getAuthData() {
       username: 'Intercap Pneus',
       passwordHash: hashPassword('IPN2026@'),
       resetToken: null,
-      resetTokenExpires: null
+      resetTokenExpires: null,
+      users: [
+        { ...DEFAULT_ADMIN },
+        {
+          id: 'user-intercap',
+          username: 'Intercap Pneus',
+          displayName: 'Intercap Pneus',
+          role: 'user',
+          passwordHash: hashPassword('IPN2026@'),
+          resetToken: null,
+          resetTokenExpires: null,
+          createdAt: new Date().toISOString()
+        }
+      ]
     };
     await db.setAuth(authData);
   }
-  return authData;
+
+  const authObj = typeof authData.toObject === 'function' ? authData.toObject() : authData;
+
+  if (!Array.isArray(authObj.users)) {
+    authObj.users = [];
+  }
+
+  if (!authObj.users.some((u) => u.username === DEFAULT_ADMIN.username)) {
+    authObj.users.unshift({ ...DEFAULT_ADMIN });
+  }
+
+  if (authObj.username && authObj.passwordHash) {
+    const hasLegacyAsUser = authObj.users.some((u) => u.username === authObj.username);
+    if (!hasLegacyAsUser) {
+      authObj.users.push({
+        id: `user-${Date.now()}`,
+        username: authObj.username,
+        displayName: authObj.username,
+        role: 'user',
+        passwordHash: authObj.passwordHash,
+        resetToken: authObj.resetToken || null,
+        resetTokenExpires: authObj.resetTokenExpires || null,
+        createdAt: new Date().toISOString()
+      });
+    }
+  }
+
+  authObj.users = authObj.users.map((u, index) => ({
+    id: u.id || `user-${index + 1}`,
+    username: String(u.username || '').trim(),
+    displayName: String(u.displayName || u.username || '').trim(),
+    role: normalizeRole(u.role),
+    passwordHash: u.passwordHash,
+    resetToken: u.resetToken || null,
+    resetTokenExpires: u.resetTokenExpires || null,
+    createdAt: u.createdAt || new Date().toISOString()
+  })).filter((u) => u.username && u.passwordHash);
+
+  authObj.users.sort((a, b) => (a.id === DEFAULT_ADMIN.id ? -1 : b.id === DEFAULT_ADMIN.id ? 1 : 0));
+
+  const persisted = {
+    username: authObj.username || 'Intercap Pneus',
+    passwordHash: authObj.passwordHash || hashPassword('IPN2026@'),
+    resetToken: authObj.resetToken || null,
+    resetTokenExpires: authObj.resetTokenExpires || null,
+    users: authObj.users
+  };
+
+  await db.setAuth(persisted);
+  return persisted;
 }
 
 async function saveAuth(authData) {
@@ -48,12 +217,15 @@ async function saveAuth(authData) {
     username: authData.username,
     passwordHash: authData.passwordHash,
     resetToken: authData.resetToken || null,
-    resetTokenExpires: authData.resetTokenExpires || null
+    resetTokenExpires: authData.resetTokenExpires || null,
+    users: Array.isArray(authData.users) ? authData.users : []
   });
 }
 
 await db.read();
 await getAuthData();
+migrateLegacyDataToAdmin();
+await db.write();
 
 // Helper to get current month in YYYY-MM format
 function getCurrentMonth() {
@@ -71,8 +243,9 @@ function renumberIdsForMonth(monthData) {
 }
 
 // Get all available months
-app.get('/api/months', (req, res) => {
-  const months = Object.keys(db.data.months || {}).sort().reverse();
+app.get('/api/months', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  const months = Object.keys(ctx.userData.months || {}).sort().reverse();
   res.json(months);
 });
 
@@ -87,17 +260,14 @@ app.post('/api/login', async (req, res) => {
   const authData = await getAuthData();
   const passwordHash = hashPassword(password);
 
-  console.log('=== LOGIN DEBUG ===');
-  console.log('Username recebido:', username);
-  console.log('Username esperado:', authData.username);
-  console.log('Hash recebido:', passwordHash);
-  console.log('Hash esperado:', authData.passwordHash);
-  console.log('Match username:', username === authData.username);
-  console.log('Match hash:', passwordHash === authData.passwordHash);
-  console.log('==================');
+  const user = (authData.users || []).find((u) => u.username === username && u.passwordHash === passwordHash);
 
-  if (username === authData.username && passwordHash === authData.passwordHash) {
-    return res.status(200).json({ success: true });
+  if (user) {
+    ensureUserData(user.id);
+    return res.status(200).json({
+      success: true,
+      user: sanitizeUser(user)
+    });
   }
 
   return res.status(401).json({ message: 'Login ou senha incorretos' });
@@ -109,12 +279,14 @@ app.post('/api/months', async (req, res) => {
   if (!month || !/^\d{4}-\d{2}$/.test(month)) {
     return res.status(400).json({ error: 'Invalid month format. Use YYYY-MM' });
   }
+
+  const ctx = await resolveRequestContext(req);
   
-  if (db.data.months[month]) {
+  if (ctx.userData.months[month]) {
     return res.status(400).json({ error: 'Month already exists' });
   }
   
-  db.data.months[month] = {
+  ctx.userData.months[month] = {
     sales: []
   };
   await db.write();
@@ -122,9 +294,28 @@ app.post('/api/months', async (req, res) => {
 });
 
 // List sales for a specific month
-app.get('/api/sales', (req, res) => {
+app.get('/api/sales', async (req, res) => {
   const month = req.query.month || getCurrentMonth();
-  const monthData = db.data.months[month];
+  const ctx = await resolveRequestContext(req);
+
+  if (ctx.isAdmin && String(req.query.allUsers || '') === 'true') {
+    const aggregated = [];
+    const usersMap = new Map((ctx.authData.users || []).map((u) => [u.id, u]));
+    Object.entries(db.data.userData || {}).forEach(([userId, userData]) => {
+      const monthData = userData?.months?.[month];
+      const user = usersMap.get(userId);
+      (monthData?.sales || []).forEach((sale) => {
+        aggregated.push({
+          ...sale,
+          userId,
+          userName: user?.displayName || user?.username || userId
+        });
+      });
+    });
+    return res.json(aggregated.sort((a, b) => b.id - a.id));
+  }
+
+  const monthData = ctx.userData.months[month];
   
   if (!monthData) {
     return res.json([]);
@@ -152,14 +343,16 @@ app.post('/api/sales', async (req, res) => {
   
   const targetMonth = month || getCurrentMonth();
   
+  const ctx = await resolveRequestContext(req);
+
   // Ensure month exists
-  if (!db.data.months[targetMonth]) {
-    db.data.months[targetMonth] = {
+  if (!ctx.userData.months[targetMonth]) {
+    ctx.userData.months[targetMonth] = {
       sales: []
     };
   }
   
-  const monthData = db.data.months[targetMonth];
+  const monthData = ctx.userData.months[targetMonth];
   const id = monthData.sales.length + 1;
   const total = Number(unit_price) * qty;
   const sale = {
@@ -192,7 +385,8 @@ app.put('/api/sales/:id', async (req, res) => {
   }
   
   const targetMonth = month || getCurrentMonth();
-  const monthData = db.data.months[targetMonth];
+  const ctx = await resolveRequestContext(req);
+  const monthData = ctx.userData.months[targetMonth];
   
   if (!monthData) {
     return res.status(404).json({ error: 'Month not found' });
@@ -234,7 +428,8 @@ app.put('/api/sales/:id', async (req, res) => {
 app.delete('/api/sales/:id', async (req, res) => {
   const { id } = req.params;
   const month = req.query.month || getCurrentMonth();
-  const monthData = db.data.months[month];
+  const ctx = await resolveRequestContext(req);
+  const monthData = ctx.userData.months[month];
   
   if (!monthData) {
     return res.status(404).json({ error: 'Month not found' });
@@ -252,13 +447,15 @@ app.delete('/api/sales/:id', async (req, res) => {
 });
 
 // Get commissions config
-app.get('/api/commissions', (req, res) => {
-  res.json(db.data.commissions || { new: 5, recap: 8, recapping: 10, service: 0 });
+app.get('/api/commissions', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  res.json(ctx.userData.commissions || defaultCommissions());
 });
 
 // Update commissions config
 app.put('/api/commissions', async (req, res) => {
   try {
+    const ctx = await resolveRequestContext(req);
     const body = req.body;
     const newVal = body.new !== undefined ? Number(body.new) : null;
     const recapVal = body.recap !== undefined ? Number(body.recap) : null;
@@ -269,14 +466,14 @@ app.put('/api/commissions', async (req, res) => {
       return res.status(400).json({ error: 'Missing commission values' });
     }
 
-    db.data.commissions = { 
+    ctx.userData.commissions = { 
       new: newVal, 
       recap: recapVal, 
       recapping: recappingVal,
       service: serviceVal
     };
     await db.write();
-    res.json(db.data.commissions);
+    res.json(ctx.userData.commissions);
   } catch (err) {
     console.error('Erro ao atualizar comissões:', err);
     res.status(500).json({ error: 'Erro ao salvar comissões' });
@@ -286,8 +483,9 @@ app.put('/api/commissions', async (req, res) => {
 // ===== FLUXO DE VENDAS =====
 
 // ===== VAI COMPRAR (DEPOIS) =====
-app.get('/api/comprar-depois', (req, res) => {
-  const comprar = db.data.comprarDepois || [];
+app.get('/api/comprar-depois', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  const comprar = ctx.userData.comprarDepois || [];
   const sorted = comprar.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   res.json(sorted);
 });
@@ -298,12 +496,14 @@ app.post('/api/comprar-depois', async (req, res) => {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  if (!Array.isArray(db.data.comprarDepois)) {
-    db.data.comprarDepois = [];
+  const ctx = await resolveRequestContext(req);
+
+  if (!Array.isArray(ctx.userData.comprarDepois)) {
+    ctx.userData.comprarDepois = [];
   }
 
   const item = {
-    id: db.data.comprarDepois.length + 1,
+    id: ctx.userData.comprarDepois.length + 1,
     client,
     phone: phone || '',
     product,
@@ -315,7 +515,7 @@ app.post('/api/comprar-depois', async (req, res) => {
     created_at: new Date().toISOString()
   };
 
-  db.data.comprarDepois.push(item);
+  ctx.userData.comprarDepois.push(item);
   await db.write();
   res.status(201).json(item);
 });
@@ -324,7 +524,8 @@ app.put('/api/comprar-depois/:id', async (req, res) => {
   const { id } = req.params;
   const { client, phone, product, tire_type, unit_price, quantity, desfecho, base_trade } = req.body;
 
-  const comprar = db.data.comprarDepois || [];
+  const ctx = await resolveRequestContext(req);
+  const comprar = ctx.userData.comprarDepois || [];
   const itemIndex = comprar.findIndex(i => i.id == id);
 
   if (itemIndex === -1) {
@@ -350,7 +551,8 @@ app.put('/api/comprar-depois/:id', async (req, res) => {
 app.delete('/api/comprar-depois/:id', async (req, res) => {
   const { id } = req.params;
 
-  const comprar = db.data.comprarDepois || [];
+  const ctx = await resolveRequestContext(req);
+  const comprar = ctx.userData.comprarDepois || [];
   const itemIndex = comprar.findIndex(i => i.id == id);
 
   if (itemIndex === -1) {
@@ -372,7 +574,8 @@ app.delete('/api/comprar-depois/:id', async (req, res) => {
 app.post('/api/comprar-depois/:id/move-to-pagar', async (req, res) => {
   const { id } = req.params;
   const { date } = req.body;
-  const comprar = db.data.comprarDepois || [];
+  const ctx = await resolveRequestContext(req);
+  const comprar = ctx.userData.comprarDepois || [];
   const itemIndex = comprar.findIndex(i => i.id == id);
 
   if (itemIndex === -1) {
@@ -382,12 +585,12 @@ app.post('/api/comprar-depois/:id/move-to-pagar', async (req, res) => {
   const item = comprar[itemIndex];
 
   // Add to falta pagar
-  if (!Array.isArray(db.data.faltaPagar)) {
-    db.data.faltaPagar = [];
+  if (!Array.isArray(ctx.userData.faltaPagar)) {
+    ctx.userData.faltaPagar = [];
   }
 
   const pagarItem = {
-    id: db.data.faltaPagar.length + 1,
+    id: ctx.userData.faltaPagar.length + 1,
     client: item.client,
     phone: item.phone,
     product: item.product,
@@ -400,7 +603,7 @@ app.post('/api/comprar-depois/:id/move-to-pagar', async (req, res) => {
     created_at: new Date().toISOString()
   };
 
-  db.data.faltaPagar.push(pagarItem);
+  ctx.userData.faltaPagar.push(pagarItem);
 
   // Remove from comprar
   comprar.splice(itemIndex, 1);
@@ -413,8 +616,9 @@ app.post('/api/comprar-depois/:id/move-to-pagar', async (req, res) => {
 });
 
 // ===== FALTA PAGAR/ENTREGAR =====
-app.get('/api/falta-pagar', (req, res) => {
-  const pagar = db.data.faltaPagar || [];
+app.get('/api/falta-pagar', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  const pagar = ctx.userData.faltaPagar || [];
   const sorted = pagar.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   res.json(sorted);
 });
@@ -425,12 +629,14 @@ app.post('/api/falta-pagar', async (req, res) => {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  if (!Array.isArray(db.data.faltaPagar)) {
-    db.data.faltaPagar = [];
+  const ctx = await resolveRequestContext(req);
+
+  if (!Array.isArray(ctx.userData.faltaPagar)) {
+    ctx.userData.faltaPagar = [];
   }
 
   const item = {
-    id: db.data.faltaPagar.length + 1,
+    id: ctx.userData.faltaPagar.length + 1,
     client,
     phone: phone || '',
     product,
@@ -443,7 +649,7 @@ app.post('/api/falta-pagar', async (req, res) => {
     created_at: new Date().toISOString()
   };
 
-  db.data.faltaPagar.push(item);
+  ctx.userData.faltaPagar.push(item);
   await db.write();
   res.status(201).json(item);
 });
@@ -452,7 +658,8 @@ app.put('/api/falta-pagar/:id', async (req, res) => {
   const { id } = req.params;
   const { client, phone, product, tire_type, unit_price, quantity, date, desfecho, base_trade } = req.body;
 
-  const pagar = db.data.faltaPagar || [];
+  const ctx = await resolveRequestContext(req);
+  const pagar = ctx.userData.faltaPagar || [];
   const itemIndex = pagar.findIndex(i => i.id == id);
 
   if (itemIndex === -1) {
@@ -479,7 +686,8 @@ app.put('/api/falta-pagar/:id', async (req, res) => {
 app.delete('/api/falta-pagar/:id', async (req, res) => {
   const { id } = req.params;
 
-  const pagar = db.data.faltaPagar || [];
+  const ctx = await resolveRequestContext(req);
+  const pagar = ctx.userData.faltaPagar || [];
   const itemIndex = pagar.findIndex(i => i.id == id);
 
   if (itemIndex === -1) {
@@ -500,7 +708,8 @@ app.delete('/api/falta-pagar/:id', async (req, res) => {
 // Convert falta-pagar to sale
 app.post('/api/falta-pagar/:id/convert-to-sale', async (req, res) => {
   const { id } = req.params;
-  const pagar = db.data.faltaPagar || [];
+  const ctx = await resolveRequestContext(req);
+  const pagar = ctx.userData.faltaPagar || [];
   const itemIndex = pagar.findIndex(i => i.id == id);
 
   if (itemIndex === -1) {
@@ -525,11 +734,11 @@ app.post('/api/falta-pagar/:id/convert-to-sale', async (req, res) => {
   }
 
   // Ensure month exists
-  if (!db.data.months[monthToUse]) {
-    db.data.months[monthToUse] = { sales: [] };
+  if (!ctx.userData.months[monthToUse]) {
+    ctx.userData.months[monthToUse] = { sales: [] };
   }
 
-  const monthData = db.data.months[monthToUse];
+  const monthData = ctx.userData.months[monthToUse];
   const saleId = monthData.sales.length + 1;
   const total = pagarItem.unit_price * pagarItem.quantity;
 
@@ -705,6 +914,207 @@ app.post('/api/reset-password', async (req, res) => {
   await saveAuth(authData);
 
   return res.status(200).json({ success: true, message: 'Senha alterada com sucesso' });
+});
+
+function requireAdmin(ctx, res) {
+  if (!ctx.isAdmin) {
+    res.status(403).json({ message: 'Apenas administrador pode acessar este recurso' });
+    return false;
+  }
+  return true;
+}
+
+app.get('/api/admin/users', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  return res.json((ctx.authData.users || []).map(sanitizeUser));
+});
+
+app.post('/api/admin/users', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  const { username, password, displayName, role } = req.body || {};
+  const safeUsername = String(username || '').trim();
+  const safePassword = String(password || '').trim();
+  const safeDisplayName = String(displayName || safeUsername).trim();
+
+  if (!safeUsername || !safePassword) {
+    return res.status(400).json({ message: 'Username e password são obrigatórios' });
+  }
+
+  if ((ctx.authData.users || []).some((u) => u.username === safeUsername)) {
+    return res.status(409).json({ message: 'Já existe usuário com este login' });
+  }
+
+  const newUser = {
+    id: `user-${Date.now()}`,
+    username: safeUsername,
+    displayName: safeDisplayName,
+    role: normalizeRole(role),
+    passwordHash: hashPassword(safePassword),
+    resetToken: null,
+    resetTokenExpires: null,
+    createdAt: new Date().toISOString()
+  };
+
+  ctx.authData.users.push(newUser);
+  ensureUserData(newUser.id);
+  await saveAuth(ctx.authData);
+  await db.write();
+
+  return res.status(201).json({ user: sanitizeUser(newUser) });
+});
+
+app.put('/api/admin/users/:id', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  const targetId = req.params.id;
+  const targetUser = (ctx.authData.users || []).find((u) => u.id === targetId);
+  if (!targetUser) {
+    return res.status(404).json({ message: 'Usuário não encontrado' });
+  }
+
+  const { username, password, displayName, role, commissions } = req.body || {};
+
+  if (username !== undefined) {
+    const safeUsername = String(username).trim();
+    if (!safeUsername) {
+      return res.status(400).json({ message: 'Login inválido' });
+    }
+    const duplicate = (ctx.authData.users || []).find((u) => u.id !== targetId && u.username === safeUsername);
+    if (duplicate) {
+      return res.status(409).json({ message: 'Já existe usuário com este login' });
+    }
+    targetUser.username = safeUsername;
+  }
+
+  if (displayName !== undefined) {
+    targetUser.displayName = String(displayName || targetUser.username).trim() || targetUser.username;
+  }
+
+  if (password !== undefined && String(password).trim()) {
+    targetUser.passwordHash = hashPassword(String(password));
+  }
+
+  if (role !== undefined && targetUser.id !== DEFAULT_ADMIN.id) {
+    targetUser.role = normalizeRole(role);
+  }
+
+  if (commissions && typeof commissions === 'object') {
+    const userData = ensureUserData(targetId);
+    userData.commissions = {
+      new: Number(commissions.new ?? userData.commissions.new ?? 5),
+      recap: Number(commissions.recap ?? userData.commissions.recap ?? 8),
+      recapping: Number(commissions.recapping ?? userData.commissions.recapping ?? 10),
+      service: Number(commissions.service ?? userData.commissions.service ?? 0)
+    };
+  }
+
+  await saveAuth(ctx.authData);
+  await db.write();
+
+  return res.json({ user: sanitizeUser(targetUser) });
+});
+
+app.delete('/api/admin/users/:id', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  const targetId = req.params.id;
+  if (targetId === DEFAULT_ADMIN.id) {
+    return res.status(400).json({ message: 'Conta ADM padrão não pode ser removida' });
+  }
+
+  const beforeCount = (ctx.authData.users || []).length;
+  ctx.authData.users = (ctx.authData.users || []).filter((u) => u.id !== targetId);
+  if (ctx.authData.users.length === beforeCount) {
+    return res.status(404).json({ message: 'Usuário não encontrado' });
+  }
+
+  if (db.data.userData && db.data.userData[targetId]) {
+    delete db.data.userData[targetId];
+  }
+
+  await saveAuth(ctx.authData);
+  await db.write();
+
+  return res.status(204).end();
+});
+
+app.get('/api/admin/sales/search', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  const q = String(req.query.q || '').toLowerCase().trim();
+  const month = String(req.query.month || '').trim();
+  const onlyUserId = String(req.query.userId || '').trim();
+  const usersMap = new Map((ctx.authData.users || []).map((u) => [u.id, u]));
+  const result = [];
+
+  Object.entries(db.data.userData || {}).forEach(([userId, userData]) => {
+    if (onlyUserId && userId !== onlyUserId) return;
+
+    Object.entries(userData.months || {}).forEach(([monthKey, monthData]) => {
+      if (month && month !== monthKey) return;
+
+      (monthData.sales || []).forEach((sale) => {
+        const haystack = [sale.client, sale.phone, sale.product, String(sale.id)].join(' ').toLowerCase();
+        if (!q || haystack.includes(q)) {
+          result.push({
+            ...sale,
+            month: monthKey,
+            userId,
+            userName: usersMap.get(userId)?.displayName || usersMap.get(userId)?.username || userId
+          });
+        }
+      });
+    });
+  });
+
+  return res.json(result);
+});
+
+app.get('/api/admin/sales/summary', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  const monthFrom = String(req.query.monthFrom || '').trim();
+  const monthTo = String(req.query.monthTo || '').trim();
+  const onlyUserId = String(req.query.userId || '').trim();
+  const usersMap = new Map((ctx.authData.users || []).map((u) => [u.id, u]));
+
+  const perUser = {};
+  let grandTotal = 0;
+
+  Object.entries(db.data.userData || {}).forEach(([userId, userData]) => {
+    if (onlyUserId && userId !== onlyUserId) return;
+
+    Object.entries(userData.months || {}).forEach(([monthKey, monthData]) => {
+      if (monthFrom && monthKey < monthFrom) return;
+      if (monthTo && monthKey > monthTo) return;
+
+      const monthTotal = (monthData.sales || []).reduce((acc, sale) => acc + Number(sale.total || 0), 0);
+      if (!perUser[userId]) {
+        perUser[userId] = {
+          userId,
+          userName: usersMap.get(userId)?.displayName || usersMap.get(userId)?.username || userId,
+          total: 0,
+          months: {}
+        };
+      }
+      perUser[userId].total += monthTotal;
+      perUser[userId].months[monthKey] = (perUser[userId].months[monthKey] || 0) + monthTotal;
+      grandTotal += monthTotal;
+    });
+  });
+
+  return res.json({
+    grandTotal,
+    users: Object.values(perUser)
+  });
 });
 
 const PORT = process.env.PORT || 3001;
