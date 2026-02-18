@@ -4123,6 +4123,82 @@ body.dark-mode .admin-search-form select {
   white-space: nowrap;
 }
 
+.admin-sort-btn {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+body.dark-mode .admin-toolbar {
+  color: #cbd5e1;
+}
+
+.admin-secondary-btn {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+body.dark-mode .admin-secondary-btn {
+  border-color: #334155;
+  background: #0b1220;
+  color: #e2e8f0;
+}
+
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.admin-pagination button {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  border-radius: 6px;
+  padding: 5px 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-pagination span {
+  font-weight: 700;
+  color: #64748b;
+}
+
+body.dark-mode .admin-pagination button {
+  border-color: #334155;
+  background: #0b1220;
+  color: #cbd5e1;
+}
+
+body.dark-mode .admin-pagination span {
+  color: #cbd5e1;
+}
+
 body.dark-mode .admin-results-table th,
 body.dark-mode .admin-results-table td {
   border-color: #334155;

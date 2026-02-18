@@ -36,6 +36,9 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
   const [searchResults, setSearchResults] = useState([])
   const [summaryData, setSummaryData] = useState({ grandTotal: 0, users: [] })
   const [loading, setLoading] = useState(false)
+  const [sortConfig, setSortConfig] = useState({ key: 'month', direction: 'desc' })
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 15
 
   const usersMap = useMemo(() => new Map((users || []).map((user) => [user.id, user])), [users])
   const selectedUser = usersMap.get(selectedUserId)
@@ -51,6 +54,10 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
     })
     loadUserCommissions(selectedUser.id)
   }, [selectedUserId, users])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchResults, sortConfig])
 
   if (!isOpen) return null
 
@@ -164,6 +171,100 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
     } finally {
       setLoading(false)
     }
+  }
+
+  const sortValue = (sale, key) => {
+    if (key === 'total') return Number(sale.total || 0)
+    return String(sale[key] || '').toLowerCase()
+  }
+
+  const sortedSearchResults = useMemo(() => {
+    const list = [...searchResults]
+    const { key, direction } = sortConfig
+    const multiplier = direction === 'asc' ? 1 : -1
+
+    list.sort((a, b) => {
+      const valueA = sortValue(a, key)
+      const valueB = sortValue(b, key)
+      if (valueA < valueB) return -1 * multiplier
+      if (valueA > valueB) return 1 * multiplier
+      return 0
+    })
+
+    return list
+  }, [searchResults, sortConfig])
+
+  const totalPages = Math.max(1, Math.ceil(sortedSearchResults.length / pageSize))
+  const paginatedResults = useMemo(() => {
+    const start = (currentPage - 1) * pageSize
+    return sortedSearchResults.slice(start, start + pageSize)
+  }, [sortedSearchResults, currentPage])
+
+  const setSort = (key) => {
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        return { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' }
+      }
+      return { key, direction: 'asc' }
+    })
+  }
+
+  const sortIndicator = (key) => {
+    if (sortConfig.key !== key) return '↕'
+    return sortConfig.direction === 'asc' ? '↑' : '↓'
+  }
+
+  const exportCsv = (filename, rows) => {
+    if (!rows || rows.length === 0) {
+      alert('Não há dados para exportar.')
+      return
+    }
+
+    const csvContent = rows
+      .map((row) => row.map((value) => {
+        const text = String(value ?? '')
+        if (text.includes(';') || text.includes('"') || text.includes('\n')) {
+          return `"${text.replace(/"/g, '""')}"`
+        }
+        return text
+      }).join(';'))
+      .join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const handleExportSearchCsv = () => {
+    const rows = [
+      ['Usuário', 'Mês', 'Cliente', 'Telefone', 'Produto', 'Total']
+    ]
+
+    sortedSearchResults.forEach((sale) => {
+      rows.push([
+        sale.userName,
+        sale.month,
+        sale.client,
+        sale.phone || '',
+        sale.product,
+        Number(sale.total || 0).toFixed(2)
+      ])
+    })
+
+    exportCsv('busca-vendas.csv', rows)
+  }
+
+  const handleExportSummaryCsv = () => {
+    const rows = [['Usuário', 'Total']]
+    ;(summaryData.users || []).forEach((item) => {
+      rows.push([item.userName, Number(item.total || 0).toFixed(2)])
+    })
+    rows.push(['TOTAL GERAL', Number(summaryData.grandTotal || 0).toFixed(2)])
+    exportCsv('resumo-vendas-total.csv', rows)
   }
 
   const handleLoadSummary = async (event) => {
@@ -281,20 +382,25 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
               <button type="submit" disabled={loading}>Buscar</button>
             </form>
 
+            <div className="admin-toolbar">
+              <button type="button" className="admin-secondary-btn" onClick={handleExportSearchCsv}>Exportar CSV</button>
+              <span>Resultados: {sortedSearchResults.length}</span>
+            </div>
+
             <div className="admin-results-table-wrap">
               <table className="admin-results-table">
                 <thead>
                   <tr>
-                    <th>Usuário</th>
-                    <th>Mês</th>
-                    <th>Cliente</th>
-                    <th>Telefone</th>
-                    <th>Produto</th>
-                    <th>Total</th>
+                    <th><button className="admin-sort-btn" onClick={() => setSort('userName')}>Usuário {sortIndicator('userName')}</button></th>
+                    <th><button className="admin-sort-btn" onClick={() => setSort('month')}>Mês {sortIndicator('month')}</button></th>
+                    <th><button className="admin-sort-btn" onClick={() => setSort('client')}>Cliente {sortIndicator('client')}</button></th>
+                    <th><button className="admin-sort-btn" onClick={() => setSort('phone')}>Telefone {sortIndicator('phone')}</button></th>
+                    <th><button className="admin-sort-btn" onClick={() => setSort('product')}>Produto {sortIndicator('product')}</button></th>
+                    <th><button className="admin-sort-btn" onClick={() => setSort('total')}>Total {sortIndicator('total')}</button></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {searchResults.map((sale, index) => (
+                  {paginatedResults.map((sale, index) => (
                     <tr key={`${sale.userId}-${sale.month}-${sale.id}-${index}`}>
                       <td>{sale.userName}</td>
                       <td>{sale.month}</td>
@@ -304,8 +410,21 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
                       <td>R$ {Number(sale.total || 0).toFixed(2)}</td>
                     </tr>
                   ))}
+                  {paginatedResults.length === 0 && (
+                    <tr>
+                      <td colSpan={6}>Nenhuma venda encontrada para os filtros informados.</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
+            </div>
+
+            <div className="admin-pagination">
+              <button type="button" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>«</button>
+              <button type="button" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>‹</button>
+              <span>Página {currentPage} de {totalPages}</span>
+              <button type="button" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage >= totalPages}>›</button>
+              <button type="button" onClick={() => setCurrentPage(totalPages)} disabled={currentPage >= totalPages}>»</button>
             </div>
           </div>
         )}
@@ -322,6 +441,10 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
               </select>
               <button type="submit" disabled={loading}>Aplicar Filtros</button>
             </form>
+
+            <div className="admin-toolbar">
+              <button type="button" className="admin-secondary-btn" onClick={handleExportSummaryCsv}>Exportar CSV</button>
+            </div>
 
             <p className="admin-total-label">Total Geral: <strong>R$ {Number(summaryData.grandTotal || 0).toFixed(2)}</strong></p>
 
