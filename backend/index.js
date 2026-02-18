@@ -3,12 +3,14 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
+import dbFile from './db.js';
+import dbMongo from './db-mongo.js';
 
 dotenv.config();
 
 const mongoUri = String(process.env.MONGODB_URI || '').trim();
 const shouldUseMongo = Boolean(mongoUri) && !mongoUri.includes('COLE_SUA_SENHA_AQUI');
-const { default: db } = shouldUseMongo ? await import('./db-mongo.js') : await import('./db.js');
+const db = shouldUseMongo ? dbMongo : dbFile;
 
 if (shouldUseMongo) {
   console.log('Banco de dados ativo: MongoDB');
