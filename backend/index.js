@@ -3,9 +3,31 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
-import db from './db.js';
 
 dotenv.config();
+
+const mongoUri = (
+  process.env.MONGODB_URI ||
+  process.env.MONGODB_URL ||
+  process.env.DATABASE_URL ||
+  process.env.MONGO_URL ||
+  ''
+).trim();
+
+if (mongoUri && !process.env.MONGODB_URI) {
+  process.env.MONGODB_URI = mongoUri;
+}
+
+const shouldUseMongo = Boolean(mongoUri);
+let db;
+
+try {
+  ({ default: db } = await import(shouldUseMongo ? './db-mongo.js' : './db.js'));
+  console.log(`DB source: ${shouldUseMongo ? 'mongodb' : 'file'}`);
+} catch (error) {
+  console.error('Failed to initialize MongoDB, falling back to file DB.', error);
+  ({ default: db } = await import('./db.js'));
+}
 
 const app = express();
 
