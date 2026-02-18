@@ -45,6 +45,10 @@ export default function App() {
   const [adminSearch, setAdminSearch] = useState('')
   const [adminSales, setAdminSales] = useState([])
   const [adminSummary, setAdminSummary] = useState({ grandTotal: 0, users: [] })
+  const [adminAnnual, setAdminAnnual] = useState({ year: new Date().getFullYear(), months: [] })
+  const [adminCredentials, setAdminCredentials] = useState([])
+  const [activeLoginId, setActiveLoginId] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [newUserForm, setNewUserForm] = useState(emptyNewUser)
   const [adminLoading, setAdminLoading] = useState(false)
 
@@ -145,6 +149,11 @@ export default function App() {
       const defaultUser = users.find((user) => user.role !== 'admin') || users[0]
       setSelectedUserId(defaultUser?.id || '')
     }
+
+    if (!activeLoginId || !users.some((user) => user.id === activeLoginId)) {
+      const defaultLogin = users.find((user) => user.username === 'Intercap Pneus') || users[0]
+      setActiveLoginId(defaultLogin?.id || '')
+    }
   }
 
   const loadAdminSales = async (query = '') => {
@@ -168,6 +177,25 @@ export default function App() {
     setAdminSummary(res.data || { grandTotal: 0, users: [] })
   }
 
+  const loadAdminAnnual = async () => {
+    if (!isAdmin) return
+    const year = new Date().getFullYear()
+    const res = await axios.get(`${API}/admin/sales/annual?year=${year}`)
+    setAdminAnnual(res.data || { year, months: [] })
+  }
+
+  const loadAdminCredentials = async () => {
+    if (!isAdmin) return
+    const res = await axios.get(`${API}/admin/users/credentials`)
+    const list = Array.isArray(res.data) ? res.data : []
+    setAdminCredentials(list)
+
+    if (!activeLoginId || !list.some((item) => item.id === activeLoginId)) {
+      const defaultLogin = list.find((item) => item.username === 'Intercap Pneus') || list[0]
+      setActiveLoginId(defaultLogin?.id || '')
+    }
+  }
+
   const handleAdminQuickCreate = async (event) => {
     event.preventDefault()
     if (!newUserForm.displayName || !newUserForm.username || !newUserForm.password) {
@@ -185,6 +213,7 @@ export default function App() {
       })
       setNewUserForm(emptyNewUser)
       await loadAdminUsers()
+      await loadAdminCredentials()
       alert('Usuário criado com sucesso!')
     } catch (err) {
       alert(err.response?.data?.message || 'Erro ao criar usuário')
@@ -210,6 +239,10 @@ export default function App() {
       setAdminUsers([])
       setAdminSales([])
       setAdminSummary({ grandTotal: 0, users: [] })
+      setAdminAnnual({ year: new Date().getFullYear(), months: [] })
+      setAdminCredentials([])
+      setActiveLoginId('')
+      setShowPassword(false)
       localStorage.removeItem('authenticated')
       localStorage.removeItem('currentUser')
       delete axios.defaults.headers.common['x-user-id']
@@ -246,6 +279,8 @@ export default function App() {
       loadAdminUsers()
       loadAdminSales(adminSearch)
       loadAdminSummary()
+      loadAdminAnnual()
+      loadAdminCredentials()
       return
     }
 
@@ -301,6 +336,10 @@ export default function App() {
         setAdminUsers([])
         setAdminSales([])
         setAdminSummary({ grandTotal: 0, users: [] })
+        setAdminAnnual({ year: new Date().getFullYear(), months: [] })
+        setAdminCredentials([])
+        setActiveLoginId('')
+        setShowPassword(false)
         localStorage.removeItem('authenticated')
         localStorage.removeItem('currentUser')
         delete axios.defaults.headers.common['x-user-id']
@@ -405,11 +444,20 @@ export default function App() {
   const handleCommissionChange = (updatedCommissions) => setCommissions(updatedCommissions)
 
   const adminChartData = useMemo(() => {
-    return (adminSummary.users || []).map((item) => ({
-      name: item.userName,
-      total: Number(item.total || 0)
-    }))
-  }, [adminSummary])
+    return (adminAnnual.months || []).map((item) => {
+      const monthNumber = String(item.month || '').split('-')[1] || '01'
+      const label = monthNames[Number(monthNumber) - 1]?.substring(0, 3) || item.month
+      return {
+        name: label,
+        month: item.month,
+        total: Number(item.total || 0)
+      }
+    })
+  }, [adminAnnual])
+
+  const activeCredential = useMemo(() => {
+    return adminCredentials.find((item) => item.id === activeLoginId) || null
+  }, [adminCredentials, activeLoginId])
 
   return (
     <div className={`container ${darkMode ? 'dark-mode' : ''}`}>
@@ -551,70 +599,97 @@ export default function App() {
       </div>
 
       {isAdmin ? (
-        <div className="admin-home-grid">
-          <div className="admin-home-card admin-home-chart">
-            <h3>Gráfico total de vendas por usuário</h3>
+        <div className="admin-home-layout">
+          <div className="admin-home-card admin-home-sales-top">
+            <div className="admin-home-row-head">
+              <h3>Últimas vendas feitas</h3>
+              <div className="admin-home-search-row">
+                <input
+                  className="admin-home-search"
+                  value={adminSearch}
+                  onChange={(event) => setAdminSearch(event.target.value)}
+                  placeholder="Buscar últimas vendas"
+                />
+                <button className="admin-home-btn" onClick={() => loadAdminSales(adminSearch)} disabled={adminLoading}>Buscar</button>
+              </div>
+            </div>
+
+            <div className="admin-home-table-wrap">
+              <table className="admin-home-table">
+                <thead>
+                  <tr>
+                    <th>CLIENTE</th>
+                    <th>PRODUTO</th>
+                    <th>QUANTIDADE</th>
+                    <th>VALOR DA VENDA</th>
+                    <th>CONTA</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {adminSales.slice(0, 12).map((sale, index) => (
+                    <tr key={`${sale.userId}-${sale.id}-${index}`}>
+                      <td>{sale.client}</td>
+                      <td>{sale.product}</td>
+                      <td>{sale.quantity || '-'}</td>
+                      <td>R$ {Number(sale.total || 0).toFixed(2)}</td>
+                      <td>{sale.userName}</td>
+                    </tr>
+                  ))}
+                  {adminSales.length === 0 && (
+                    <tr>
+                      <td colSpan={5}>Nenhuma venda encontrada.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="admin-home-card admin-home-chart-full">
+            <h3>Gráfico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
             <p className="admin-home-total">Total geral: <strong>R$ {Number(adminSummary.grandTotal || 0).toFixed(2)}</strong></p>
-            <div className="admin-home-chart-wrap">
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={adminChartData} margin={{ top: 8, right: 16, left: 0, bottom: 24 }}>
+            <div className="admin-home-chart-wrap full-width">
+              <ResponsiveContainer width="100%" height={360}>
+                <BarChart data={adminChartData} margin={{ top: 12, right: 16, left: 0, bottom: 16 }}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" angle={-20} textAnchor="end" height={72} />
+                  <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip formatter={(value) => `R$ ${Number(value).toFixed(2)}`} />
-                  <Bar dataKey="total" fill="var(--primary-color)" radius={[6, 6, 0, 0]} />
+                  <Tooltip formatter={(value) => `R$ ${Number(value).toFixed(2)}`} labelFormatter={(label, payload) => payload?.[0]?.payload?.month || label} />
+                  <Bar dataKey="total" fill="var(--primary-color)" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="admin-home-card">
-            <h3>Últimas vendas</h3>
-            <div className="admin-home-search-row">
-              <input
-                className="admin-home-search"
-                value={adminSearch}
-                onChange={(event) => setAdminSearch(event.target.value)}
-                placeholder="Buscar por nome, número, produto ou ID"
-              />
-              <button
-                className="admin-home-btn"
-                onClick={() => loadAdminSales(adminSearch)}
-                disabled={adminLoading}
-              >
-                Buscar
+          <div className="admin-home-card admin-home-login-card">
+            <div className="admin-login-head">
+              <h3>Login ativo</h3>
+              <button className="btn-eye" onClick={() => setShowPassword((prev) => !prev)} title="Desmascarar senha">
+                {showPassword ? '🙈' : '👁️'}
               </button>
             </div>
 
-            <div className="admin-home-sales-list">
-              {adminSales.slice(0, 12).map((sale, index) => (
-                <div key={`${sale.userId}-${sale.id}-${index}`} className="admin-home-sale-item">
-                  <div>
-                    <strong>{sale.client}</strong>
-                    <span>{sale.userName} • {sale.month}</span>
-                  </div>
-                  <div>
-                    <strong>R$ {Number(sale.total || 0).toFixed(2)}</strong>
-                    <span>{sale.product}</span>
-                  </div>
-                </div>
+            <select
+              className="admin-user-select"
+              value={activeLoginId}
+              onChange={(event) => setActiveLoginId(event.target.value)}
+            >
+              {adminCredentials.map((cred) => (
+                <option key={cred.id} value={cred.id}>{cred.displayName} ({cred.username})</option>
               ))}
-              {adminSales.length === 0 && <p>Nenhuma venda encontrada.</p>}
-            </div>
-          </div>
+            </select>
 
-          <div className="admin-home-card">
-            <h3>Logins ativos</h3>
-            <div className="admin-home-users-list">
-              {adminUsers.map((user) => (
-                <div key={user.id} className="admin-home-user-item">
-                  <strong>{user.displayName}</strong>
-                  <span>{user.username} • {user.role}</span>
-                </div>
-              ))}
-            </div>
+            {activeCredential ? (
+              <div className="admin-login-details">
+                <p><strong>Login:</strong> {activeCredential.username}</p>
+                <p><strong>Senha:</strong> {showPassword ? (activeCredential.password || 'Não disponível') : '••••••••••'}</p>
+                <p className="admin-login-note">Clique no olho para desmascarar.</p>
+              </div>
+            ) : (
+              <p>Nenhum login disponível.</p>
+            )}
 
-            <h4>Adicionar novo usuário</h4>
+            <h4>criar mais contas</h4>
             <form className="admin-home-user-form" onSubmit={handleAdminQuickCreate}>
               <input
                 value={newUserForm.displayName}

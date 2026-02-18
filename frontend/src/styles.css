@@ -4226,6 +4226,20 @@ body.dark-mode .admin-total-label {
   gap: 14px;
 }
 
+.admin-home-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
+}
+
+.admin-home-sales-top {
+  grid-column: 1 / -1;
+}
+
+.admin-home-chart-full {
+  grid-column: 1 / -1;
+}
+
 .admin-home-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -4248,10 +4262,44 @@ body.dark-mode .admin-total-label {
   height: 330px;
 }
 
+.admin-home-chart-wrap.full-width {
+  height: 380px;
+}
+
+.admin-home-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 .admin-home-search-row {
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
+}
+
+.admin-home-table-wrap {
+  overflow: auto;
+}
+
+.admin-home-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.admin-home-table th,
+.admin-home-table td {
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 8px;
+  white-space: nowrap;
+}
+
+.admin-home-table th {
+  color: #334155;
+  font-size: 12px;
 }
 
 .admin-home-search {
@@ -4345,6 +4393,43 @@ body.dark-mode .admin-total-label {
   padding: 9px 10px;
 }
 
+.admin-home-login-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-login-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-eye {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  border-radius: 8px;
+  width: 40px;
+  height: 36px;
+  cursor: pointer;
+}
+
+.admin-login-details {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px;
+  background: #f8fafc;
+}
+
+.admin-login-details p {
+  margin: 0 0 6px 0;
+}
+
+.admin-login-note {
+  color: #64748b;
+  font-size: 12px;
+}
+
 body.dark-mode .admin-home-card {
   background: #0f172a;
   border-color: #334155;
@@ -4367,6 +4452,30 @@ body.dark-mode .admin-home-user-item {
   border-color: #334155;
 }
 
+body.dark-mode .admin-home-table th,
+body.dark-mode .admin-home-table td {
+  border-color: #334155;
+}
+
+body.dark-mode .admin-home-table th {
+  color: #cbd5e1;
+}
+
+body.dark-mode .btn-eye {
+  background: #0b1220;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+body.dark-mode .admin-login-details {
+  background: #111827;
+  border-color: #334155;
+}
+
+body.dark-mode .admin-login-note {
+  color: #94a3b8;
+}
+
 body.dark-mode .admin-home-sale-item span,
 body.dark-mode .admin-home-user-item span {
   color: #94a3b8;
@@ -4384,6 +4493,20 @@ body.dark-mode .admin-chart-wrap {
 
   .admin-home-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-home-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-home-sales-top,
+  .admin-home-chart-full {
+    grid-column: auto;
+  }
+
+  .admin-home-row-head {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 

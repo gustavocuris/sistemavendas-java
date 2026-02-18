@@ -26,6 +26,7 @@ const authSchema = new mongoose.Schema({
       username: String,
       displayName: String,
       role: String,
+      passwordPlain: String,
       passwordHash: String,
       resetToken: String,
       resetTokenExpires: Date,

@@ -34,6 +34,7 @@ const DEFAULT_ADMIN = {
   username: 'ADM',
   displayName: 'Administrador',
   role: 'admin',
+  passwordPlain: 'ADM@Sv2026',
   passwordHash: hashPassword('ADM@Sv2026'),
   resetToken: null,
   resetTokenExpires: null,
@@ -151,6 +152,7 @@ async function getAuthData() {
           username: 'Intercap Pneus',
           displayName: 'Intercap Pneus',
           role: 'user',
+          passwordPlain: 'IPN2026@',
           passwordHash: hashPassword('IPN2026@'),
           resetToken: null,
           resetTokenExpires: null,
@@ -179,6 +181,7 @@ async function getAuthData() {
         username: authObj.username,
         displayName: authObj.username,
         role: 'user',
+        passwordPlain: authObj.username === 'Intercap Pneus' ? 'IPN2026@' : null,
         passwordHash: authObj.passwordHash,
         resetToken: authObj.resetToken || null,
         resetTokenExpires: authObj.resetTokenExpires || null,
@@ -192,6 +195,7 @@ async function getAuthData() {
     username: String(u.username || '').trim(),
     displayName: String(u.displayName || u.username || '').trim(),
     role: normalizeRole(u.role),
+    passwordPlain: u.passwordPlain || null,
     passwordHash: u.passwordHash,
     resetToken: u.resetToken || null,
     resetTokenExpires: u.resetTokenExpires || null,
@@ -953,6 +957,7 @@ app.post('/api/admin/users', async (req, res) => {
     username: safeUsername,
     displayName: safeDisplayName,
     role: normalizeRole(role),
+    passwordPlain: safePassword,
     passwordHash: hashPassword(safePassword),
     resetToken: null,
     resetTokenExpires: null,
@@ -996,6 +1001,7 @@ app.put('/api/admin/users/:id', async (req, res) => {
   }
 
   if (password !== undefined && String(password).trim()) {
+    targetUser.passwordPlain = String(password);
     targetUser.passwordHash = hashPassword(String(password));
   }
 
@@ -1115,6 +1121,53 @@ app.get('/api/admin/sales/summary', async (req, res) => {
     grandTotal,
     users: Object.values(perUser)
   });
+});
+
+app.get('/api/admin/sales/annual', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  const year = Number(req.query.year || new Date().getFullYear());
+  const fromMonth = `${year}-01`;
+  const toMonth = `${year}-12`;
+
+  const monthTotals = {};
+  const usersMap = new Map((ctx.authData.users || []).map((u) => [u.id, u]));
+
+  Object.entries(db.data.userData || {}).forEach(([userId, userData]) => {
+    Object.entries(userData.months || {}).forEach(([monthKey, monthData]) => {
+      if (monthKey < fromMonth || monthKey > toMonth) return;
+      const total = (monthData.sales || []).reduce((acc, sale) => acc + Number(sale.total || 0), 0);
+      if (!monthTotals[monthKey]) {
+        monthTotals[monthKey] = {
+          month: monthKey,
+          total: 0,
+          users: {}
+        };
+      }
+      monthTotals[monthKey].total += total;
+      const userName = usersMap.get(userId)?.displayName || usersMap.get(userId)?.username || userId;
+      monthTotals[monthKey].users[userName] = (monthTotals[monthKey].users[userName] || 0) + total;
+    });
+  });
+
+  const list = Object.values(monthTotals).sort((a, b) => a.month.localeCompare(b.month));
+  return res.json({ year, months: list });
+});
+
+app.get('/api/admin/users/credentials', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  const credentials = (ctx.authData.users || []).map((user) => ({
+    id: user.id,
+    displayName: user.displayName || user.username,
+    username: user.username,
+    role: normalizeRole(user.role),
+    password: user.passwordPlain || null
+  }));
+
+  return res.json(credentials);
 });
 
 const PORT = process.env.PORT || 3001;
