@@ -8,6 +8,7 @@ import ChartView from './components/ChartView'
 import NotesPanel from './NotesPanel'
 import Login from './components/Login'
 import AdminPanel from './components/AdminPanel'
+import LoginManager from './components/LoginManager'
 
 const API = `${import.meta.env.VITE_API_URL}/api`
 
@@ -42,6 +43,7 @@ export default function App() {
   const [adminUsers, setAdminUsers] = useState([])
   const [selectedUserId, setSelectedUserId] = useState('')
   const [showAdminPanel, setShowAdminPanel] = useState(false)
+  const [showLoginManager, setShowLoginManager] = useState(false)
   const [adminSearch, setAdminSearch] = useState('')
   const [adminSales, setAdminSales] = useState([])
   const [adminSummary, setAdminSummary] = useState({ grandTotal: 0, users: [] })
@@ -149,11 +151,6 @@ export default function App() {
       const defaultUser = users.find((user) => user.role !== 'admin') || users[0]
       setSelectedUserId(defaultUser?.id || '')
     }
-
-    if (!activeLoginId || !users.some((user) => user.id === activeLoginId)) {
-      const defaultLogin = users.find((user) => user.username === 'Intercap Pneus') || users[0]
-      setActiveLoginId(defaultLogin?.id || '')
-    }
   }
 
   const loadAdminSales = async (query = '') => {
@@ -189,11 +186,6 @@ export default function App() {
     const res = await axios.get(`${API}/admin/users/credentials`)
     const list = Array.isArray(res.data) ? res.data : []
     setAdminCredentials(list)
-
-    if (!activeLoginId || !list.some((item) => item.id === activeLoginId)) {
-      const defaultLogin = list.find((item) => item.username === 'Intercap Pneus') || list[0]
-      setActiveLoginId(defaultLogin?.id || '')
-    }
   }
 
   const handleAdminQuickCreate = async (event) => {
@@ -222,6 +214,39 @@ export default function App() {
     }
   }
 
+  const createUser = async (userData) => {
+    setAdminLoading(true)
+    try {
+      await axios.post(`${API}/admin/users`, {
+        displayName: userData.displayName,
+        username: userData.username,
+        password: userData.password,
+        role: 'user'
+      })
+      await loadAdminUsers()
+      await loadAdminCredentials()
+      alert('Usuário criado com sucesso!')
+    } catch (err) {
+      alert(err.response?.data?.message || 'Erro ao criar usuário')
+    } finally {
+      setAdminLoading(false)
+    }
+  }
+
+  const deleteUser = async (userId) => {
+    setAdminLoading(true)
+    try {
+      await axios.delete(`${API}/admin/users/${userId}`)
+      await loadAdminUsers()
+      await loadAdminCredentials()
+      alert('Usuário deletado com sucesso!')
+    } catch (err) {
+      alert(err.response?.data?.message || 'Erro ao deletar usuário')
+    } finally {
+      setAdminLoading(false)
+    }
+  }
+
   const handleLogin = (user) => {
     setIsAuthenticated(true)
     localStorage.setItem('authenticated', 'true')
@@ -241,8 +266,6 @@ export default function App() {
       setAdminSummary({ grandTotal: 0, users: [] })
       setAdminAnnual({ year: new Date().getFullYear(), months: [] })
       setAdminCredentials([])
-      setActiveLoginId('')
-      setShowPassword(false)
       localStorage.removeItem('authenticated')
       localStorage.removeItem('currentUser')
       delete axios.defaults.headers.common['x-user-id']
@@ -338,8 +361,6 @@ export default function App() {
         setAdminSummary({ grandTotal: 0, users: [] })
         setAdminAnnual({ year: new Date().getFullYear(), months: [] })
         setAdminCredentials([])
-        setActiveLoginId('')
-        setShowPassword(false)
         localStorage.removeItem('authenticated')
         localStorage.removeItem('currentUser')
         delete axios.defaults.headers.common['x-user-id']
@@ -454,10 +475,6 @@ export default function App() {
       }
     })
   }, [adminAnnual])
-
-  const activeCredential = useMemo(() => {
-    return adminCredentials.find((item) => item.id === activeLoginId) || null
-  }, [adminCredentials, activeLoginId])
 
   return (
     <div className={`container ${darkMode ? 'dark-mode' : ''}`}>
@@ -662,59 +679,12 @@ export default function App() {
           </div>
 
           <div className="admin-home-card admin-home-login-card">
-            <div className="admin-login-head">
-              <h3>Login ativo</h3>
-              <button className="btn-eye" onClick={() => setShowPassword((prev) => !prev)} title="Desmascarar senha">
-                {showPassword ? '🙈' : '👁️'}
-              </button>
-            </div>
-
-            <select
-              className="admin-user-select"
-              value={activeLoginId}
-              onChange={(event) => setActiveLoginId(event.target.value)}
+            <button
+              className="btn-eye-large"
+              onClick={() => setShowLoginManager(true)}
+              title="Gerenciar contas"
             >
-              {adminCredentials.map((cred) => (
-                <option key={cred.id} value={cred.id}>{cred.displayName} ({cred.username})</option>
-              ))}
-            </select>
-
-            {activeCredential ? (
-              <div className="admin-login-details">
-                <p><strong>Login:</strong> {activeCredential.username}</p>
-                <p><strong>Senha:</strong> {showPassword ? (activeCredential.password || 'Não disponível') : '••••••••••'}</p>
-                <p className="admin-login-note">Clique no olho para desmascarar.</p>
-              </div>
-            ) : (
-              <p>Nenhum login disponível.</p>
-            )}
-
-            <h4>criar mais contas</h4>
-            <form className="admin-home-user-form" onSubmit={handleAdminQuickCreate}>
-              <input
-                value={newUserForm.displayName}
-                onChange={(event) => setNewUserForm((prev) => ({ ...prev, displayName: event.target.value }))}
-                placeholder="Nome de referência"
-                required
-              />
-              <input
-                value={newUserForm.username}
-                onChange={(event) => setNewUserForm((prev) => ({ ...prev, username: event.target.value }))}
-                placeholder="Login"
-                required
-              />
-              <input
-                type="password"
-                value={newUserForm.password}
-                onChange={(event) => setNewUserForm((prev) => ({ ...prev, password: event.target.value }))}
-                placeholder="Senha"
-                required
-              />
-              <button type="submit" className="admin-home-btn" disabled={adminLoading}>Criar usuário</button>
-            </form>
-
-            <button className="admin-home-btn admin-home-btn-secondary" onClick={() => setShowAdminPanel(true)}>
-              Gerenciar contas avançado
+              👁️ Contas
             </button>
           </div>
         </div>
@@ -747,6 +717,19 @@ export default function App() {
           onUsersRefresh={loadAdminUsers}
           selectedUserId={selectedUserId}
           onSelectUser={setSelectedUserId}
+        />
+      )}
+
+      {showLoginManager && isAdmin && (
+        <LoginManager
+          isOpen={showLoginManager}
+          onClose={() => setShowLoginManager(false)}
+          adminCredentials={adminCredentials}
+          onCreateUser={createUser}
+          onDeleteUser={deleteUser}
+          onRefresh={loadAdminCredentials}
+          adminLoading={adminLoading}
+          darkMode={darkMode}
         />
       )}
 
