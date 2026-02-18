@@ -275,21 +275,20 @@ export default function App() {
     setCurrentUser(resolvedUser)
     localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
     axios.defaults.headers.common['x-user-id'] = resolvedUser.id
+    // Dispara o useEffect para carregar dados imediatamente
   }
 
   const handleLogout = () => {
-    openConfirm('Deseja realmente sair do sistema?', () => {
-      setIsAuthenticated(false)
-      setCurrentUser(null)
-      setAdminUsers([])
-      setAdminSales([])
-      setAdminSummary({ grandTotal: 0, users: [] })
-      setAdminAnnual({ year: new Date().getFullYear(), months: [] })
-      setAdminCredentials([])
-      localStorage.removeItem('authenticated')
-      localStorage.removeItem('currentUser')
-      delete axios.defaults.headers.common['x-user-id']
-    })
+    setIsAuthenticated(false)
+    setCurrentUser(null)
+    setAdminUsers([])
+    setAdminSales([])
+    setAdminSummary({ grandTotal: 0, users: [] })
+    setAdminAnnual({ year: new Date().getFullYear(), months: [] })
+    setAdminCredentials([])
+    localStorage.removeItem('authenticated')
+    localStorage.removeItem('currentUser')
+    delete axios.defaults.headers.common['x-user-id']
   }
 
   const openConfirm = (message, onConfirm) => setConfirmState({ open: true, message, onConfirm })
