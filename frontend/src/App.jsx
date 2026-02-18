@@ -329,9 +329,16 @@ export default function App() {
       } else {
         await loadCommissions()
         const [months, monthsWithSales] = await Promise.all([loadMonths(), loadMonthsWithSales()])
-        const targetMonth = monthsWithSales[0] || months[0] || currentMonth
-
-        if (targetMonth && targetMonth !== currentMonth) {
+        
+        // Preferir mês salvo no localStorage se tiver vendas, senão ir pro primeiro com vendas
+        let targetMonth = currentMonth
+        if (monthsWithSales.length > 0) {
+          if (!monthsWithSales.includes(currentMonth)) {
+            targetMonth = monthsWithSales[0]
+            setCurrentMonth(targetMonth)
+          }
+        } else if (months.length > 0) {
+          targetMonth = months[0]
           setCurrentMonth(targetMonth)
         }
 
