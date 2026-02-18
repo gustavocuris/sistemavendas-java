@@ -154,6 +154,31 @@ class DB {
   async read() {
     this.load();
   }
+
+  async getAuth() {
+    const authPath = path.join(dataDir, 'auth.json');
+    try {
+      if (fs.existsSync(authPath)) {
+        const content = fs.readFileSync(authPath, 'utf-8');
+        return JSON.parse(content);
+      }
+      return null;
+    } catch (error) {
+      console.error('Erro ao carregar auth:', error);
+      return null;
+    }
+  }
+
+  async setAuth(authData) {
+    const authPath = path.join(dataDir, 'auth.json');
+    try {
+      fs.writeFileSync(authPath, JSON.stringify(authData, null, 2), 'utf-8');
+      console.log('Autenticacao salva');
+    } catch (error) {
+      console.error('Erro ao salvar auth:', error);
+      throw error;
+    }
+  }
 }
 
 const db = new DB(filePath);

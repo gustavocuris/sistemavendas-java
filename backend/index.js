@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
-import db from './db-mongo.js';
+import db from './db.js';
 
 dotenv.config();
 
