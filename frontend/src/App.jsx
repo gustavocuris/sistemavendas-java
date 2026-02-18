@@ -6,6 +6,7 @@ import CommissionSummary from './components/CommissionSummary'
 import ChartView from './components/ChartView'
 import NotesPanel from './NotesPanel'
 import Login from './components/Login'
+import AdminPanel from './components/AdminPanel'
 
 const API = `${import.meta.env.VITE_API_URL}/api`
 
@@ -30,6 +31,9 @@ export default function App(){
       return null
     }
   })
+  const [adminUsers, setAdminUsers] = useState([])
+  const [selectedUserId, setSelectedUserId] = useState(() => localStorage.getItem('selectedUserId') || '')
+  const [showAdminPanel, setShowAdminPanel] = useState(false)
   const [sales, setSales] = useState([])
   const [editing, setEditing] = useState(null)
   const [copiedSale, setCopiedSale] = useState(null)
@@ -108,10 +112,18 @@ export default function App(){
     document.documentElement.style.setProperty('--primary-light-rgb', hexToRgbString(lightHex))
   }
 
+  const getScopedQuery = (prefix = '?') => {
+    if (currentUser?.role === 'admin' && selectedUserId) {
+      return `${prefix}userId=${encodeURIComponent(selectedUserId)}`
+    }
+    return ''
+  }
+
   const load = async () => {
     try {
       setIsLoading(true)
-      const res = await axios.get(`${API}/sales?month=${currentMonth}`)
+      const scoped = currentUser?.role === 'admin' && selectedUserId ? `&userId=${encodeURIComponent(selectedUserId)}` : ''
+      const res = await axios.get(`${API}/sales?month=${currentMonth}${scoped}`)
       setSales(res.data)
       // Atualiza lista de meses com dados
       if (res.data.length > 0) {
@@ -127,13 +139,28 @@ export default function App(){
   }
 
   const loadMonths = async () => {
-    const res = await axios.get(`${API}/months`)
+    const res = await axios.get(`${API}/months${getScopedQuery('?')}`)
     setAvailableMonths(res.data)
   }
 
   const loadCommissions = async ()=>{
-    const res = await axios.get(`${API}/commissions`)
+    const res = await axios.get(`${API}/commissions${getScopedQuery('?')}`)
     setCommissions(res.data)
+  }
+
+  const loadAdminUsers = async () => {
+    if (currentUser?.role !== 'admin') return
+    const res = await axios.get(`${API}/admin/users`)
+    const users = Array.isArray(res.data) ? res.data : []
+    setAdminUsers(users)
+
+    if (!selectedUserId || !users.some((user) => user.id === selectedUserId)) {
+      const defaultUserId = users.find((user) => user.role !== 'admin')?.id || users[0]?.id || ''
+      if (defaultUserId) {
+        setSelectedUserId(defaultUserId)
+        localStorage.setItem('selectedUserId', defaultUserId)
+      }
+    }
   }
 
   const handleLogin = (user) => {
@@ -144,14 +171,21 @@ export default function App(){
     setCurrentUser(resolvedUser)
     localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
     axios.defaults.headers.common['x-user-id'] = resolvedUser.id
+
+    if (resolvedUser.role !== 'admin') {
+      setSelectedUserId(resolvedUser.id)
+      localStorage.setItem('selectedUserId', resolvedUser.id)
+    }
   }
 
   const handleLogout = () => {
     openConfirm('Deseja realmente sair do sistema?', () => {
       setIsAuthenticated(false)
       setCurrentUser(null)
+      setAdminUsers([])
       localStorage.removeItem('authenticated')
       localStorage.removeItem('currentUser')
+      localStorage.removeItem('selectedUserId')
       delete axios.defaults.headers.common['x-user-id']
     })
   }
@@ -171,28 +205,30 @@ export default function App(){
     closeConfirm()
   }
 
-  useEffect(()=>{ 
-    if (isAuthenticated) {
-      load()
-      loadCommissions()
-      loadMonths()
-      useEffect(() => {
-        if (!isAuthenticated) {
-          delete axios.defaults.headers.common['x-user-id']
-          return
-        }
-
-        const resolvedUser = currentUser || { id: 'adm', username: 'ADM', displayName: 'Administrador', role: 'admin' }
-        axios.defaults.headers.common['x-user-id'] = resolvedUser.id
-
-        if (!currentUser) {
-          setCurrentUser(resolvedUser)
-          localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
-        }
-      }, [isAuthenticated, currentUser])
-
+  useEffect(() => {
+    if (!isAuthenticated) {
+      delete axios.defaults.headers.common['x-user-id']
+      return
     }
-  }, [isAuthenticated])
+
+    const resolvedUser = currentUser || { id: 'adm', username: 'ADM', displayName: 'Administrador', role: 'admin' }
+    axios.defaults.headers.common['x-user-id'] = resolvedUser.id
+
+    if (!currentUser) {
+      setCurrentUser(resolvedUser)
+      localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
+    }
+  }, [isAuthenticated, currentUser])
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+    load()
+    loadCommissions()
+    loadMonths()
+    if (currentUser?.role === 'admin') {
+      loadAdminUsers()
+    }
+  }, [isAuthenticated, currentUser?.role, selectedUserId])
 
   // Aplicar estilos imediatamente na montagem
   useEffect(() => {
@@ -211,7 +247,7 @@ export default function App(){
     if (isAuthenticated) {
       load()
     }
-  }, [currentMonth])
+  }, [currentMonth, selectedUserId])
 
   useEffect(() => {
     if (darkMode) {
@@ -246,8 +282,10 @@ export default function App(){
         // Logout automático
         setIsAuthenticated(false)
         setCurrentUser(null)
+        setAdminUsers([])
         localStorage.removeItem('authenticated')
         localStorage.removeItem('currentUser')
+        localStorage.removeItem('selectedUserId')
         delete axios.defaults.headers.common['x-user-id']
         alert('Sessão encerrada por inatividade.')
       }, INACTIVITY_TIME)
@@ -286,7 +324,7 @@ export default function App(){
   }
 
   const create = async (payload)=>{
-    await axios.post(`${API}/sales`, { ...payload, month: currentMonth })
+    await axios.post(`${API}/sales${getScopedQuery('?')}`, { ...payload, month: currentMonth })
     // Marca mês como tendo dados
     setMonthsWithData(prev => 
       prev.includes(currentMonth) ? prev : [...prev, currentMonth]
@@ -296,7 +334,7 @@ export default function App(){
     setChartRefresh(prev => prev + 1)
   }
   const update = async (id, payload)=>{
-    await axios.put(`${API}/sales/${id}`, { ...payload, month: currentMonth })
+    await axios.put(`${API}/sales/${id}${getScopedQuery('?')}`, { ...payload, month: currentMonth })
     setEditing(null)
     await load()
     setChartRefresh(prev => prev + 1)
@@ -304,7 +342,8 @@ export default function App(){
   const remove = (id)=>{
     openConfirm('Deseja realmente apagar essa venda?', async () => {
       try {
-        await axios.delete(`${API}/sales/${id}?month=${currentMonth}`)
+        const scoped = currentUser?.role === 'admin' && selectedUserId ? `&userId=${encodeURIComponent(selectedUserId)}` : ''
+        await axios.delete(`${API}/sales/${id}?month=${currentMonth}${scoped}`)
       } catch (err) {
         console.error('Erro ao deletar venda:', err)
         alert('Erro ao deletar venda. Tente novamente.')
@@ -312,7 +351,8 @@ export default function App(){
       }
       await load()
       // Após deletar, recarrega para verificar se ficou vazio
-      const res = await axios.get(`${API}/sales?month=${currentMonth}`)
+      const scoped = currentUser?.role === 'admin' && selectedUserId ? `&userId=${encodeURIComponent(selectedUserId)}` : ''
+      const res = await axios.get(`${API}/sales?month=${currentMonth}${scoped}`)
       if (res.data.length === 0) {
         setMonthsWithData(prev => prev.filter(m => m !== currentMonth))
       }
@@ -339,7 +379,7 @@ export default function App(){
   const createNewMonth = async (monthNum, year) => {
     const monthStr = `${year}-${String(monthNum).padStart(2, '0')}`
     try {
-      await axios.post(`${API}/months`, { month: monthStr })
+      await axios.post(`${API}/months${getScopedQuery('?')}`, { month: monthStr })
       await loadMonths()
       setCurrentMonth(monthStr)
     } catch (err) {
@@ -429,6 +469,15 @@ export default function App(){
               <line x1="21" y1="12" x2="9" y2="12"></line>
             </svg>
           </button>
+          {currentUser?.role === 'admin' && (
+            <button className="btn-chart" onClick={() => setShowAdminPanel(true)} title="Painel de administração">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 3h18v4H3z"></path>
+                <path d="M3 10h18v4H3z"></path>
+                <path d="M3 17h18v4H3z"></path>
+              </svg>
+            </button>
+          )}
           {showColorPicker && (
             <div className="color-picker-dropdown">
               <div className="color-picker-header">
@@ -454,8 +503,28 @@ export default function App(){
             </div>
           )}
         </div>
-        <h1>Tabela de Vendas</h1>
+        <h1>
+          Tabela de Vendas
+          {currentUser?.role === 'admin' && selectedUserId && (
+            <span className="admin-viewing-label"> • Visualizando: {adminUsers.find((user) => user.id === selectedUserId)?.displayName || selectedUserId}</span>
+          )}
+        </h1>
         <div className="month-controls">
+          {currentUser?.role === 'admin' && (
+            <select
+              className="admin-user-select"
+              value={selectedUserId}
+              onChange={(event) => {
+                setSelectedUserId(event.target.value)
+                localStorage.setItem('selectedUserId', event.target.value)
+              }}
+              title="Selecionar usuário"
+            >
+              {adminUsers.map((user) => (
+                <option key={user.id} value={user.id}>{user.displayName} ({user.username})</option>
+              ))}
+            </select>
+          )}
           <button className="btn-month" onClick={() => setShowMonthSelector(!showMonthSelector)} title="Selecionar mês">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -519,6 +588,19 @@ export default function App(){
       </div>
       <CommissionSummary sales={sales} commissions={commissions} onCommissionChange={handleCommissionChange} />
       {showChart && <ChartView year={selectedYear} onClose={() => setShowChart(false)} refreshKey={chartRefresh} primaryColor={primaryColor} darkMode={darkMode} />}
+      {showAdminPanel && currentUser?.role === 'admin' && (
+        <AdminPanel
+          isOpen={showAdminPanel}
+          onClose={() => setShowAdminPanel(false)}
+          users={adminUsers}
+          onUsersRefresh={loadAdminUsers}
+          selectedUserId={selectedUserId}
+          onSelectUser={(id) => {
+            setSelectedUserId(id)
+            localStorage.setItem('selectedUserId', id)
+          }}
+        />
+      )}
       <NotesPanel isOpen={showNotes} onClose={() => setShowNotes(false)} darkMode={darkMode} currentMonth={currentMonth} onSaleAdded={load} onMonthChange={setCurrentMonth} />
       {confirmState.open && (
         <div className="modal-overlay">
