@@ -3823,9 +3823,18 @@ body.dark-mode .footer-content {
   font-size: 15px;
 }
 
+body.dark-mode .footer-system strong {
+  color: #e2e8f0;
+}
+
 .footer-security svg {
   color: var(--primary-color);
   opacity: 0.8;
+}
+
+body.dark-mode .footer-security svg {
+  color: #cbd5e1;
+  opacity: 1;
 }
 
 .footer-divider {
@@ -3840,6 +3849,10 @@ body.dark-mode .footer-divider {
 .footer-author strong {
   color: var(--primary-color);
   font-weight: 700;
+}
+
+body.dark-mode .footer-author strong {
+  color: #e2e8f0;
 }
 
 @media (max-width: 768px) {
