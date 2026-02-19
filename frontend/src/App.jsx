@@ -292,6 +292,24 @@ export default function App() {
     }
   }
 
+  const updateUser = async (userId, userData) => {
+    setAdminLoading(true)
+    try {
+      await axios.put(`${API}/admin/users/${userId}`, {
+        username: userData.username,
+        password: userData.password,
+        displayName: userData.displayName
+      })
+      await loadAdminUsers()
+      await loadAdminCredentials()
+      alert('Usuário atualizado com sucesso!')
+    } catch (err) {
+      alert(err.response?.data?.message || 'Erro ao atualizar usuário')
+    } finally {
+      setAdminLoading(false)
+    }
+  }
+
   const handleLogin = (user) => {
     setIsAuthenticated(true)
     localStorage.setItem('authenticated', 'true')
@@ -822,6 +840,7 @@ export default function App() {
           onClose={() => setShowLoginManager(false)}
           adminCredentials={adminCredentials}
           onCreateUser={createUser}
+          onUpdateUser={updateUser}
           onDeleteUser={deleteUser}
           onRefresh={loadAdminCredentials}
           adminLoading={adminLoading}

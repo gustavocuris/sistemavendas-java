@@ -4827,6 +4827,236 @@ body.dark-mode .btn-eye-large:hover {
   box-shadow: 0 8px 20px rgba(74, 222, 128, 0.3);
 }
 
+/* Botão de Editar */
+.btn-edit-sm {
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: var(--primary-color);
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: all 0.2s ease;
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-edit-sm:hover {
+  border-color: var(--primary-color);
+  background: rgba(30, 113, 69, 0.05);
+}
+
+.login-manager-modal.dark-mode .btn-edit-sm {
+  border-color: #475569;
+}
+
+.login-manager-modal.dark-mode .btn-edit-sm:hover {
+  border-color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+}
+
+/* Modal de Edição */
+.login-manager-modal-edit {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 10001;
+  padding: 0;
+}
+
+.login-manager-modal-edit.dark-mode {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+.login-manager-modal-edit .login-manager-header {
+  padding: 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-header {
+  border-bottom-color: #334155;
+}
+
+.login-manager-modal-edit .login-manager-form {
+  padding: 20px;
+}
+
+.login-manager-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.login-manager-btn-save,
+.login-manager-btn-cancel,
+.login-manager-btn-delete-confirm {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.login-manager-btn-save {
+  background: var(--primary-color);
+  color: white;
+}
+
+.login-manager-btn-save:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 113, 69, 0.2);
+}
+
+.login-manager-btn-cancel {
+  background: #e2e8f0;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.login-manager-btn-cancel:hover:not(:disabled) {
+  background: #cbd5e1;
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-btn-cancel {
+  background: #334155;
+  color: #cbd5e1;
+  border-color: #475569;
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-btn-cancel:hover:not(:disabled) {
+  background: #475569;
+}
+
+.login-manager-btn-save:disabled,
+.login-manager-btn-cancel:disabled,
+.login-manager-btn-delete-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Modal de Confirmação de Deleção */
+.login-manager-modal-delete {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 10001;
+  padding: 0;
+}
+
+.login-manager-modal-delete.dark-mode {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+.login-manager-modal-delete .login-manager-header {
+  padding: 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.login-manager-modal-delete.dark-mode .login-manager-header {
+  border-bottom-color: #334155;
+}
+
+.login-manager-delete-content {
+  padding: 20px;
+}
+
+.delete-warning {
+  color: #d32f2f;
+  font-size: 1.05em;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.login-manager-modal-delete.dark-mode .delete-warning {
+  color: #ef4444;
+}
+
+.delete-instruction {
+  color: #475569;
+  font-size: 0.95em;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.login-manager-modal-delete.dark-mode .delete-instruction {
+  color: #cbd5e1;
+}
+
+.delete-confirm-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95em;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.delete-confirm-input:focus {
+  outline: none;
+  border-color: #d32f2f;
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+}
+
+.login-manager-modal-delete.dark-mode .delete-confirm-input {
+  background: #0f1729;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+.login-manager-modal-delete.dark-mode .delete-confirm-input:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.login-manager-btn-delete-confirm {
+  background: #d32f2f;
+  color: white;
+}
+
+.login-manager-btn-delete-confirm:hover:not(:disabled) {
+  background: #b71c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+}
+
+.login-manager-modal-delete.dark-mode .login-manager-btn-delete-confirm {
+  background: #ef4444;
+  color: #0f172a;
+}
+
+.login-manager-modal-delete.dark-mode .login-manager-btn-delete-confirm:hover:not(:disabled) {
+  background: #dc2626;
+}
+
 @media (max-width: 1100px) {
   .admin-grid {
     grid-template-columns: 1fr;
