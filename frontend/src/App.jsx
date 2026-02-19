@@ -688,7 +688,7 @@ export default function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  {adminSales.slice(0, 12).map((sale, index) => (
+                  {adminSales.slice(0, 5).map((sale, index) => (
                     <tr key={`${sale.userId}-${sale.id}-${index}`}>
                       <td>{sale.client}</td>
                       <td>{sale.product}</td>

@@ -57,6 +57,7 @@ export default function SaleList({ sales, onEdit, onDelete, onCopy }){
     }
   })
   
+  const displaySales = sortedSales.slice(0, 5)
   const totalAll = sortedSales.reduce((s,i)=>s+Number(i.total||0),0)
   return (
     <div className="list">
@@ -87,7 +88,7 @@ export default function SaleList({ sales, onEdit, onDelete, onCopy }){
             </tr>
           </thead>
           <tbody>
-            {sortedSales.map(s=> (
+            {displaySales.map(s=> (
               <tr key={s.id}>
                 <td title={formatDateFull(s.date)}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
