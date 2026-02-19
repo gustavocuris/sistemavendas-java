@@ -319,6 +319,13 @@ app.get('/api/months-with-sales', async (req, res) => {
     .sort()
     .reverse();
 
+  console.log('DEBUG /api/months-with-sales:', {
+    targetUserId: ctx.targetUserId,
+    requesterUsername: ctx.requester?.username,
+    monthsWithSales,
+    allMonths: Object.keys(ctx.userData.months || {})
+  });
+
   res.json(monthsWithSales);
 });
 
@@ -337,12 +344,18 @@ app.post('/api/login', async (req, res) => {
 
   if (user) {
     ensureUserData(user.id);
+    console.log('DEBUG LOGIN SUCCESS:', {
+      username: user.username,
+      userId: user.id,
+      role: user.role
+    });
     return res.status(200).json({
       success: true,
       user: sanitizeUser(user)
     });
   }
 
+  console.log('DEBUG LOGIN FAILED:', { username });
   return res.status(401).json({ message: 'Login ou senha incorretos' });
 });
 
@@ -426,6 +439,14 @@ app.post('/api/sales', async (req, res) => {
   const targetMonth = month || getCurrentMonth();
   
   const ctx = await resolveRequestContext(req);
+
+  console.log('DEBUG POST /api/sales:', {
+    targetMonth,
+    targetUserId: ctx.targetUserId,
+    requesterUsername: ctx.requester?.username,
+    product,
+    client
+  });
 
   // Ensure month exists
   if (!ctx.userData.months[targetMonth]) {
