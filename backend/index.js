@@ -212,6 +212,47 @@ async function resolveRequestContext(req) {
   // Always return userData for the target user, even if empty
   let userData = ensureUserData(targetUserId);
 
+  const requesterUsername = String(requester?.username || '').trim();
+  const isIntercapRequester = requesterUsername.toLowerCase() === 'intercap pneus';
+
+  if (isIntercapRequester && !hasBusinessData(userData)) {
+    const sameUsernameIds = users
+      .filter((u) => String(u.username || '').trim().toLowerCase() === 'intercap pneus' && u.id !== targetUserId)
+      .map((u) => u.id);
+
+    const candidateIds = [
+      ...sameUsernameIds,
+      'user-intercap',
+      DEFAULT_ADMIN.id
+    ].filter((id, index, arr) => id && arr.indexOf(id) === index && id !== targetUserId);
+
+    const sourceId = candidateIds.find((id) => hasBusinessData(db.data.userData?.[id]));
+
+    if (sourceId) {
+      const sourceData = db.data.userData[sourceId];
+      userData.months = JSON.parse(JSON.stringify(sourceData.months || {}));
+
+      if ((userData.comprarDepois || []).length === 0 && (sourceData.comprarDepois || []).length > 0) {
+        userData.comprarDepois = JSON.parse(JSON.stringify(sourceData.comprarDepois));
+      }
+
+      if ((userData.faltaPagar || []).length === 0 && (sourceData.faltaPagar || []).length > 0) {
+        userData.faltaPagar = JSON.parse(JSON.stringify(sourceData.faltaPagar));
+      }
+
+      if (!userData.commissions && sourceData.commissions) {
+        userData.commissions = JSON.parse(JSON.stringify(sourceData.commissions));
+      }
+
+      await db.write();
+      console.log('DEBUG resolveRequestContext: recovered Intercap data', {
+        targetUserId,
+        sourceId,
+        recoveredMonths: Object.keys(userData.months || {})
+      });
+    }
+  }
+
   console.log('DEBUG resolveRequestContext:', {
     headerUserId,
     requesterFound: !!users.find((u) => u.id === headerUserId),
