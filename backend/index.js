@@ -389,18 +389,33 @@ function renumberIdsForMonth(monthData) {
 // Get all available months
 app.get('/api/months', async (req, res) => {
   const ctx = await resolveRequestContext(req);
-  const months = Object.keys(ctx.userData.months || {}).sort().reverse();
+  let months = Object.keys(ctx.userData.months || {}).sort().reverse();
+
+  const isIntercapUser = String(ctx.requester?.username || '').trim().toLowerCase() === 'intercap pneus';
+  if (isIntercapUser && months.length === 0) {
+    months = Object.keys(db.data.months || {}).sort().reverse();
+  }
+
   res.json(months);
 });
 
 // Get only months that contain sales
 app.get('/api/months-with-sales', async (req, res) => {
   const ctx = await resolveRequestContext(req);
-  const monthsWithSales = Object.entries(ctx.userData.months || {})
+  let monthsWithSales = Object.entries(ctx.userData.months || {})
     .filter(([, monthData]) => Array.isArray(monthData?.sales) && monthData.sales.length > 0)
     .map(([month]) => month)
     .sort()
     .reverse();
+
+  const isIntercapUser = String(ctx.requester?.username || '').trim().toLowerCase() === 'intercap pneus';
+  if (isIntercapUser && monthsWithSales.length === 0) {
+    monthsWithSales = Object.entries(db.data.months || {})
+      .filter(([, monthData]) => Array.isArray(monthData?.sales) && monthData.sales.length > 0)
+      .map(([month]) => month)
+      .sort()
+      .reverse();
+  }
 
   console.log('DEBUG /api/months-with-sales:', {
     targetUserId: ctx.targetUserId,
@@ -566,7 +581,21 @@ app.get('/api/sales', async (req, res) => {
     return res.json(aggregated.sort((a, b) => b.id - a.id));
   }
 
-  const monthData = ctx.userData.months[month];
+  let monthData = ctx.userData.months[month];
+
+  const isIntercapUser = String(ctx.requester?.username || '').trim().toLowerCase() === 'intercap pneus';
+  const userSalesCount = Array.isArray(monthData?.sales) ? monthData.sales.length : 0;
+  if (isIntercapUser && userSalesCount === 0) {
+    const legacyMonthData = db.data.months?.[month];
+    if (Array.isArray(legacyMonthData?.sales) && legacyMonthData.sales.length > 0) {
+      monthData = legacyMonthData;
+      console.log('DEBUG /api/sales: using legacy root month fallback', {
+        month,
+        targetUserId: ctx.targetUserId,
+        legacySalesCount: legacyMonthData.sales.length
+      });
+    }
+  }
   
   if (!monthData) {
     return res.json([]);
