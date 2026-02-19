@@ -63,6 +63,8 @@ const DEFAULT_ADMIN = {
   createdAt: new Date().toISOString()
 };
 
+const INTERCAP_USERNAME = 'Intercap Pneus';
+
 function defaultCommissions() {
   return { new: 5, recap: 8, recapping: 10, service: 0 };
 }
@@ -78,6 +80,10 @@ function createDefaultUserData() {
 
 function normalizeRole(role) {
   return role === 'admin' ? 'admin' : 'user';
+}
+
+function isIntercapUsername(username) {
+  return String(username || '').trim().toLowerCase() === INTERCAP_USERNAME.toLowerCase();
 }
 
 function sanitizeUser(user) {
@@ -131,7 +137,7 @@ function migrateLegacyDataToIntercap(authData) {
   const users = authData?.users || [];
   
   // Find Intercap Pneus user
-  const intercapUser = users.find(u => u.username === 'Intercap Pneus');
+  const intercapUser = users.find((u) => isIntercapUsername(u.username));
   
   if (!intercapUser) {
     console.log('DEBUG migrateLegacyDataToIntercap: Intercap Pneus user not found');
@@ -146,7 +152,9 @@ function migrateLegacyDataToIntercap(authData) {
 
     if (rootSales.length === 0) return;
 
-    if (!intercapData.months[monthKey]) {
+    const intercapMonth = intercapData.months[monthKey];
+    const intercapSales = intercapMonth?.sales || [];
+    if (!intercapMonth || intercapSales.length === 0) {
       intercapData.months[monthKey] = {
         sales: JSON.parse(JSON.stringify(rootSales))
       };
@@ -213,11 +221,11 @@ async function resolveRequestContext(req) {
   let userData = ensureUserData(targetUserId);
 
   const requesterUsername = String(requester?.username || '').trim();
-  const isIntercapRequester = requesterUsername.toLowerCase() === 'intercap pneus';
+  const isIntercapRequester = isIntercapUsername(requesterUsername);
 
   if (isIntercapRequester && !hasBusinessData(userData)) {
     const sameUsernameIds = users
-      .filter((u) => String(u.username || '').trim().toLowerCase() === 'intercap pneus' && u.id !== targetUserId)
+      .filter((u) => isIntercapUsername(u.username) && u.id !== targetUserId)
       .map((u) => u.id);
 
     const candidateIds = [
@@ -391,7 +399,7 @@ app.get('/api/months', async (req, res) => {
   const ctx = await resolveRequestContext(req);
   let months = Object.keys(ctx.userData.months || {}).sort().reverse();
 
-  const isIntercapUser = String(ctx.requester?.username || '').trim().toLowerCase() === 'intercap pneus';
+  const isIntercapUser = isIntercapUsername(ctx.requester?.username);
   if (isIntercapUser && months.length === 0) {
     months = Object.keys(db.data.months || {}).sort().reverse();
   }
@@ -408,7 +416,7 @@ app.get('/api/months-with-sales', async (req, res) => {
     .sort()
     .reverse();
 
-  const isIntercapUser = String(ctx.requester?.username || '').trim().toLowerCase() === 'intercap pneus';
+  const isIntercapUser = isIntercapUsername(ctx.requester?.username);
   if (isIntercapUser && monthsWithSales.length === 0) {
     monthsWithSales = Object.entries(db.data.months || {})
       .filter(([, monthData]) => Array.isArray(monthData?.sales) && monthData.sales.length > 0)
@@ -1232,7 +1240,7 @@ app.post('/api/admin/users', async (req, res) => {
     return res.status(400).json({ message: 'Username e password são obrigatórios' });
   }
 
-  if ((ctx.authData.users || []).some((u) => u.username === safeUsername)) {
+  if ((ctx.authData.users || []).some((u) => String(u.username || '').trim().toLowerCase() === safeUsername.toLowerCase())) {
     return res.status(409).json({ message: 'Já existe usuário com este login' });
   }
 
@@ -1264,6 +1272,10 @@ app.put('/api/admin/users/:id', async (req, res) => {
   const targetUser = (ctx.authData.users || []).find((u) => u.id === targetId);
   if (!targetUser) {
     return res.status(404).json({ message: 'Usuário não encontrado' });
+  }
+
+  if (isIntercapUsername(targetUser.username) && username !== undefined && !isIntercapUsername(username)) {
+    return res.status(400).json({ message: 'Conta Intercap Pneus é fixa e não pode trocar o login' });
   }
 
   const { username, password, displayName, role, commissions } = req.body || {};
@@ -1316,6 +1328,11 @@ app.delete('/api/admin/users/:id', async (req, res) => {
   const targetId = req.params.id;
   if (targetId === DEFAULT_ADMIN.id) {
     return res.status(400).json({ message: 'Conta ADM padrão não pode ser removida' });
+  }
+
+  const targetUser = (ctx.authData.users || []).find((u) => u.id === targetId);
+  if (targetUser && isIntercapUsername(targetUser.username)) {
+    return res.status(400).json({ message: 'Conta Intercap Pneus não pode ser removida' });
   }
 
   const beforeCount = (ctx.authData.users || []).length;
