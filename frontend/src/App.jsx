@@ -754,12 +754,17 @@ export default function App() {
             <p className="admin-home-total">Total geral: <strong>R$ {Number(adminSummary.grandTotal || 0).toFixed(2)}</strong></p>
             <div className="admin-home-chart-wrap full-width">
               <ResponsiveContainer width="100%" height={360}>
-                <BarChart data={adminChartData} margin={{ top: 12, right: 16, left: 0, bottom: 16 }}>
+                <BarChart
+                  data={adminChartData}
+                  margin={{ top: 12, right: 16, left: 0, bottom: 16 }}
+                  barCategoryGap="4%"
+                  barGap={1}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip formatter={(value) => `R$ ${Number(value).toFixed(2)}`} labelFormatter={(label, payload) => payload?.[0]?.payload?.month || label} />
-                  <Bar dataKey="total" radius={[8, 8, 0, 0]} barSize={28}>
+                  <Bar dataKey="total" radius={[0, 0, 0, 0]} barSize={40}>
                     {adminChartData.map((entry, index) => (
                       <Cell key={`month-${entry.month}`} fill={adminChartColors[index % adminChartColors.length]} />
                     ))}
