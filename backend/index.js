@@ -1265,60 +1265,69 @@ app.post('/api/admin/users', async (req, res) => {
 });
 
 app.put('/api/admin/users/:id', async (req, res) => {
-  const ctx = await resolveRequestContext(req);
-  if (!requireAdmin(ctx, res)) return;
+  try {
+    const ctx = await resolveRequestContext(req);
+    if (!requireAdmin(ctx, res)) return;
 
-  const targetId = req.params.id;
-  const targetUser = (ctx.authData.users || []).find((u) => u.id === targetId);
-  if (!targetUser) {
-    return res.status(404).json({ message: 'Usuário não encontrado' });
-  }
-
-  if (isIntercapUsername(targetUser.username) && username !== undefined && !isIntercapUsername(username)) {
-    return res.status(400).json({ message: 'Conta Intercap Pneus é fixa e não pode trocar o login' });
-  }
-
-  const { username, password, displayName, role, commissions } = req.body || {};
-
-  if (username !== undefined) {
-    const safeUsername = String(username).trim();
-    if (!safeUsername) {
-      return res.status(400).json({ message: 'Login inválido' });
+    const targetId = req.params.id;
+    const targetUser = (ctx.authData.users || []).find((u) => u.id === targetId);
+    if (!targetUser) {
+      console.error(`[UPDATE USER] Usuário não encontrado: id=${targetId}`);
+      return res.status(404).json({ message: 'Usuário não encontrado' });
     }
-    const duplicate = (ctx.authData.users || []).find((u) => u.id !== targetId && u.username === safeUsername);
-    if (duplicate) {
-      return res.status(409).json({ message: 'Já existe usuário com este login' });
+
+    const { username, password, displayName, role, commissions } = req.body || {};
+
+    if (isIntercapUsername(targetUser.username) && username !== undefined && !isIntercapUsername(username)) {
+      console.warn(`[UPDATE USER] Tentativa de trocar login da conta Intercap: id=${targetId}`);
+      return res.status(400).json({ message: 'Conta Intercap Pneus é fixa e não pode trocar o login' });
     }
-    targetUser.username = safeUsername;
+
+    if (username !== undefined) {
+      const safeUsername = String(username).trim();
+      if (!safeUsername) {
+        console.warn(`[UPDATE USER] Login inválido recebido: id=${targetId}`);
+        return res.status(400).json({ message: 'Login inválido' });
+      }
+      const duplicate = (ctx.authData.users || []).find((u) => u.id !== targetId && u.username === safeUsername);
+      if (duplicate) {
+        console.warn(`[UPDATE USER] Login duplicado: ${safeUsername}`);
+        return res.status(409).json({ message: 'Já existe usuário com este login' });
+      }
+      targetUser.username = safeUsername;
+    }
+
+    if (displayName !== undefined) {
+      targetUser.displayName = String(displayName || targetUser.username).trim() || targetUser.username;
+    }
+
+    if (password !== undefined && String(password).trim()) {
+      targetUser.passwordPlain = String(password);
+      targetUser.passwordHash = hashPassword(String(password));
+    }
+
+    if (role !== undefined && targetUser.id !== DEFAULT_ADMIN.id) {
+      targetUser.role = normalizeRole(role);
+    }
+
+    if (commissions && typeof commissions === 'object') {
+      const userData = ensureUserData(targetId);
+      userData.commissions = {
+        new: Number(commissions.new ?? userData.commissions.new ?? 5),
+        recap: Number(commissions.recap ?? userData.commissions.recap ?? 8),
+        recapping: Number(commissions.recapping ?? userData.commissions.recapping ?? 10),
+        service: Number(commissions.service ?? userData.commissions.service ?? 0)
+      };
+    }
+
+    await saveAuth(ctx.authData);
+    await db.write();
+
+    return res.json({ user: sanitizeUser(targetUser) });
+  } catch (err) {
+    console.error('[UPDATE USER] Erro inesperado:', err);
+    return res.status(500).json({ message: 'Erro interno ao atualizar usuário', error: String(err && err.message ? err.message : err) });
   }
-
-  if (displayName !== undefined) {
-    targetUser.displayName = String(displayName || targetUser.username).trim() || targetUser.username;
-  }
-
-  if (password !== undefined && String(password).trim()) {
-    targetUser.passwordPlain = String(password);
-    targetUser.passwordHash = hashPassword(String(password));
-  }
-
-  if (role !== undefined && targetUser.id !== DEFAULT_ADMIN.id) {
-    targetUser.role = normalizeRole(role);
-  }
-
-  if (commissions && typeof commissions === 'object') {
-    const userData = ensureUserData(targetId);
-    userData.commissions = {
-      new: Number(commissions.new ?? userData.commissions.new ?? 5),
-      recap: Number(commissions.recap ?? userData.commissions.recap ?? 8),
-      recapping: Number(commissions.recapping ?? userData.commissions.recapping ?? 10),
-      service: Number(commissions.service ?? userData.commissions.service ?? 0)
-    };
-  }
-
-  await saveAuth(ctx.authData);
-  await db.write();
-
-  return res.json({ user: sanitizeUser(targetUser) });
 });
 
 app.delete('/api/admin/users/:id', async (req, res) => {
