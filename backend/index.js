@@ -359,6 +359,41 @@ app.post('/api/login', async (req, res) => {
   return res.status(401).json({ message: 'Login ou senha incorretos' });
 });
 
+// Debug endpoint to check current user context
+app.get('/api/debug/current-user', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  res.json({
+    headerUserId: req.headers['x-user-id'],
+    targetUserId: ctx.targetUserId,
+    requesterUsername: ctx.requester?.username,
+    requesterRole: ctx.requester?.role,
+    allUsers: ctx.authData.users?.map(u => ({ id: u.id, username: u.username, role: u.role })),
+    userDataKeys: Object.keys(ctx.userData.months || {})
+  });
+});
+
+// Admin endpoint to clear legacy shared data and ensure user isolation
+app.post('/api/admin/cleanup-legacy-data', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!ctx.isAdmin) {
+    return res.status(403).json({ message: 'Acesso negado' });
+  }
+
+  console.log('DEBUG: Clearing legacy shared data in db.data.months');
+  
+  // Clear the shared db.data.months that was causing data overlap
+  if (db.data.months) {
+    db.data.months = {};
+  }
+  
+  await db.write();
+  
+  res.json({
+    message: 'Legacy data cleared. Each user now has completely isolated data.',
+    result: 'success'
+  });
+});
+
 // Create a new month
 app.post('/api/months', async (req, res) => {
   const { month } = req.body;
