@@ -30,6 +30,7 @@ const emptyNewUser = {
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('authenticated') === 'true')
+  const [authKey, setAuthKey] = useState(0)
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem('currentUser')
@@ -276,6 +277,7 @@ export default function App() {
     localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
     axios.defaults.headers.common['x-user-id'] = resolvedUser.id
     // Dispara o useEffect para carregar dados imediatamente
+    setAuthKey((prev) => prev + 1)
   }
 
   const handleLogout = () => {
@@ -289,6 +291,7 @@ export default function App() {
     localStorage.removeItem('authenticated')
     localStorage.removeItem('currentUser')
     delete axios.defaults.headers.common['x-user-id']
+    setAuthKey((prev) => prev + 1)
   }
 
   const openConfirm = (message, onConfirm) => setConfirmState({ open: true, message, onConfirm })
@@ -427,7 +430,7 @@ export default function App() {
   const handleColorSelect = (colorHex) => applyColor(colorHex)
 
   if (!isAuthenticated) {
-    return <Login onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />
+    return <Login key={`login-${authKey}`} onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />
   }
 
   const create = async (payload) => {
@@ -531,7 +534,7 @@ export default function App() {
   }, [adminSales])
 
   return (
-    <div className={`container ${darkMode ? 'dark-mode' : ''}`}>
+    <div key={`app-${authKey}`} className={`container ${darkMode ? 'dark-mode' : ''}`}>
       <div className="header-top">
         <div className="theme-controls">
           <button className="btn-theme" onClick={() => setDarkMode(!darkMode)} title="Alternar tema">
