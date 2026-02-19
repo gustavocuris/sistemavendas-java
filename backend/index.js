@@ -1379,11 +1379,16 @@ app.get('/api/admin/sales/search', async (req, res) => {
       (monthData.sales || []).forEach((sale) => {
         const haystack = [sale.client, sale.phone, sale.product, String(sale.id)].join(' ').toLowerCase();
         if (!q || haystack.includes(q)) {
+          // Forçar userName para GUSTAVO se não for outro usuário válido
+          let userName = usersMap.get(userId)?.displayName || usersMap.get(userId)?.username || userId;
+          if (userName === 'Administrador' || userName === 'ADM' || userId === 'adm') {
+            userName = 'GUSTAVO';
+          }
           result.push({
             ...sale,
             month: monthKey,
             userId,
-            userName: usersMap.get(userId)?.displayName || usersMap.get(userId)?.username || userId
+            userName
           });
         }
       });
