@@ -149,14 +149,16 @@ export default function LoginManager({
                         >
                           🗑️
                         </button>
-                        <button
-                          className="btn-table-sm"
-                          onClick={() => onViewUserSales(cred.id, cred.displayName)}
-                          disabled={adminLoading}
-                          title="Visualizar vendas"
-                        >
-                          📊
-                        </button>
+                        {cred.role !== 'admin' && (
+                          <button
+                            className="btn-table-sm"
+                            onClick={() => onViewUserSales(cred.id, cred.displayName)}
+                            disabled={adminLoading}
+                            title="Visualizar vendas"
+                          >
+                            📊
+                          </button>
+                        )}
                       </div>
                     </div>
 
