@@ -161,11 +161,15 @@ export default function App() {
     try {
       setIsLoading(true)
       const monthToUse = monthOverride || currentMonth
+      console.log('DEBUG load(): monthToUse=', monthToUse, 'currentMonth=', currentMonth)
       if (!monthToUse) {
+        console.log('DEBUG load(): No month to use, clearing sales')
         setSales([])
         return
       }
+      console.log('DEBUG load(): Fetching sales for month', monthToUse)
       const res = await axios.get(`${API}/sales?month=${monthToUse}`)
+      console.log('DEBUG load(): Response received, sales count:', res.data.length)
       setSales(res.data)
       if (res.data.length > 0) {
         setMonthsWithData((prev) => (prev.includes(monthToUse) ? prev : [...prev, monthToUse]))
@@ -188,9 +192,11 @@ export default function App() {
     try {
       const res = await axios.get(`${API}/months-with-sales`)
       const months = Array.isArray(res.data) ? res.data : []
+      console.log('DEBUG loadMonthsWithSales(): months=', months)
       setMonthsWithData(months)
       return months
     } catch (err) {
+      console.error('DEBUG loadMonthsWithSales(): Error=', err)
       setMonthsWithData([])
       return []
     }
@@ -415,6 +421,7 @@ export default function App() {
 
     const resolvedUser = currentUser || { id: 'adm', username: 'ADM', displayName: 'Administrador', role: 'admin' }
     axios.defaults.headers.common['x-user-id'] = resolvedUser.id
+    console.log('DEBUG auth useEffect: user=', resolvedUser.username, 'role=', resolvedUser.role)
 
     if (!currentUser) {
       setCurrentUser(resolvedUser)
@@ -424,6 +431,7 @@ export default function App() {
     // Carregar dados APÓS settar o header
     const loadAfterAuth = async () => {
       const isAdminUser = resolvedUser.role === 'admin'
+      console.log('DEBUG loadAfterAuth: isAdminUser=', isAdminUser)
       
       if (isAdminUser) {
         await Promise.all([
@@ -436,6 +444,7 @@ export default function App() {
       } else {
         await loadCommissions()
         const [months, monthsWithSales] = await Promise.all([loadMonths(), loadMonthsWithSales()])
+        console.log('DEBUG loadAfterAuth: months=', months, 'monthsWithSales=', monthsWithSales)
         
         // Preferir mês salvo no localStorage se tiver vendas, senão ir pro primeiro com vendas
         let targetMonth = currentMonth
@@ -443,21 +452,24 @@ export default function App() {
           if (!monthsWithSales.includes(currentMonth)) {
             targetMonth = monthsWithSales[0]
             setCurrentMonth(targetMonth)
+            console.log('DEBUG loadAfterAuth: Setting targetMonth to', targetMonth)
           }
         } else if (months.length > 0) {
           targetMonth = months[0]
           setCurrentMonth(targetMonth)
+          console.log('DEBUG loadAfterAuth: No months with sales, setting to', targetMonth)
         }
 
+        console.log('DEBUG loadAfterAuth: Loading sales for month', targetMonth)
         await load(targetMonth)
       }
     }
 
     loadAfterAuth()
   }, [isAuthenticated, currentUser])
-
   useEffect(() => {
     if (isAuthenticated && !isAdmin && currentMonth) {
+      console.log('DEBUG second useEffect: Loading sales because currentMonth changed to', currentMonth)
       load()
     }
   }, [currentMonth, isAuthenticated, isAdmin])
