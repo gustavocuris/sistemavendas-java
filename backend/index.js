@@ -124,12 +124,11 @@ function hasBusinessData(userData) {
   return hasSales || (userData.comprarDepois || []).length > 0 || (userData.faltaPagar || []).length > 0;
 }
 
-function migrateLegacyDataToIntercap() {
+function migrateLegacyDataToIntercap(authData) {
   ensureDataStructures();
   
-  // Get all users from auth data
-  const authData = db.data.auth || {};
-  const users = authData.users || [];
+  // Get users from auth data parameter
+  const users = authData?.users || [];
   
   // Find Intercap Pneus user
   const intercapUser = users.find(u => u.username === 'Intercap Pneus');
@@ -326,9 +325,9 @@ if (typeof db.init === 'function') {
 }
 
 await db.read();
-await getAuthData();
+const authData = await getAuthData();
 migrateLegacyDataToAdmin();
-migrateLegacyDataToIntercap();
+migrateLegacyDataToIntercap(authData);
 await db.write();
 
 // Helper to get current month in YYYY-MM format
