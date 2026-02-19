@@ -834,7 +834,7 @@ export default function App() {
               <button className="admin-home-btn" style={{marginLeft: 12}} onClick={() => setShowAllSalesModal(true)}>
                 VER TUDO
               </button>
-                    {/* Modal de todas as vendas */}
+                    {/* Modal de todas as vendas - renderizado fora do cabeçalho */}
                     {showAllSalesModal && isAdmin && (
                       <div className="login-manager-overlay">
                         <div className="user-sales-modal" style={{minWidth: 700}}>
