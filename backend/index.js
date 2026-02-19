@@ -171,6 +171,15 @@ async function resolveRequestContext(req) {
   // Always return userData for the target user, even if empty
   let userData = ensureUserData(targetUserId);
 
+  console.log('DEBUG resolveRequestContext:', {
+    headerUserId,
+    requesterFound: !!users.find((u) => u.id === headerUserId),
+    allUserIds: users.map(u => u.id),
+    requesterUsername: requester?.username,
+    targetUserId,
+    isAdmin
+  });
+
   return {
     authData,
     requester,
@@ -361,6 +370,15 @@ app.post('/api/months', async (req, res) => {
 app.get('/api/sales', async (req, res) => {
   const month = req.query.month || getCurrentMonth();
   const ctx = await resolveRequestContext(req);
+
+  console.log('DEBUG /api/sales:', {
+    month,
+    headerUserId: req.headers['x-user-id'],
+    requesterRole: ctx.requester?.role,
+    targetUserId: ctx.targetUserId,
+    requesterUsername: ctx.requester?.username,
+    userDataMonths: Object.keys(ctx.userData.months || {})
+  });
 
   if (ctx.isAdmin && String(req.query.allUsers || '') === 'true') {
     const aggregated = [];
