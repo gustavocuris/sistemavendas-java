@@ -4264,9 +4264,8 @@ body.dark-mode .admin-total-label {
 
 .admin-home-chart-wrap.full-width {
   height: 380px;
-  max-width: 900px;
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .admin-home-row-head {

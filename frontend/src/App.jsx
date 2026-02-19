@@ -759,7 +759,7 @@ export default function App() {
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip formatter={(value) => `R$ ${Number(value).toFixed(2)}`} labelFormatter={(label, payload) => payload?.[0]?.payload?.month || label} />
-                  <Bar dataKey="total" radius={[8, 8, 0, 0]}>
+                  <Bar dataKey="total" radius={[8, 8, 0, 0]} barSize={28}>
                     {adminChartData.map((entry, index) => (
                       <Cell key={`month-${entry.month}`} fill={adminChartColors[index % adminChartColors.length]} />
                     ))}
