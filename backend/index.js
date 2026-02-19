@@ -394,6 +394,44 @@ app.post('/api/admin/cleanup-legacy-data', async (req, res) => {
   });
 });
 
+// Admin endpoint to restore/migrate Intercap Pneus legacy data
+app.post('/api/admin/restore-intercap-data', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!ctx.isAdmin) {
+    return res.status(403).json({ message: 'Acesso negado' });
+  }
+
+  console.log('DEBUG: Restoring Intercap Pneus legacy data');
+  
+  // Find Intercap Pneus user
+  const intercapUser = ctx.authData.users?.find(u => u.username === 'Intercap Pneus');
+  if (!intercapUser) {
+    return res.status(404).json({ message: 'Usuário Intercap Pneus não encontrado' });
+  }
+
+  // Get or create Intercap data structure
+  const intercapData = ensureUserData(intercapUser.id);
+  
+  // Restore months data from req.body (client sends the data to restore)
+  const { months } = req.body;
+  if (months && typeof months === 'object') {
+    Object.entries(months).forEach(([monthKey, monthData]) => {
+      intercapData.months[monthKey] = JSON.parse(JSON.stringify(monthData));
+    });
+    
+    console.log('DEBUG: Restored months:', Object.keys(months));
+  }
+  
+  await db.write();
+  
+  res.json({
+    message: `Data restaurada para ${intercapUser.username}`,
+    result: 'success',
+    userId: intercapUser.id,
+    monthsRestored: Object.keys(months || {})
+  });
+});
+
 // Create a new month
 app.post('/api/months', async (req, res) => {
   const { month } = req.body;
