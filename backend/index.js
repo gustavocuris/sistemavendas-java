@@ -124,6 +124,49 @@ function hasBusinessData(userData) {
   return hasSales || (userData.comprarDepois || []).length > 0 || (userData.faltaPagar || []).length > 0;
 }
 
+function migrateLegacyDataToIntercap() {
+  ensureDataStructures();
+  
+  // Get all users from auth data
+  const authData = db.data.auth || {};
+  const users = authData.users || [];
+  
+  // Find Intercap Pneus user
+  const intercapUser = users.find(u => u.username === 'Intercap Pneus');
+  
+  if (!intercapUser) {
+    console.log('DEBUG migrateLegacyDataToIntercap: Intercap Pneus user not found');
+    return;
+  }
+
+  const intercapData = ensureUserData(intercapUser.id);
+
+  // Migrate months data from db.data.months to Intercap user
+  Object.entries(db.data.months || {}).forEach(([monthKey, monthData]) => {
+    const rootSales = monthData?.sales || [];
+
+    if (rootSales.length === 0) return;
+
+    if (!intercapData.months[monthKey]) {
+      intercapData.months[monthKey] = {
+        sales: JSON.parse(JSON.stringify(rootSales))
+      };
+      console.log(`DEBUG migrateLegacyDataToIntercap: Migrated ${rootSales.length} sales from month ${monthKey}`);
+    }
+  });
+
+  // Also migrate other data
+  if ((intercapData.comprarDepois || []).length === 0 && (db.data.comprarDepois || []).length > 0) {
+    intercapData.comprarDepois = JSON.parse(JSON.stringify(db.data.comprarDepois));
+    console.log('DEBUG migrateLegacyDataToIntercap: Migrated comprarDepois');
+  }
+
+  if ((intercapData.faltaPagar || []).length === 0 && (db.data.faltaPagar || []).length > 0) {
+    intercapData.faltaPagar = JSON.parse(JSON.stringify(db.data.faltaPagar));
+    console.log('DEBUG migrateLegacyDataToIntercap: Migrated faltaPagar');
+  }
+}
+
 function migrateLegacyDataToAdmin() {
   ensureDataStructures();
   const adminData = ensureUserData(DEFAULT_ADMIN.id);
@@ -132,7 +175,6 @@ function migrateLegacyDataToAdmin() {
     const rootSales = monthData?.sales || [];
     const adminMonth = adminData.months?.[monthKey];
     const adminSales = adminMonth?.sales || [];
-
     if (rootSales.length === 0) return;
 
     if (!adminMonth || adminSales.length === 0) {
@@ -286,6 +328,7 @@ if (typeof db.init === 'function') {
 await db.read();
 await getAuthData();
 migrateLegacyDataToAdmin();
+migrateLegacyDataToIntercap();
 await db.write();
 
 // Helper to get current month in YYYY-MM format
