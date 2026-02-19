@@ -521,6 +521,15 @@ export default function App() {
     })
   }, [adminAnnual])
 
+  const adminRecentSales = useMemo(() => {
+    const sorted = [...adminSales].sort((a, b) => {
+      const dateA = new Date(a.date || a.created_at || 0).getTime()
+      const dateB = new Date(b.date || b.created_at || 0).getTime()
+      return dateB - dateA
+    })
+    return sorted.slice(0, 5)
+  }, [adminSales])
+
   return (
     <div className={`container ${darkMode ? 'dark-mode' : ''}`}>
       <div className="header-top">
@@ -688,7 +697,7 @@ export default function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  {adminSales.slice(0, 5).map((sale, index) => (
+                  {adminRecentSales.map((sale, index) => (
                     <tr key={`${sale.userId}-${sale.id}-${index}`}>
                       <td>{sale.client}</td>
                       <td>{sale.product}</td>
