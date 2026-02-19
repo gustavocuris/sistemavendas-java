@@ -592,13 +592,21 @@ export default function App() {
             </svg>
           </button>
           {isAdmin ? (
-            <button className="btn-chart" onClick={() => setShowAdminPanel(true)} title="Gerenciar logins e contas">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 3h18v4H3z"></path>
-                <path d="M3 10h18v4H3z"></path>
-                <path d="M3 17h18v4H3z"></path>
-              </svg>
-            </button>
+            <>
+              <button className="btn-chart" onClick={() => setShowAdminPanel(true)} title="Gerenciar logins e contas">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 3h18v4H3z"></path>
+                  <path d="M3 10h18v4H3z"></path>
+                  <path d="M3 17h18v4H3z"></path>
+                </svg>
+              </button>
+              <button className="btn-chart" onClick={() => setShowLoginManager(true)} title="Gerenciar contas">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </button>
+            </>
           ) : (
             <>
               <button className="btn-chart" onClick={() => setShowChart(true)} title="Gráfico de vendas anuais">
@@ -774,15 +782,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="admin-home-card admin-home-login-card">
-            <button
-              className="btn-eye-large"
-              onClick={() => setShowLoginManager(true)}
-              title="Gerenciar contas"
-            >
-              👁️ Contas
-            </button>
-          </div>
+
         </div>
       ) : (
         <>
