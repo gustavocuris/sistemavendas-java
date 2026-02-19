@@ -168,15 +168,8 @@ async function resolveRequestContext(req) {
   const hasRequestedUser = requestedUserId && users.some((u) => u.id === requestedUserId);
   let targetUserId = isAdmin && hasRequestedUser ? requestedUserId : (requester?.id || DEFAULT_ADMIN.id);
 
+  // Always return userData for the target user, even if empty
   let userData = ensureUserData(targetUserId);
-
-  if (!isAdmin && !hasBusinessData(userData)) {
-    const adminData = ensureUserData(DEFAULT_ADMIN.id);
-    if (hasBusinessData(adminData)) {
-      targetUserId = DEFAULT_ADMIN.id;
-      userData = adminData;
-    }
-  }
 
   return {
     authData,
