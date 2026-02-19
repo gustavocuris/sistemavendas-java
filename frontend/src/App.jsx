@@ -970,10 +970,10 @@ export default function App() {
                                   <thead>
                                     <tr>
                                       <th>Data</th>
-                                      <th>Pneu</th>
+                                      <th>Produto</th>
                                       <th>Tipo</th>
                                       <th>Valor</th>
-                                      <th>Comissão</th>
+                                      <th>Quantidade</th>
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -983,10 +983,10 @@ export default function App() {
                                       return (
                                         <tr key={`${year}-${month}-${idx}`}>
                                           <td>{formattedDate}</td>
-                                          <td>{sale.tire || '-'}</td>
-                                          <td>{sale.type || '-'}</td>
-                                          <td>R$ {(sale.value || 0).toFixed(2).replace('.', ',')}</td>
-                                          <td>{sale.commission || '-'}</td>
+                                          <td>{sale.product || '-'}</td>
+                                          <td>{sale.tire_type || '-'}</td>
+                                          <td>R$ {(sale.total || 0).toFixed(2).replace('.', ',')}</td>
+                                          <td>{sale.quantity || '-'}</td>
                                         </tr>
                                       )
                                     })}
