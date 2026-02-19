@@ -757,14 +757,14 @@ export default function App() {
                 <BarChart
                   data={adminChartData}
                   margin={{ top: 12, right: 16, left: 0, bottom: 16 }}
-                  barCategoryGap="4%"
-                  barGap={1}
+                  barCategoryGap="2%"
+                  barGap={0}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip formatter={(value) => `R$ ${Number(value).toFixed(2)}`} labelFormatter={(label, payload) => payload?.[0]?.payload?.month || label} />
-                  <Bar dataKey="total" radius={[0, 0, 0, 0]} barSize={40}>
+                  <Bar dataKey="total" radius={[0, 0, 0, 0]} barSize={55}>
                     {adminChartData.map((entry, index) => (
                       <Cell key={`month-${entry.month}`} fill={adminChartColors[index % adminChartColors.length]} />
                     ))}
