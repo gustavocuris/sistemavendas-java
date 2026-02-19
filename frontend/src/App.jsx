@@ -1,4 +1,9 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react'
+// Função para formatar números com ponto de milhar e vírgula decimal
+function formatReal(value) {
+  return Number(value || 0)
+    .toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
 import axios from 'axios'
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts'
 import SaleForm from './components/SaleForm'
@@ -842,7 +847,7 @@ export default function App() {
                       <td>{sale.client}</td>
                       <td>{sale.product}</td>
                       <td>{sale.quantity || '-'}</td>
-                      <td>R$ {Number(sale.total || 0).toFixed(2)}</td>
+                      <td>R$ {formatReal(sale.total)}</td>
                       <td>{sale.userName}</td>
                     </tr>
                   ))}
@@ -858,7 +863,7 @@ export default function App() {
 
           <div className="admin-home-card admin-home-chart-full">
             <h3>Gráfico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
-            <p className="admin-home-total">Total geral: <strong>R$ {Number(adminSummary.grandTotal || 0).toFixed(2)}</strong></p>
+            <p className="admin-home-total">Total geral: <strong>R$ {formatReal(adminSummary.grandTotal)}</strong></p>
             <div className="admin-home-chart-wrap full-width">
               <ResponsiveContainer width="100%" height={360}>
                 <BarChart
@@ -870,7 +875,7 @@ export default function App() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip formatter={(value) => `R$ ${Number(value).toFixed(2)}`} labelFormatter={(label, payload) => payload?.[0]?.payload?.month || label} />
+                  <Tooltip formatter={(value) => `R$ ${formatReal(value)}`} labelFormatter={(label, payload) => payload?.[0]?.payload?.month || label} />
                   <Bar dataKey="total" radius={[0, 0, 0, 0]} barSize={55}>
                     {adminChartData.map((entry, index) => (
                       <Cell key={`month-${entry.month}`} fill={adminChartColors[index % adminChartColors.length]} />
@@ -1050,7 +1055,7 @@ export default function App() {
                       <div className="user-sales-month-header">
                         <h4>{monthData.monthName}</h4>
                         <span className="user-sales-month-total">
-                          Total: R$ {monthData.total.toFixed(2).replace('.', ',')}
+                          Total: R$ {formatReal(monthData.total)}
                         </span>
                       </div>
                       <table className="user-sales-table">
@@ -1072,7 +1077,7 @@ export default function App() {
                                 <td>{formattedDate}</td>
                                 <td>{sale.product || '-'}</td>
                                 <td>{getTireTypeLabel(sale.tire_type)}</td>
-                                <td>R$ {(sale.total || 0).toFixed(2).replace('.', ',')}</td>
+                                <td>R$ {formatReal(sale.total)}</td>
                                 <td>{sale.quantity || '-'}</td>
                               </tr>
                             )
