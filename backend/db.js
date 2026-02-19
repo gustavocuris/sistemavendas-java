@@ -104,7 +104,7 @@ class DB {
     const backupPath = path.join(path.dirname(this.filePath), 'initial-data.json');
     try {
       if (fs.existsSync(backupPath)) {
-        console.log('✅ Restaurando dados do backup...');
+        console.log('✅ Restaurando dados do backup de sales.json...');
         const backupContent = fs.readFileSync(backupPath, 'utf-8');
         const sanitizedBackupContent = backupContent
           .split('\n')
@@ -112,15 +112,17 @@ class DB {
           .join('\n')
           .trim();
 
-        this.data = JSON.parse(sanitizedBackupContent);
+        const backupData = JSON.parse(sanitizedBackupContent);
+        // Só restaura dados de vendas, nunca auth.json!
+        this.data = backupData;
         this.save();
-        console.log('✅ Dados restaurados com sucesso!');
+        console.log('✅ Dados de vendas restaurados com sucesso! (auth.json preservado)');
       } else {
         console.log('❌ Arquivo de backup não encontrado: ' + backupPath);
         this.save();
       }
     } catch (error) {
-      console.error('Erro ao restaurar backup:', error);
+      console.error('Erro ao restaurar backup de sales.json:', error);
     }
   }
 
