@@ -1159,12 +1159,21 @@ app.get('/api/admin/user-sales/:userId', async (req, res) => {
     return res.status(400).json({ message: 'userId é obrigatório' });
   }
 
+  console.log(`Loading sales for userId: ${userId}`);
+  console.log(`Available userData keys: ${Object.keys(db.data.userData || {}).join(', ')}`);
+  console.log(`db.data.months keys: ${Object.keys(db.data.months || {}).join(', ')}`);
+
   const result = [];
   
   // Verificar vendas em userData[userId]
   const userData = db.data.userData?.[userId];
+  console.log(`userData for ${userId}:`, userData ? 'found' : 'not found');
   if (userData) {
+    const monthCount = Object.keys(userData.months || {}).length;
+    console.log(`Found ${monthCount} months in userData[${userId}]`);
     Object.entries(userData.months || {}).forEach(([monthKey, monthData]) => {
+      const salesCount = (monthData.sales || []).length;
+      console.log(`  Month ${monthKey}: ${salesCount} sales`);
       (monthData.sales || []).forEach((sale) => {
         result.push({
           ...sale,
@@ -1178,8 +1187,12 @@ app.get('/api/admin/user-sales/:userId', async (req, res) => {
   // Se for "Intercap Pneus" ou admin com dados legados, também verificar db.data.months
   // Isso suporta dados migrados do sistema antigo
   const user = (ctx.authData.users || []).find((u) => u.id === userId);
+  console.log(`User lookup for ${userId}:`, user ? user.username : 'not found');
   if (userId === 'adm' || (user && user.username === 'Intercap Pneus')) {
+    console.log(`Checking legacy data in db.data.months for ${userId}`);
     Object.entries(db.data.months || {}).forEach(([monthKey, monthData]) => {
+      const salesCount = (monthData.sales || []).length;
+      console.log(`  Legacy month ${monthKey}: ${salesCount} sales`);
       (monthData.sales || []).forEach((sale) => {
         // Verificar se já foi adicionado para evitar duplicatas
         if (!result.some((r) => r.id === sale.id && r.month === monthKey)) {
@@ -1193,7 +1206,36 @@ app.get('/api/admin/user-sales/:userId', async (req, res) => {
     });
   }
 
+  console.log(`Total sales returned for ${userId}: ${result.length}`);
   return res.json(result);
+});
+
+// Endpoint de debug - remover depois
+app.get('/api/debug/db-status', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  const userData = Object.keys(db.data.userData || {});
+  const months = Object.keys(db.data.months || {});
+  
+  const status = {
+    userData: userData.map((uid) => {
+      const data = db.data.userData[uid];
+      const monthsWithData = Object.keys(data.months || {}).filter((m) => (data.months[m].sales || []).length > 0);
+      const totalSales = Object.values(data.months || {}).reduce((acc, m) => acc + (m.sales || []).length, 0);
+      return {
+        uid,
+        months: monthsWithData,
+        totalSales
+      };
+    }),
+    legacyData: {
+      months: months.filter((m) => (db.data.months[m].sales || []).length > 0),
+      totalSales: Object.values(db.data.months || {}).reduce((acc, m) => acc + (m.sales || []).length, 0)
+    }
+  };
+
+  return res.json(status);
 });
 
 app.get('/api/admin/sales/summary', async (req, res) => {
