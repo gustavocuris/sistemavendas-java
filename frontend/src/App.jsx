@@ -157,19 +157,31 @@ export default function App() {
     document.documentElement.style.setProperty('--primary-light-rgb', hexToRgbString(lightHex))
   }
 
+  const getRequestHeaders = () => {
+    const userId = currentUser?.id
+    if (userId) return { 'x-user-id': userId }
+
+    try {
+      const savedUser = JSON.parse(localStorage.getItem('currentUser') || 'null')
+      if (savedUser?.id) return { 'x-user-id': savedUser.id }
+    } catch {
+      return undefined
+    }
+
+    return undefined
+  }
+
   const load = async (monthOverride = null) => {
     try {
       setIsLoading(true)
       const monthToUse = monthOverride || currentMonth
-      console.log('DEBUG load(): monthToUse=', monthToUse, 'currentMonth=', currentMonth)
       if (!monthToUse) {
-        console.log('DEBUG load(): No month to use, clearing sales')
         setSales([])
         return
       }
-      console.log('DEBUG load(): Fetching sales for month', monthToUse)
-      const res = await axios.get(`${API}/sales?month=${monthToUse}`)
-      console.log('DEBUG load(): Response received, sales count:', res.data.length)
+      const res = await axios.get(`${API}/sales?month=${monthToUse}`, {
+        headers: getRequestHeaders()
+      })
       setSales(res.data)
       if (res.data.length > 0) {
         setMonthsWithData((prev) => (prev.includes(monthToUse) ? prev : [...prev, monthToUse]))
@@ -182,7 +194,9 @@ export default function App() {
   }
 
   const loadMonths = async () => {
-    const res = await axios.get(`${API}/months`)
+    const res = await axios.get(`${API}/months`, {
+      headers: getRequestHeaders()
+    })
     const months = Array.isArray(res.data) ? res.data : []
     setAvailableMonths(months)
     return months
@@ -190,13 +204,13 @@ export default function App() {
 
   const loadMonthsWithSales = async () => {
     try {
-      const res = await axios.get(`${API}/months-with-sales`)
+      const res = await axios.get(`${API}/months-with-sales`, {
+        headers: getRequestHeaders()
+      })
       const months = Array.isArray(res.data) ? res.data : []
-      console.log('DEBUG loadMonthsWithSales(): months=', months)
       setMonthsWithData(months)
       return months
     } catch (err) {
-      console.error('DEBUG loadMonthsWithSales(): Error=', err)
       setMonthsWithData([])
       return []
     }
@@ -421,8 +435,6 @@ export default function App() {
 
     const resolvedUser = currentUser || { id: 'adm', username: 'ADM', displayName: 'Administrador', role: 'admin' }
     axios.defaults.headers.common['x-user-id'] = resolvedUser.id
-    console.log('DEBUG auth useEffect: user=', resolvedUser.username, 'role=', resolvedUser.role)
-
     if (!currentUser) {
       setCurrentUser(resolvedUser)
       localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
@@ -431,7 +443,6 @@ export default function App() {
     // Carregar dados APÓS settar o header
     const loadAfterAuth = async () => {
       const isAdminUser = resolvedUser.role === 'admin'
-      console.log('DEBUG loadAfterAuth: isAdminUser=', isAdminUser)
       
       if (isAdminUser) {
         await Promise.all([
@@ -452,15 +463,11 @@ export default function App() {
           if (!monthsWithSales.includes(currentMonth)) {
             targetMonth = monthsWithSales[0]
             setCurrentMonth(targetMonth)
-            console.log('DEBUG loadAfterAuth: Setting targetMonth to', targetMonth)
           }
         } else if (months.length > 0) {
           targetMonth = months[0]
           setCurrentMonth(targetMonth)
-          console.log('DEBUG loadAfterAuth: No months with sales, setting to', targetMonth)
         }
-
-        console.log('DEBUG loadAfterAuth: Loading sales for month', targetMonth)
         await load(targetMonth)
       }
     }
@@ -469,7 +476,6 @@ export default function App() {
   }, [isAuthenticated, currentUser])
   useEffect(() => {
     if (isAuthenticated && !isAdmin && currentMonth) {
-      console.log('DEBUG second useEffect: Loading sales because currentMonth changed to', currentMonth)
       load()
     }
   }, [currentMonth, isAuthenticated, isAdmin])
