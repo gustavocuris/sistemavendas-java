@@ -1159,21 +1159,39 @@ app.get('/api/admin/user-sales/:userId', async (req, res) => {
     return res.status(400).json({ message: 'userId é obrigatório' });
   }
 
-  const userData = db.data.userData?.[userId];
-  if (!userData) {
-    return res.json([]);
-  }
-
   const result = [];
-  Object.entries(userData.months || {}).forEach(([monthKey, monthData]) => {
-    (monthData.sales || []).forEach((sale) => {
-      result.push({
-        ...sale,
-        month: monthKey,
-        userId,
+  
+  // Verificar vendas em userData[userId]
+  const userData = db.data.userData?.[userId];
+  if (userData) {
+    Object.entries(userData.months || {}).forEach(([monthKey, monthData]) => {
+      (monthData.sales || []).forEach((sale) => {
+        result.push({
+          ...sale,
+          month: monthKey,
+          userId,
+        });
       });
     });
-  });
+  }
+
+  // Se for "Intercap Pneus" ou admin com dados legados, também verificar db.data.months
+  // Isso suporta dados migrados do sistema antigo
+  const user = (ctx.authData.users || []).find((u) => u.id === userId);
+  if (userId === 'adm' || (user && user.username === 'Intercap Pneus')) {
+    Object.entries(db.data.months || {}).forEach(([monthKey, monthData]) => {
+      (monthData.sales || []).forEach((sale) => {
+        // Verificar se já foi adicionado para evitar duplicatas
+        if (!result.some((r) => r.id === sale.id && r.month === monthKey)) {
+          result.push({
+            ...sale,
+            month: monthKey,
+            userId,
+          });
+        }
+      });
+    });
+  }
 
   return res.json(result);
 });
