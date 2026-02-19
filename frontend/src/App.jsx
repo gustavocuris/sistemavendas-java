@@ -1042,7 +1042,7 @@ export default function App() {
                               <tr key={`${selectedSalesYear}-${selectedSalesMonth}-${idx}`}>
                                 <td>{formattedDate}</td>
                                 <td>{sale.product || '-'}</td>
-                                <td>{sale.tire_type || '-'}</td>
+                                <td>{(sale.tire_type || '-').toUpperCase()}</td>
                                 <td>R$ {(sale.total || 0).toFixed(2).replace('.', ',')}</td>
                                 <td>{sale.quantity || '-'}</td>
                               </tr>
