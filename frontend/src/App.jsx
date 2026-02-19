@@ -40,23 +40,6 @@ const getTireTypeLabel = (type) => {
 }
 
 export default function App() {
-    const [showAllSalesModal, setShowAllSalesModal] = useState(false)
-    const [allSalesMonth, setAllSalesMonth] = useState(() => {
-      const now = new Date()
-      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-    })
-    const [allSalesYear, setAllSalesYear] = useState(() => new Date().getFullYear())
-
-    // Filtra todas as vendas do adminSales pelo mês/ano selecionado
-    const allSalesFiltered = useMemo(() => {
-      return adminSales.filter(sale => {
-        if (!sale.date && !sale.created_at) return false
-        const d = new Date(sale.date || sale.created_at)
-        const year = d.getFullYear()
-        const month = String(d.getMonth() + 1).padStart(2, '0')
-        return year === Number(allSalesYear) && `${year}-${month}` === allSalesMonth
-      })
-    }, [adminSales, allSalesMonth, allSalesYear])
   const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('authenticated') === 'true')
   const [authKey, setAuthKey] = useState(0)
   const [currentUser, setCurrentUser] = useState(() => {
@@ -831,63 +814,6 @@ export default function App() {
           <div className="admin-home-card admin-home-sales-top">
             <div className="admin-home-row-head">
               <h3>Últimas vendas feitas</h3>
-              <button className="admin-home-btn" style={{marginLeft: 12}} onClick={() => setShowAllSalesModal(true)}>
-                VER TUDO
-              </button>
-                    {/* Modal de todas as vendas - renderizado fora do cabeçalho */}
-                    {showAllSalesModal && isAdmin && (
-                      <div className="login-manager-overlay">
-                        <div className="user-sales-modal" style={{minWidth: 700}}>
-                          <div className="login-manager-header">
-                            <h2>Todas as vendas</h2>
-                            <button className="login-manager-close" onClick={() => setShowAllSalesModal(false)} title="Fechar">✕</button>
-                          </div>
-                          <div style={{display: 'flex', gap: 16, alignItems: 'center', marginBottom: 16}}>
-                            <label htmlFor="all-sales-year">Ano:</label>
-                            <input id="all-sales-year" type="number" min="2020" max={new Date().getFullYear()} value={allSalesYear} onChange={e => setAllSalesYear(e.target.value)} style={{width: 80}} />
-                            <label htmlFor="all-sales-month">Mês:</label>
-                            <select id="all-sales-month" value={allSalesMonth} onChange={e => setAllSalesMonth(e.target.value)}>
-                              {Array.from({length: 12}, (_, i) => {
-                                const m = String(i+1).padStart(2, '0')
-                                const y = allSalesYear
-                                return <option key={m} value={`${y}-${m}`}>{monthNames[i]} {y}</option>
-                              })}
-                            </select>
-                          </div>
-                          <div className="admin-home-table-wrap">
-                            <table className="admin-home-table">
-                              <thead>
-                                <tr>
-                                  <th>CLIENTE</th>
-                                  <th>PRODUTO</th>
-                                  <th>QUANTIDADE</th>
-                                  <th>VALOR DA VENDA</th>
-                                  <th>CONTA</th>
-                                  <th>DATA</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {allSalesFiltered.length === 0 ? (
-                                  <tr><td colSpan={6}>Nenhuma venda neste mês.</td></tr>
-                                ) : allSalesFiltered.map((sale, idx) => {
-                                  const d = new Date(sale.date || sale.created_at)
-                                  return (
-                                    <tr key={`${sale.userId}-${sale.id}-${idx}`}>
-                                      <td>{sale.client}</td>
-                                      <td>{sale.product}</td>
-                                      <td>{sale.quantity || '-'}</td>
-                                      <td>R$ {Number(sale.total || 0).toFixed(2)}</td>
-                                      <td>{sale.userName}</td>
-                                      <td>{d.toLocaleDateString('pt-BR')}</td>
-                                    </tr>
-                                  )
-                                })}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    )}
               <div className="admin-home-search-row">
                 <input
                   className="admin-home-search"
