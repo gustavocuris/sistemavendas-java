@@ -28,6 +28,17 @@ const emptyNewUser = {
   password: ''
 }
 
+const TIRE_TYPE_LABELS = {
+  'new': 'NOVO',
+  'recap': 'RECAPADO',
+  'recapping': 'RECAPAGEM',
+  'sv_borracharia': 'SV BORRACHARIA'
+}
+
+const getTireTypeLabel = (type) => {
+  return TIRE_TYPE_LABELS[type] || (type || '-').toUpperCase()
+}
+
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('authenticated') === 'true')
   const [authKey, setAuthKey] = useState(0)
@@ -1042,7 +1053,7 @@ export default function App() {
                               <tr key={`${selectedSalesYear}-${selectedSalesMonth}-${idx}`}>
                                 <td>{formattedDate}</td>
                                 <td>{sale.product || '-'}</td>
-                                <td>{(sale.tire_type || '-').toUpperCase()}</td>
+                                <td>{getTireTypeLabel(sale.tire_type)}</td>
                                 <td>R$ {(sale.total || 0).toFixed(2).replace('.', ',')}</td>
                                 <td>{sale.quantity || '-'}</td>
                               </tr>
