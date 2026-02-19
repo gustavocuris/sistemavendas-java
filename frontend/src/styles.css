@@ -4547,17 +4547,30 @@ body.dark-mode .admin-chart-wrap {
 .login-manager-close {
   background: none;
   border: none;
-  font-size: 1.5em;
   cursor: pointer;
   color: #64748b;
   padding: 4px 8px;
   border-radius: 4px;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
 }
 
 .login-manager-close:hover {
   background: #f1f5f9;
   color: #1e293b;
+}
+
+.login-manager-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.login-manager-modal.dark-mode .login-manager-close {
+  color: #94a3b8;
 }
 
 .login-manager-modal.dark-mode .login-manager-close:hover {
@@ -4643,7 +4656,9 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .btn-eye-sm,
-.btn-delete-sm {
+.btn-delete-sm,
+.btn-edit-sm,
+.btn-table-sm {
   background: transparent;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
@@ -4656,23 +4671,52 @@ body.dark-mode .admin-chart-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--primary-color);
+}
+
+.btn-eye-sm svg,
+.btn-delete-sm svg,
+.btn-edit-sm svg,
+.btn-table-sm svg {
+  stroke: currentColor;
+  transition: all 0.2s ease;
 }
 
 .btn-eye-sm:hover,
-.btn-delete-sm:hover {
+.btn-delete-sm:hover,
+.btn-edit-sm:hover,
+.btn-table-sm:hover {
   border-color: var(--primary-color);
   background: rgba(30, 113, 69, 0.05);
 }
 
+.btn-delete-sm:hover {
+  color: #d32f2f;
+}
+
+.btn-delete-sm:hover svg {
+  stroke: #d32f2f;
+}
+
 .login-manager-modal.dark-mode .btn-eye-sm,
-.login-manager-modal.dark-mode .btn-delete-sm {
+.login-manager-modal.dark-mode .btn-delete-sm,
+.login-manager-modal.dark-mode .btn-edit-sm,
+.login-manager-modal.dark-mode .btn-table-sm {
   border-color: #475569;
+  color: #cbd5e1;
 }
 
 .login-manager-modal.dark-mode .btn-eye-sm:hover,
-.login-manager-modal.dark-mode .btn-delete-sm:hover {
+.login-manager-modal.dark-mode .btn-delete-sm:hover,
+.login-manager-modal.dark-mode .btn-edit-sm:hover,
+.login-manager-modal.dark-mode .btn-table-sm:hover {
   border-color: #4ade80;
   background: rgba(74, 222, 128, 0.1);
+  color: #4ade80;
+}
+
+.login-manager-modal.dark-mode .btn-delete-sm:hover {
+  color: #ef4444;
 }
 
 .login-manager-details {
