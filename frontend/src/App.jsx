@@ -55,6 +55,8 @@ export default function App() {
   const [showPassword, setShowPassword] = useState(false)
   const [newUserForm, setNewUserForm] = useState(emptyNewUser)
   const [adminLoading, setAdminLoading] = useState(false)
+  const [viewUserSalesId, setViewUserSalesId] = useState(null)
+  const [viewUserSalesData, setViewUserSalesData] = useState(null)
 
   const [sales, setSales] = useState([])
   const [editing, setEditing] = useState(null)
@@ -305,6 +307,47 @@ export default function App() {
       alert('Usuário atualizado com sucesso!')
     } catch (err) {
       alert(err.response?.data?.message || 'Erro ao atualizar usuário')
+    } finally {
+      setAdminLoading(false)
+    }
+  }
+
+  const loadUserSalesAndYears = async (userId, userName) => {
+    setAdminLoading(true)
+    try {
+      const res = await axios.get(`${API}/admin/user-sales/${userId}`)
+      const allSales = Array.isArray(res.data) ? res.data : []
+
+      // Agrupar vendas por ano e mês
+      const salesByYearMonth = {}
+      allSales.forEach((sale) => {
+        const saleDate = new Date(sale.date || sale.created_at)
+        const year = saleDate.getFullYear()
+        const month = String(saleDate.getMonth() + 1).padStart(2, '0')
+        const monthName = saleDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
+
+        if (!salesByYearMonth[year]) {
+          salesByYearMonth[year] = {}
+        }
+        if (!salesByYearMonth[year][month]) {
+          salesByYearMonth[year][month] = {
+            monthName,
+            sales: [],
+            total: 0
+          }
+        }
+        salesByYearMonth[year][month].sales.push(sale)
+        salesByYearMonth[year][month].total += Number(sale.value || 0)
+      })
+
+      setViewUserSalesId(userId)
+      setViewUserSalesData({
+        userName,
+        salesByYearMonth,
+        allSales
+      })
+    } catch (err) {
+      alert('Erro ao carregar vendas do usuário: ' + (err.response?.data?.message || err.message))
     } finally {
       setAdminLoading(false)
     }
@@ -842,6 +885,7 @@ export default function App() {
           onCreateUser={createUser}
           onUpdateUser={updateUser}
           onDeleteUser={deleteUser}
+          onViewUserSales={loadUserSalesAndYears}
           onRefresh={loadAdminCredentials}
           adminLoading={adminLoading}
           darkMode={darkMode}
@@ -884,6 +928,81 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Modal de Vendas do Usuário */}
+      {viewUserSalesData && (
+        <div className="login-manager-overlay">
+          <div className={`user-sales-modal ${darkMode ? 'dark-mode' : ''}`}>
+            <div className="login-manager-header">
+              <h2>Vendas de {viewUserSalesData.userName}</h2>
+              <button 
+                className="login-manager-close" 
+                onClick={() => { setViewUserSalesId(null); setViewUserSalesData(null) }}
+                title="Fechar"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="user-sales-content">
+              {Object.keys(viewUserSalesData.salesByYearMonth).length === 0 ? (
+                <p className="user-sales-empty">Nenhuma venda encontrada</p>
+              ) : (
+                Object.keys(viewUserSalesData.salesByYearMonth)
+                  .sort((a, b) => Number(b) - Number(a))
+                  .map((year) => (
+                    <div key={year} className="user-sales-year">
+                      <h3 className="user-sales-year-title">{year}</h3>
+                      <div className="user-sales-months">
+                        {Object.keys(viewUserSalesData.salesByYearMonth[year])
+                          .sort((a, b) => Number(b) - Number(a))
+                          .map((month) => {
+                            const monthData = viewUserSalesData.salesByYearMonth[year][month]
+                            return (
+                              <div key={`${year}-${month}`} className="user-sales-month">
+                                <div className="user-sales-month-header">
+                                  <h4>{monthData.monthName}</h4>
+                                  <span className="user-sales-month-total">
+                                    Total: R$ {monthData.total.toFixed(2).replace('.', ',')}
+                                  </span>
+                                </div>
+                                <table className="user-sales-table">
+                                  <thead>
+                                    <tr>
+                                      <th>Data</th>
+                                      <th>Pneu</th>
+                                      <th>Tipo</th>
+                                      <th>Valor</th>
+                                      <th>Comissão</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {monthData.sales.map((sale, idx) => {
+                                      const saleDate = new Date(sale.date || sale.created_at)
+                                      const formattedDate = saleDate.toLocaleDateString('pt-BR')
+                                      return (
+                                        <tr key={`${year}-${month}-${idx}`}>
+                                          <td>{formattedDate}</td>
+                                          <td>{sale.tire || '-'}</td>
+                                          <td>{sale.type || '-'}</td>
+                                          <td>R$ {(sale.value || 0).toFixed(2).replace('.', ',')}</td>
+                                          <td>{sale.commission || '-'}</td>
+                                        </tr>
+                                      )
+                                    })}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )
+                          })}
+                      </div>
+                    </div>
+                  ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

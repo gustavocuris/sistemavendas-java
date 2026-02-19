@@ -5120,3 +5120,205 @@ body.dark-mode .btn-eye-large:hover {
   }
 }
 
+/* Botão de Tabela */
+.btn-table-sm {
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: var(--primary-color);
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: all 0.2s ease;
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-table-sm:hover {
+  border-color: var(--primary-color);
+  background: rgba(30, 113, 69, 0.05);
+}
+
+.login-manager-modal.dark-mode .btn-table-sm {
+  border-color: #475569;
+}
+
+.login-manager-modal.dark-mode .btn-table-sm:hover {
+  border-color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+}
+
+/* Modal de Vendas do Usuário */
+.user-sales-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 1000px;
+  width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 10001;
+  padding: 0;
+}
+
+.user-sales-modal.dark-mode {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+.user-sales-modal .login-manager-header {
+  padding: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10002;
+}
+
+.user-sales-modal.dark-mode .login-manager-header {
+  background: #0f172a;
+  border-bottom-color: #334155;
+}
+
+.user-sales-content {
+  padding: 20px;
+}
+
+.user-sales-empty {
+  color: #64748b;
+  text-align: center;
+  padding: 40px 20px;
+  font-style: italic;
+  font-size: 1.1em;
+}
+
+.user-sales-modal.dark-mode .user-sales-empty {
+  color: #94a3b8;
+}
+
+.user-sales-year {
+  margin-bottom: 32px;
+}
+
+.user-sales-year-title {
+  color: var(--primary-color);
+  font-size: 1.5em;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.user-sales-modal.dark-mode .user-sales-year-title {
+  color: #4ade80;
+  border-bottom-color: #4ade80;
+}
+
+.user-sales-months {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 16px;
+}
+
+.user-sales-month {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.user-sales-modal.dark-mode .user-sales-month {
+  border-color: #334155;
+  background: #1e293b;
+}
+
+.user-sales-month-header {
+  background: #f1f5f9;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.user-sales-modal.dark-mode .user-sales-month-header {
+  background: #334155;
+  border-bottom-color: #475569;
+}
+
+.user-sales-month-header h4 {
+  color: #334155;
+  font-size: 1.05em;
+  margin: 0;
+}
+
+.user-sales-modal.dark-mode .user-sales-month-header h4 {
+  color: #cbd5e1;
+}
+
+.user-sales-month-total {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 0.95em;
+}
+
+.user-sales-modal.dark-mode .user-sales-month-total {
+  color: #4ade80;
+}
+
+.user-sales-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+.user-sales-table thead tr {
+  background: #e2e8f0;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+.user-sales-modal.dark-mode .user-sales-table thead tr {
+  background: #1e293b;
+  border-bottom-color: #475569;
+}
+
+.user-sales-table th {
+  padding: 12px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #334155;
+}
+
+.user-sales-modal.dark-mode .user-sales-table th {
+  color: #94a3b8;
+}
+
+.user-sales-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.user-sales-modal.dark-mode .user-sales-table td {
+  border-bottom-color: #334155;
+  color: #cbd5e1;
+}
+
+.user-sales-table tbody tr:hover {
+  background: rgba(30, 113, 69, 0.05);
+}
+
+.user-sales-modal.dark-mode .user-sales-table tbody tr:hover {
+  background: rgba(74, 222, 128, 0.05);
+}
+
+@media (max-width: 900px) {
+  .user-sales-months {
+    grid-template-columns: 1fr;
+  }
+}

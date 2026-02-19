@@ -7,6 +7,7 @@ export default function LoginManager({
   onCreateUser,
   onUpdateUser,
   onDeleteUser,
+  onViewUserSales,
   onRefresh,
   adminLoading,
   darkMode,
@@ -147,6 +148,14 @@ export default function LoginManager({
                           title="Deletar conta"
                         >
                           🗑️
+                        </button>
+                        <button
+                          className="btn-table-sm"
+                          onClick={() => onViewUserSales(cred.id, cred.displayName)}
+                          disabled={adminLoading}
+                          title="Visualizar vendas"
+                        >
+                          📊
                         </button>
                       </div>
                     </div>

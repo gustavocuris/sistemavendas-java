@@ -1150,6 +1150,34 @@ app.get('/api/admin/sales/search', async (req, res) => {
   return res.json(result);
 });
 
+app.get('/api/admin/user-sales/:userId', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  const userId = String(req.params.userId).trim();
+  if (!userId) {
+    return res.status(400).json({ message: 'userId é obrigatório' });
+  }
+
+  const userData = db.data.userData?.[userId];
+  if (!userData) {
+    return res.json([]);
+  }
+
+  const result = [];
+  Object.entries(userData.months || {}).forEach(([monthKey, monthData]) => {
+    (monthData.sales || []).forEach((sale) => {
+      result.push({
+        ...sale,
+        month: monthKey,
+        userId,
+      });
+    });
+  });
+
+  return res.json(result);
+});
+
 app.get('/api/admin/sales/summary', async (req, res) => {
   const ctx = await resolveRequestContext(req);
   if (!requireAdmin(ctx, res)) return;
