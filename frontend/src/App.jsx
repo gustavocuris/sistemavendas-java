@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react'
 import axios from 'axios'
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts'
 import SaleForm from './components/SaleForm'
 import SaleList from './components/SaleList'
 import CommissionSummary from './components/CommissionSummary'
@@ -97,6 +97,30 @@ export default function App() {
     const g = (intValue >> 8) & 255
     const b = intValue & 255
     return `${r}, ${g}, ${b}`
+  }
+
+  const hexToRgb = (hex) => {
+    if (!hex) return { r: 0, g: 0, b: 0 }
+    const raw = hex.replace('#', '')
+    const full = raw.length === 3 ? raw.split('').map((c) => `${c}${c}`).join('') : raw
+    const intValue = parseInt(full, 16)
+    if (Number.isNaN(intValue)) return { r: 0, g: 0, b: 0 }
+    return {
+      r: (intValue >> 16) & 255,
+      g: (intValue >> 8) & 255,
+      b: intValue & 255
+    }
+  }
+
+  const rgbToHex = (r, g, b) => {
+    const toHex = (value) => value.toString(16).padStart(2, '0')
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`
+  }
+
+  const blendWithWhite = (hex, amount) => {
+    const { r, g, b } = hexToRgb(hex)
+    const mix = (value) => Math.round(value + (255 - value) * amount)
+    return rgbToHex(mix(r), mix(g), mix(b))
   }
 
   const normalizeHex = (value) => (value || '').toLowerCase()
@@ -513,16 +537,22 @@ export default function App() {
   const handleCommissionChange = (updatedCommissions) => setCommissions(updatedCommissions)
 
   const adminChartData = useMemo(() => {
-    return (adminAnnual.months || []).map((item) => {
-      const monthNumber = String(item.month || '').split('-')[1] || '01'
-      const label = monthNames[Number(monthNumber) - 1]?.substring(0, 3) || item.month
+    const year = adminAnnual.year || new Date().getFullYear()
+    const totals = new Map((adminAnnual.months || []).map((item) => [item.month, Number(item.total || 0)]))
+    return monthNames.map((label, index) => {
+      const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`
       return {
-        name: label,
-        month: item.month,
-        total: Number(item.total || 0)
+        name: label.substring(0, 3),
+        month: monthKey,
+        total: totals.get(monthKey) || 0
       }
     })
-  }, [adminAnnual])
+  }, [adminAnnual, monthNames])
+
+  const adminChartColors = useMemo(() => {
+    const base = primaryColor || PRESET_COLORS[0].hex
+    return monthNames.map((_, index) => blendWithWhite(base, 0.05 + (index / 11) * 0.55))
+  }, [primaryColor, monthNames])
 
   const adminRecentSales = useMemo(() => {
     const sorted = [...adminSales].sort((a, b) => {
@@ -729,7 +759,11 @@ export default function App() {
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip formatter={(value) => `R$ ${Number(value).toFixed(2)}`} labelFormatter={(label, payload) => payload?.[0]?.payload?.month || label} />
-                  <Bar dataKey="total" fill="var(--primary-color)" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="total" radius={[8, 8, 0, 0]}>
+                    {adminChartData.map((entry, index) => (
+                      <Cell key={`month-${entry.month}`} fill={adminChartColors[index % adminChartColors.length]} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
