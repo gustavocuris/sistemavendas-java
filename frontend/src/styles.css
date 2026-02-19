@@ -5317,6 +5317,72 @@ body.dark-mode .btn-eye-large:hover {
   background: rgba(74, 222, 128, 0.05);
 }
 
+/* Controles de seleção de ano/mês */
+.user-sales-controls {
+  display: flex;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.user-sales-modal.dark-mode .user-sales-controls {
+  background: #1e293b;
+  border-bottom-color: #334155;
+}
+
+.user-sales-select-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.user-sales-select-group label {
+  font-weight: 600;
+  color: #475569;
+  font-size: 0.9em;
+}
+
+.user-sales-modal.dark-mode .user-sales-select-group label {
+  color: #cbd5e1;
+}
+
+.user-sales-select {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95em;
+  background: white;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-sales-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(30, 113, 69, 0.1);
+}
+
+.user-sales-modal.dark-mode .user-sales-select {
+  background: #0f172a;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+.user-sales-modal.dark-mode .user-sales-select:focus {
+  border-color: #4ade80;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+}
+
+.user-sales-month-single {
+  padding: 0;
+}
+
 @media (max-width: 900px) {
   .user-sales-months {
     grid-template-columns: 1fr;

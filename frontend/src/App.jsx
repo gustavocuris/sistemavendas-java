@@ -57,6 +57,8 @@ export default function App() {
   const [adminLoading, setAdminLoading] = useState(false)
   const [viewUserSalesId, setViewUserSalesId] = useState(null)
   const [viewUserSalesData, setViewUserSalesData] = useState(null)
+  const [selectedSalesYear, setSelectedSalesYear] = useState(null)
+  const [selectedSalesMonth, setSelectedSalesMonth] = useState(null)
 
   const [sales, setSales] = useState([])
   const [editing, setEditing] = useState(null)
@@ -337,8 +339,13 @@ export default function App() {
           }
         }
         salesByYearMonth[year][month].sales.push(sale)
-        salesByYearMonth[year][month].total += Number(sale.value || 0)
+        salesByYearMonth[year][month].total += Number(sale.total || 0)
       })
+
+      // Inicializar ano/mês selecionados
+      const years = Object.keys(salesByYearMonth).sort((a, b) => Number(b) - Number(a))
+      const firstYear = years.length > 0 ? years[0] : null
+      const firstMonth = firstYear ? Object.keys(salesByYearMonth[firstYear]).sort((a, b) => Number(b) - Number(a))[0] : null
 
       setViewUserSalesId(userId)
       setViewUserSalesData({
@@ -346,6 +353,8 @@ export default function App() {
         salesByYearMonth,
         allSales
       })
+      setSelectedSalesYear(firstYear)
+      setSelectedSalesMonth(firstMonth)
     } catch (err) {
       alert('Erro ao carregar vendas do usuário: ' + (err.response?.data?.message || err.message))
     } finally {
@@ -937,67 +946,115 @@ export default function App() {
               <h2>Vendas de {viewUserSalesData.userName}</h2>
               <button 
                 className="login-manager-close" 
-                onClick={() => { setViewUserSalesId(null); setViewUserSalesData(null) }}
+                onClick={() => { 
+                  setViewUserSalesId(null)
+                  setViewUserSalesData(null)
+                  setSelectedSalesYear(null)
+                  setSelectedSalesMonth(null)
+                }}
                 title="Fechar"
               >
                 ✕
               </button>
             </div>
 
+            <div className="user-sales-controls">
+              <div className="user-sales-select-group">
+                <label htmlFor="year-select">Ano:</label>
+                <select 
+                  id="year-select"
+                  className="user-sales-select"
+                  value={selectedSalesYear || ''}
+                  onChange={(e) => {
+                    const year = e.target.value
+                    setSelectedSalesYear(year)
+                    // Auto-select first month of the selected year
+                    const months = Object.keys(viewUserSalesData.salesByYearMonth[year] || {}).sort((a, b) => Number(b) - Number(a))
+                    setSelectedSalesMonth(months.length > 0 ? months[0] : null)
+                  }}
+                >
+                  <option value="">Selecione um ano</option>
+                  {Object.keys(viewUserSalesData.salesByYearMonth)
+                    .sort((a, b) => Number(b) - Number(a))
+                    .map((year) => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                </select>
+              </div>
+
+              {selectedSalesYear && (
+                <div className="user-sales-select-group">
+                  <label htmlFor="month-select">Mês:</label>
+                  <select 
+                    id="month-select"
+                    className="user-sales-select"
+                    value={selectedSalesMonth || ''}
+                    onChange={(e) => setSelectedSalesMonth(e.target.value)}
+                  >
+                    <option value="">Selecione um mês</option>
+                    {Object.keys(viewUserSalesData.salesByYearMonth[selectedSalesYear] || {})
+                      .sort((a, b) => Number(b) - Number(a))
+                      .map((month) => {
+                        const monthData = viewUserSalesData.salesByYearMonth[selectedSalesYear][month]
+                        return (
+                          <option key={`${selectedSalesYear}-${month}`} value={month}>
+                            {monthData.monthName}
+                          </option>
+                        )
+                      })}
+                  </select>
+                </div>
+              )}
+            </div>
+
             <div className="user-sales-content">
               {Object.keys(viewUserSalesData.salesByYearMonth).length === 0 ? (
                 <p className="user-sales-empty">Nenhuma venda encontrada</p>
-              ) : (
-                Object.keys(viewUserSalesData.salesByYearMonth)
-                  .sort((a, b) => Number(b) - Number(a))
-                  .map((year) => (
-                    <div key={year} className="user-sales-year">
-                      <h3 className="user-sales-year-title">{year}</h3>
-                      <div className="user-sales-months">
-                        {Object.keys(viewUserSalesData.salesByYearMonth[year])
-                          .sort((a, b) => Number(b) - Number(a))
-                          .map((month) => {
-                            const monthData = viewUserSalesData.salesByYearMonth[year][month]
+              ) : selectedSalesYear && selectedSalesMonth ? (
+                (() => {
+                  const monthData = viewUserSalesData.salesByYearMonth[selectedSalesYear]?.[selectedSalesMonth]
+                  if (!monthData) {
+                    return <p className="user-sales-empty">Nenhuma venda neste mês</p>
+                  }
+                  return (
+                    <div className="user-sales-month-single">
+                      <div className="user-sales-month-header">
+                        <h4>{monthData.monthName}</h4>
+                        <span className="user-sales-month-total">
+                          Total: R$ {monthData.total.toFixed(2).replace('.', ',')}
+                        </span>
+                      </div>
+                      <table className="user-sales-table">
+                        <thead>
+                          <tr>
+                            <th>Data</th>
+                            <th>Produto</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                            <th>Quantidade</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {monthData.sales.map((sale, idx) => {
+                            const saleDate = new Date(sale.date || sale.created_at)
+                            const formattedDate = saleDate.toLocaleDateString('pt-BR')
                             return (
-                              <div key={`${year}-${month}`} className="user-sales-month">
-                                <div className="user-sales-month-header">
-                                  <h4>{monthData.monthName}</h4>
-                                  <span className="user-sales-month-total">
-                                    Total: R$ {monthData.total.toFixed(2).replace('.', ',')}
-                                  </span>
-                                </div>
-                                <table className="user-sales-table">
-                                  <thead>
-                                    <tr>
-                                      <th>Data</th>
-                                      <th>Produto</th>
-                                      <th>Tipo</th>
-                                      <th>Valor</th>
-                                      <th>Quantidade</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {monthData.sales.map((sale, idx) => {
-                                      const saleDate = new Date(sale.date || sale.created_at)
-                                      const formattedDate = saleDate.toLocaleDateString('pt-BR')
-                                      return (
-                                        <tr key={`${year}-${month}-${idx}`}>
-                                          <td>{formattedDate}</td>
-                                          <td>{sale.product || '-'}</td>
-                                          <td>{sale.tire_type || '-'}</td>
-                                          <td>R$ {(sale.total || 0).toFixed(2).replace('.', ',')}</td>
-                                          <td>{sale.quantity || '-'}</td>
-                                        </tr>
-                                      )
-                                    })}
-                                  </tbody>
-                                </table>
-                              </div>
+                              <tr key={`${selectedSalesYear}-${selectedSalesMonth}-${idx}`}>
+                                <td>{formattedDate}</td>
+                                <td>{sale.product || '-'}</td>
+                                <td>{sale.tire_type || '-'}</td>
+                                <td>R$ {(sale.total || 0).toFixed(2).replace('.', ',')}</td>
+                                <td>{sale.quantity || '-'}</td>
+                              </tr>
                             )
                           })}
-                      </div>
+                        </tbody>
+                      </table>
                     </div>
-                  ))
+                  )
+                })()
+              ) : (
+                <p className="user-sales-empty">Selecione um ano e mês para visualizar</p>
               )}
             </div>
           </div>
