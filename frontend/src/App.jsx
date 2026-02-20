@@ -732,6 +732,7 @@ export default function App() {
       )}
       <div className="header-top">
         <div className="theme-controls">
+          {/* Mantém apenas uma linha de botões, removendo duplicados */}
           {/* Botões de tema, cor, gráfico, rascunhos e sair, todos no mesmo estilo */}
           <button className="btn-theme" onClick={() => setDarkMode(!darkMode)} title="Alternar tema">
             {darkMode ? (
