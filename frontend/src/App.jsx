@@ -1,11 +1,5 @@
-  // Estado para filtro de usuário no gráfico (inicial: todos)
-  const [selectedChartUserId, setSelectedChartUserId] = useState('ALL')
+
 import React, { useEffect, useMemo, useState, useCallback } from 'react'
-// Função para formatar números com ponto de milhar e vírgula decimal
-function formatReal(value) {
-  return Number(value || 0)
-    .toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-}
 import axios from 'axios'
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts'
 import SaleForm from './components/SaleForm'
@@ -16,6 +10,14 @@ import NotesPanel from './NotesPanel'
 import Login from './components/Login'
 import AdminPanel from './components/AdminPanel'
 import LoginManager from './components/LoginManager'
+
+// Função para formatar números com ponto de milhar e vírgula decimal
+function formatReal(value) {
+  return Number(value || 0)
+    .toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+export default function App() {
+  // ...existing code...
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 const API = `${API_BASE_URL}/api`
@@ -53,68 +55,16 @@ export default function App() {
     try {
       const saved = localStorage.getItem('currentUser')
       return saved ? JSON.parse(saved) : null
-    } catch {
-      return null
-    }
-  })
+            </div>
+          </div>
 
-  const isAdmin = currentUser?.role === 'admin'
-
-  const [adminUsers, setAdminUsers] = useState([])
-  const [selectedUserId, setSelectedUserId] = useState('')
-  const [showAdminPanel, setShowAdminPanel] = useState(false)
-  const [showLoginManager, setShowLoginManager] = useState(false)
-  const [adminSearch, setAdminSearch] = useState('')
-  const [adminSales, setAdminSales] = useState([])
-  const [adminSummary, setAdminSummary] = useState({ grandTotal: 0, users: [] })
-  const [adminAnnual, setAdminAnnual] = useState({ year: new Date().getFullYear(), months: [] })
-  const [adminCredentials, setAdminCredentials] = useState([])
-  const [activeLoginId, setActiveLoginId] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [newUserForm, setNewUserForm] = useState(emptyNewUser)
-  const [adminLoading, setAdminLoading] = useState(false)
-  const [viewUserSalesId, setViewUserSalesId] = useState(null)
-  const [viewUserSalesData, setViewUserSalesData] = useState(null)
-  const [selectedSalesYear, setSelectedSalesYear] = useState(null)
-  const [selectedSalesMonth, setSelectedSalesMonth] = useState(null)
-
-  const [sales, setSales] = useState([])
-  const [editing, setEditing] = useState(null)
-  const [copiedSale, setCopiedSale] = useState(null)
-  const [pastedSale, setPastedSale] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [commissions, setCommissions] = useState({ new: 5, recap: 8, recapping: 10, service: 0 })
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true')
-  const [primaryColor, setPrimaryColor] = useState(() => localStorage.getItem('primaryColor') || PRESET_COLORS[0].hex)
-  const [showColorPicker, setShowColorPicker] = useState(false)
-  const [availableMonths, setAvailableMonths] = useState([])
-  const [monthsWithData, setMonthsWithData] = useState([])
-  const [currentMonth, setCurrentMonth] = useState(() => {
-    const saved = localStorage.getItem('currentMonth')
-    if (saved) return saved
-    const now = new Date()
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-  })
-  const [showMonthSelector, setShowMonthSelector] = useState(false)
-  const [selectedYear, setSelectedYear] = useState(() => {
-    const saved = localStorage.getItem('currentMonth')
-    return saved ? parseInt(saved.split('-')[0]) : new Date().getFullYear()
-  })
-  const [selectedMonth, setSelectedMonth] = useState(() => {
-    const saved = localStorage.getItem('currentMonth')
-    return saved ? parseInt(saved.split('-')[1]) : new Date().getMonth() + 1
-  })
-  const [showChart, setShowChart] = useState(false)
-  const [chartRefresh, setChartRefresh] = useState(0)
-  const [showNotes, setShowNotes] = useState(false)
-  const [confirmState, setConfirmState] = useState({ open: false, message: '', onConfirm: null })
-
-  const hexToRgbString = (hex) => {
-    if (!hex) return '0, 0, 0'
-    const raw = hex.replace('#', '')
-    const full = raw.length === 3 ? raw.split('').map((c) => `${c}${c}`).join('') : raw
-    const intValue = parseInt(full, 16)
-    if (Number.isNaN(intValue)) return '0, 0, 0'
+          <div className="admin-home-card admin-home-chart-full">
+// ...existing code...
+// ...existing code...
+          </div>
+        </div>
+      ) : (
+        <>
     const r = (intValue >> 16) & 255
     const g = (intValue >> 8) & 255
     const b = intValue & 255
@@ -759,193 +709,194 @@ export default function App() {
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                 </svg>
-              </button>
-            </>
-          )}
-          <button className="btn-logout" onClick={() => openConfirm('Deseja realmente sair do sistema?', handleLogout)} title="Sair do sistema">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-          </button>
+              )}
 
-          {showColorPicker && (
-            <div className="color-picker-dropdown">
-              <div className="color-picker-header">
-                <span>Escolher cor principal</span>
-                <button onClick={() => setShowColorPicker(false)}>✕</button>
-              </div>
-              <div className="color-presets">
-                {PRESET_COLORS.map((color) => (
-                  <button
-                    key={color.hex}
-                    className={`color-preset-btn ${primaryColor === color.hex ? 'active' : ''}`}
-                    onClick={() => handleColorSelect(color.hex)}
-                    title={color.name}
-                    style={{ background: `linear-gradient(135deg, ${color.hex} 0%, ${color.dark} 100%)` }}
-                  >
-                    <span className="color-name">{color.name}</span>
-                    {primaryColor === color.hex && <span className="color-check">✓</span>}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <h1>{isAdmin ? 'ÁREA ADMINISTRADOR' : 'Tabela de Vendas'}</h1>
-
-        {!isAdmin && (
-          <div className="month-controls">
-            <button className="btn-month" onClick={() => setShowMonthSelector(!showMonthSelector)} title="Selecionar mês">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
-              </svg>
-              <span>{formatMonthName(currentMonth)}</span>
-            </button>
-            {showMonthSelector && (
-              <div className="month-selector-dropdown">
-                <div className="month-selector-header">
-                  <button className="btn-arrow" onClick={handlePrevYear} title="Ano anterior">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="15 18 9 12 15 6"></polyline>
-                    </svg>
-                  </button>
-                  <span className="year-display">{selectedYear}</span>
-                  <button className="btn-arrow" onClick={handleNextYear} title="Próximo ano">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </button>
-                  <button onClick={() => setShowMonthSelector(false)}>✕</button>
-                </div>
-
-                <div className="months-grid">
-                  {monthNames.map((monthName, index) => {
-                    const monthNum = index + 1
-                    const monthStr = `${selectedYear}-${String(monthNum).padStart(2, '0')}`
-                    const hasData = monthsWithData.includes(monthStr)
-                    return (
-                      <button
-                        key={monthNum}
-                        className={`month-button ${hasData ? 'exists' : ''} ${currentMonth === monthStr ? 'active' : ''}`}
-                        onClick={() => handleSelectMonth(monthNum)}
-                        title={`${monthName} ${selectedYear}`}
-                      >
-                        <span className="month-label">{monthName.substring(0, 3)}</span>
-                        <span className="month-indicator">{hasData ? '✓' : '+'}</span>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {isAdmin ? (
-        <div className="admin-home-layout">
-          <div className="admin-home-card admin-home-sales-top">
-            <div className="admin-home-row-head">
-              <h3>Últimas vendas feitas</h3>
-              <div className="admin-home-search-row">
-                <input
-                  className="admin-home-search"
-                  value={adminSearch}
-                  onChange={(event) => setAdminSearch(event.target.value)}
-                  placeholder="Buscar últimas vendas"
+              {showAdminPanel && isAdmin && (
+                <AdminPanel
+                  isOpen={showAdminPanel}
+                  onClose={() => setShowAdminPanel(false)}
+                  users={adminUsers}
+                  onUsersRefresh={loadAdminUsers}
+                  selectedUserId={selectedUserId}
+                  onSelectUser={setSelectedUserId}
                 />
-                <button className="admin-home-btn" onClick={() => loadAdminSales(adminSearch)} disabled={adminLoading}>Buscar</button>
-              </div>
-            </div>
+              )}
 
-            <div className="admin-home-table-wrap">
-              <table className="admin-home-table">
-                <thead>
-                  <tr>
-                    <th>CLIENTE</th>
-                    <th>PRODUTO</th>
-                    <th>QUANTIDADE</th>
-                    <th>VALOR DA VENDA</th>
-                    <th>CONTA</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {adminRecentSales.map((sale, index) => (
-                    <tr key={`${sale.userId}-${sale.id}-${index}`}>
-                      <td>{sale.client}</td>
-                      <td>{sale.product}</td>
-                      <td>{sale.quantity || '-'}</td>
-                      <td>R$ {formatReal(sale.total)}</td>
-                      <td>{sale.userName}</td>
-                    </tr>
-                  ))}
-                  {adminSales.length === 0 && (
-                    <tr>
-                      <td colSpan={5}>Nenhuma venda encontrada.</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+              {showLoginManager && isAdmin && (
+                <LoginManager
+                  isOpen={showLoginManager}
+                  onClose={() => setShowLoginManager(false)}
+                  adminCredentials={adminCredentials}
+                  onCreateUser={createUser}
+                  onUpdateUser={updateUser}
+                  onDeleteUser={deleteUser}
+                  onViewUserSales={loadUserSalesAndYears}
+                  onRefresh={loadAdminCredentials}
+                  adminLoading={adminLoading}
+                  darkMode={darkMode}
+                />
+              )}
 
-          <div className="admin-home-card admin-home-chart-full">
-            {/* Seletor de usuário para o gráfico (apenas visual, sem lógica de filtro ainda) */}
-            <div style={{ marginBottom: 16 }}>
-              <label htmlFor="chart-user-select"><strong>Filtrar gráfico por usuário:</strong> </label>
-              <select
-                id="chart-user-select"
-                value={selectedChartUserId}
-                onChange={e => setSelectedChartUserId(e.target.value)}
-                style={{ minWidth: 180, marginLeft: 8 }}
-              >
-                <option value="ALL">Todos</option>
-                {adminUsers.filter(u => u.role !== 'admin').map(u => (
-                  <option key={u.id} value={u.id}>{u.displayName || u.username || u.id}</option>
-                ))}
-              </select>
+              {confirmState.open && (
+                <div className="modal-overlay">
+                  <div className="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+                    <div className="modal-header">
+                      <h3 id="confirm-title">CONFIRMAÇÃO</h3>
+                      <button className="modal-close" onClick={closeConfirm} aria-label="Fechar">✕</button>
+                    </div>
+                    <div className="modal-body">
+                      <p>{confirmState.message}</p>
+                    </div>
+                    <div className="modal-footer">
+                      <button className="btn-secondary" type="button" onClick={closeConfirm}>CANCELAR</button>
+                      <button className="btn-primary" type="button" onClick={handleConfirm}>SIM</button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <footer className="app-footer">
+                <div className="footer-content">
+                  <div className="footer-system">
+                    <strong>SV SISTEMA DE VENDAS 2026</strong>
+                  </div>
+                  <div className="footer-divider">•</div>
+                  <div className="footer-security">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <span>Security and Privacy Protected</span>
+                  </div>
+                  <div className="footer-divider">•</div>
+                  <div className="footer-author">
+                    Developed by <strong>Gustavo Curis de Francisco</strong>
+                  </div>
+                </div>
+              </footer>
+
+              {/* Modal de Vendas do Usuário */}
+              {viewUserSalesData && (
+                <div className="login-manager-overlay">
+                  <div className={`user-sales-modal ${darkMode ? 'dark-mode' : ''}`}>
+                    <div className="login-manager-header">
+                      <h2>Vendas de {viewUserSalesData.userName}</h2>
+                      <button 
+                        className="login-manager-close" 
+                        onClick={() => { 
+                          setViewUserSalesId(null)
+                          setViewUserSalesData(null)
+                          setSelectedSalesYear(null)
+                          setSelectedSalesMonth(null)
+                        }}
+                        title="Fechar"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <div className="user-sales-controls">
+                      <div className="user-sales-select-group">
+                        <label htmlFor="year-select">Ano:</label>
+                        <select 
+                          id="year-select"
+                          className="user-sales-select"
+                          value={selectedSalesYear || ''}
+                          onChange={(e) => {
+                            const year = e.target.value
+                            setSelectedSalesYear(year)
+                            // Auto-select first month of the selected year
+                            const months = Object.keys(viewUserSalesData.salesByYearMonth[year] || {}).sort((a, b) => Number(b) - Number(a))
+                            setSelectedSalesMonth(months.length > 0 ? months[0] : null)
+                          }}
+                        >
+                          <option value="">Selecione um ano</option>
+                          {Object.keys(viewUserSalesData.salesByYearMonth)
+                            .sort((a, b) => Number(b) - Number(a))
+                            .map((year) => (
+                              <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+                      </div>
+
+                      {selectedSalesYear && (
+                        <div className="user-sales-select-group">
+                          <label htmlFor="month-select">Mês:</label>
+                          <select 
+                            id="month-select"
+                            className="user-sales-select"
+                            value={selectedSalesMonth || ''}
+                            onChange={(e) => setSelectedSalesMonth(e.target.value)}
+                          >
+                            <option value="">Selecione um mês</option>
+                            {Object.keys(viewUserSalesData.salesByYearMonth[selectedSalesYear] || {})
+                              .sort((a, b) => Number(b) - Number(a))
+                              .map((month) => {
+                                const monthData = viewUserSalesData.salesByYearMonth[selectedSalesYear][month]
+                                return (
+                                  <option key={`${selectedSalesYear}-${month}`} value={month}>
+                                    {monthData.monthName}
+                                  </option>
+                                )
+                              })}
+                          </select>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="user-sales-content">
+                      {Object.keys(viewUserSalesData.salesByYearMonth).length === 0 ? (
+                        <p className="user-sales-empty">Nenhuma venda encontrada</p>
+                      ) : selectedSalesYear && selectedSalesMonth ? (
+                        (() => {
+                          const monthData = viewUserSalesData.salesByYearMonth[selectedSalesYear]?.[selectedSalesMonth]
+                          if (!monthData) {
+                            return <p className="user-sales-empty">Nenhuma venda neste mês</p>
+                          }
+                          return (
+                            <div className="user-sales-month-single">
+                              <div className="user-sales-month-header">
+                                <h4>{monthData.monthName}</h4>
+                                <span className="user-sales-month-total">
+                                  Total: R$ {formatReal(monthData.total)}
+                                </span>
+                              </div>
+                              <table className="user-sales-table">
+                                <thead>
+                                  <tr>
+                                    <th>Data</th>
+                                    <th>Produto</th>
+                                    <th>Tipo</th>
+                                    <th>Valor</th>
+                                    <th>Quantidade</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {monthData.sales.map((sale, idx) => {
+                                    const saleDate = new Date(sale.date || sale.created_at)
+                                    const formattedDate = saleDate.toLocaleDateString('pt-BR')
+                                    return (
+                                      <tr key={`${selectedSalesYear}-${selectedSalesMonth}-${idx}`}>
+                                        <td>{formattedDate}</td>
+                                        <td>{sale.product || '-'}</td>
+                                        <td>{getTireTypeLabel(sale.tire_type)}</td>
+                                        <td>R$ {formatReal(sale.total)}</td>
+                                        <td>{sale.quantity || '-'}</td>
+                                      </tr>
+                                    )
+                                  })}
+                                </tbody>
+                              </table>
+                            </div>
+                          )
+                        })()
+                      ) : (
+                        <p className="user-sales-empty">Selecione um ano e mês para visualizar</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-            <h3>Gráfico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
-            {/* Filtra venda TESTE do total geral */}
-            {/* Total geral: soma real das vendas válidas do ano */}
-            {/* Total geral: soma real das vendas válidas do ano selecionado */}
-            <p className="admin-home-total">Total geral: <strong>R$ {formatReal(
-              adminSales.filter(
-                (sale) => {
-                  const saleDate = new Date(sale.date || sale.created_at);
-                  return (
-                    String(sale.client).toUpperCase() !== 'TESTE' &&
-                    String(sale.product).toUpperCase() !== 'AAAAA' &&
-                    String(sale.userId) !== 'user-1771531117808' &&
-                    saleDate.getFullYear() === (adminAnnual.year || new Date().getFullYear())
-                  );
-                }
-              ).reduce((sum, sale) => sum + Number(sale.total || 0), 0)
-            )}</strong></p>
-            <div className="admin-home-chart-wrap full-width">
-              <ResponsiveContainer width="100%" height={360}>
-                <BarChart
-                  data={adminChartData}
-                  margin={{ top: 12, right: 16, left: 0, bottom: 16 }}
-                  barCategoryGap="2%"
-                  barGap={0}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip formatter={(value) => `R$ ${formatReal(value)}`} labelFormatter={(label, payload) => payload?.[0]?.payload?.month || label} />
-                  <Bar dataKey="total" radius={[0, 0, 0, 0]} barSize={55}>
-                    {adminChartData.map((entry, index) => (
-                      <Cell key={`month-${entry.month}`} fill={adminChartColors[index % adminChartColors.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
@@ -971,193 +922,194 @@ export default function App() {
           {showChart && <ChartView year={selectedYear} onClose={() => setShowChart(false)} refreshKey={chartRefresh} primaryColor={primaryColor} darkMode={darkMode} />}
           <NotesPanel isOpen={showNotes} onClose={() => setShowNotes(false)} darkMode={darkMode} currentMonth={currentMonth} onSaleAdded={load} onMonthChange={setCurrentMonth} />
         </>
+
       )}
 
-      {showAdminPanel && isAdmin && (
-        <AdminPanel
-          isOpen={showAdminPanel}
-          onClose={() => setShowAdminPanel(false)}
-          users={adminUsers}
-          onUsersRefresh={loadAdminUsers}
-          selectedUserId={selectedUserId}
-          onSelectUser={setSelectedUserId}
-        />
-      )}
+    {/* Modais e componentes fora do fluxo principal */}
+    {showAdminPanel && isAdmin && (
+      <AdminPanel
+        isOpen={showAdminPanel}
+        onClose={() => setShowAdminPanel(false)}
+        users={adminUsers}
+        onUsersRefresh={loadAdminUsers}
+        selectedUserId={selectedUserId}
+        onSelectUser={setSelectedUserId}
+      />
 
-      {showLoginManager && isAdmin && (
-        <LoginManager
-          isOpen={showLoginManager}
-          onClose={() => setShowLoginManager(false)}
-          adminCredentials={adminCredentials}
-          onCreateUser={createUser}
-          onUpdateUser={updateUser}
-          onDeleteUser={deleteUser}
-          onViewUserSales={loadUserSalesAndYears}
-          onRefresh={loadAdminCredentials}
-          adminLoading={adminLoading}
-          darkMode={darkMode}
-        />
-      )}
 
-      {confirmState.open && (
-        <div className="modal-overlay">
-          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
-            <div className="modal-header">
-              <h3 id="confirm-title">CONFIRMAÇÃO</h3>
-              <button className="modal-close" onClick={closeConfirm} aria-label="Fechar">✕</button>
-            </div>
-            <div className="modal-body">
-              <p>{confirmState.message}</p>
-            </div>
-            <div className="modal-footer">
-              <button className="btn-secondary" type="button" onClick={closeConfirm}>CANCELAR</button>
-              <button className="btn-primary" type="button" onClick={handleConfirm}>SIM</button>
-            </div>
+    )}
+    {showLoginManager && isAdmin && (
+      <LoginManager
+        isOpen={showLoginManager}
+        onClose={() => setShowLoginManager(false)}
+        adminCredentials={adminCredentials}
+        onCreateUser={createUser}
+        onUpdateUser={updateUser}
+        onDeleteUser={deleteUser}
+        onViewUserSales={loadUserSalesAndYears}
+        onRefresh={loadAdminCredentials}
+        adminLoading={adminLoading}
+        darkMode={darkMode}
+      />
+    )}
+
+    {confirmState.open && (
+      <div className="modal-overlay">
+        <div className="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+          <div className="modal-header">
+            <h3 id="confirm-title">CONFIRMAÇÃO</h3>
+            <button className="modal-close" onClick={closeConfirm} aria-label="Fechar">✕</button>
+          </div>
+          <div className="modal-body">
+            <p>{confirmState.message}</p>
+          </div>
+          <div className="modal-footer">
+            <button className="btn-secondary" type="button" onClick={closeConfirm}>CANCELAR</button>
+            <button className="btn-primary" type="button" onClick={handleConfirm}>SIM</button>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
-      <footer className="app-footer">
-        <div className="footer-content">
-          <div className="footer-system">
-            <strong>SV SISTEMA DE VENDAS 2026</strong>
-          </div>
-          <div className="footer-divider">•</div>
-          <div className="footer-security">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-            <span>Security and Privacy Protected</span>
-          </div>
-          <div className="footer-divider">•</div>
-          <div className="footer-author">
-            Developed by <strong>Gustavo Curis de Francisco</strong>
-          </div>
+    <footer className="app-footer">
+      <div className="footer-content">
+        <div className="footer-system">
+          <strong>SV SISTEMA DE VENDAS 2026</strong>
         </div>
-      </footer>
+        <div className="footer-divider">•</div>
+        <div className="footer-security">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span>Security and Privacy Protected</span>
+        </div>
+        <div className="footer-divider">•</div>
+        <div className="footer-author">
+          Developed by <strong>Gustavo Curis de Francisco</strong>
+        </div>
+      </div>
+    </footer>
 
-      {/* Modal de Vendas do Usuário */}
-      {viewUserSalesData && (
-        <div className="login-manager-overlay">
-          <div className={`user-sales-modal ${darkMode ? 'dark-mode' : ''}`}>
-            <div className="login-manager-header">
-              <h2>Vendas de {viewUserSalesData.userName}</h2>
-              <button 
-                className="login-manager-close" 
-                onClick={() => { 
-                  setViewUserSalesId(null)
-                  setViewUserSalesData(null)
-                  setSelectedSalesYear(null)
-                  setSelectedSalesMonth(null)
+    {/* Modal de Vendas do Usuário */}
+    {viewUserSalesData && (
+      <div className="login-manager-overlay">
+        <div className={`user-sales-modal ${darkMode ? 'dark-mode' : ''}`}>
+          <div className="login-manager-header">
+            <h2>Vendas de {viewUserSalesData.userName}</h2>
+            <button 
+              className="login-manager-close" 
+              onClick={() => { 
+                setViewUserSalesId(null)
+                setViewUserSalesData(null)
+                setSelectedSalesYear(null)
+                setSelectedSalesMonth(null)
+              }}
+              title="Fechar"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="user-sales-controls">
+            <div className="user-sales-select-group">
+              <label htmlFor="year-select">Ano:</label>
+              <select 
+                id="year-select"
+                className="user-sales-select"
+                value={selectedSalesYear || ''}
+                onChange={(e) => {
+                  const year = e.target.value
+                  setSelectedSalesYear(year)
+                  // Auto-select first month of the selected year
+                  const months = Object.keys(viewUserSalesData.salesByYearMonth[year] || {}).sort((a, b) => Number(b) - Number(a))
+                  setSelectedSalesMonth(months.length > 0 ? months[0] : null)
                 }}
-                title="Fechar"
               >
-                ✕
-              </button>
+                <option value="">Selecione um ano</option>
+                {Object.keys(viewUserSalesData.salesByYearMonth)
+                  .sort((a, b) => Number(b) - Number(a))
+                  .map((year) => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+              </select>
             </div>
 
-            <div className="user-sales-controls">
+            {selectedSalesYear && (
               <div className="user-sales-select-group">
-                <label htmlFor="year-select">Ano:</label>
+                <label htmlFor="month-select">Mês:</label>
                 <select 
-                  id="year-select"
+                  id="month-select"
                   className="user-sales-select"
-                  value={selectedSalesYear || ''}
-                  onChange={(e) => {
-                    const year = e.target.value
-                    setSelectedSalesYear(year)
-                    // Auto-select first month of the selected year
-                    const months = Object.keys(viewUserSalesData.salesByYearMonth[year] || {}).sort((a, b) => Number(b) - Number(a))
-                    setSelectedSalesMonth(months.length > 0 ? months[0] : null)
-                  }}
+                  value={selectedSalesMonth || ''}
+                  onChange={(e) => setSelectedSalesMonth(e.target.value)}
                 >
-                  <option value="">Selecione um ano</option>
-                  {Object.keys(viewUserSalesData.salesByYearMonth)
+                  <option value="">Selecione um mês</option>
+                  {Object.keys(viewUserSalesData.salesByYearMonth[selectedSalesYear] || {})
                     .sort((a, b) => Number(b) - Number(a))
-                    .map((year) => (
-                      <option key={year} value={year}>{year}</option>
-                    ))}
+                    .map((month) => {
+                      const monthData = viewUserSalesData.salesByYearMonth[selectedSalesYear][month]
+                      return (
+                        <option key={`${selectedSalesYear}-${month}`} value={month}>
+                          {monthData.monthName}
+                        </option>
+                      )
+                    })}
                 </select>
               </div>
+            )}
+          </div>
 
-              {selectedSalesYear && (
-                <div className="user-sales-select-group">
-                  <label htmlFor="month-select">Mês:</label>
-                  <select 
-                    id="month-select"
-                    className="user-sales-select"
-                    value={selectedSalesMonth || ''}
-                    onChange={(e) => setSelectedSalesMonth(e.target.value)}
-                  >
-                    <option value="">Selecione um mês</option>
-                    {Object.keys(viewUserSalesData.salesByYearMonth[selectedSalesYear] || {})
-                      .sort((a, b) => Number(b) - Number(a))
-                      .map((month) => {
-                        const monthData = viewUserSalesData.salesByYearMonth[selectedSalesYear][month]
-                        return (
-                          <option key={`${selectedSalesYear}-${month}`} value={month}>
-                            {monthData.monthName}
-                          </option>
-                        )
-                      })}
-                  </select>
-                </div>
-              )}
-            </div>
-
-            <div className="user-sales-content">
-              {Object.keys(viewUserSalesData.salesByYearMonth).length === 0 ? (
-                <p className="user-sales-empty">Nenhuma venda encontrada</p>
-              ) : selectedSalesYear && selectedSalesMonth ? (
-                (() => {
-                  const monthData = viewUserSalesData.salesByYearMonth[selectedSalesYear]?.[selectedSalesMonth]
-                  if (!monthData) {
-                    return <p className="user-sales-empty">Nenhuma venda neste mês</p>
-                  }
-                  return (
-                    <div className="user-sales-month-single">
-                      <div className="user-sales-month-header">
-                        <h4>{monthData.monthName}</h4>
-                        <span className="user-sales-month-total">
-                          Total: R$ {formatReal(monthData.total)}
-                        </span>
-                      </div>
-                      <table className="user-sales-table">
-                        <thead>
-                          <tr>
-                            <th>Data</th>
-                            <th>Produto</th>
-                            <th>Tipo</th>
-                            <th>Valor</th>
-                            <th>Quantidade</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {monthData.sales.map((sale, idx) => {
-                            const saleDate = new Date(sale.date || sale.created_at)
-                            const formattedDate = saleDate.toLocaleDateString('pt-BR')
-                            return (
-                              <tr key={`${selectedSalesYear}-${selectedSalesMonth}-${idx}`}>
-                                <td>{formattedDate}</td>
-                                <td>{sale.product || '-'}</td>
-                                <td>{getTireTypeLabel(sale.tire_type)}</td>
-                                <td>R$ {formatReal(sale.total)}</td>
-                                <td>{sale.quantity || '-'}</td>
-                              </tr>
-                            )
-                          })}
-                        </tbody>
-                      </table>
+          <div className="user-sales-content">
+            {Object.keys(viewUserSalesData.salesByYearMonth).length === 0 ? (
+              <p className="user-sales-empty">Nenhuma venda encontrada</p>
+            ) : selectedSalesYear && selectedSalesMonth ? (
+              (() => {
+                const monthData = viewUserSalesData.salesByYearMonth[selectedSalesYear]?.[selectedSalesMonth]
+                if (!monthData) {
+                  return <p className="user-sales-empty">Nenhuma venda neste mês</p>
+                }
+                return (
+                  <div className="user-sales-month-single">
+                    <div className="user-sales-month-header">
+                      <h4>{monthData.monthName}</h4>
+                      <span className="user-sales-month-total">
+                        Total: R$ {formatReal(monthData.total)}
+                      </span>
                     </div>
-                  )
-                })()
-              ) : (
-                <p className="user-sales-empty">Selecione um ano e mês para visualizar</p>
-              )}
-            </div>
+                    <table className="user-sales-table">
+                      <thead>
+                        <tr>
+                          <th>Data</th>
+                          <th>Produto</th>
+                          <th>Tipo</th>
+                          <th>Valor</th>
+                          <th>Quantidade</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {monthData.sales.map((sale, idx) => {
+                          const saleDate = new Date(sale.date || sale.created_at)
+                          const formattedDate = saleDate.toLocaleDateString('pt-BR')
+                          return (
+                            <tr key={`${selectedSalesYear}-${selectedSalesMonth}-${idx}`}>
+                              <td>{formattedDate}</td>
+                              <td>{sale.product || '-'}</td>
+                              <td>{getTireTypeLabel(sale.tire_type)}</td>
+                              <td>R$ {formatReal(sale.total)}</td>
+                              <td>{sale.quantity || '-'}</td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )
+              })()
+            ) : (
+              <p className="user-sales-empty">Selecione um ano e mês para visualizar</p>
+            )}
           </div>
         </div>
-      )}
-    </div>
-  )
-}
+      </div>
+    )}
+
