@@ -1,6 +1,6 @@
 // Script de backup automático dos dados do sistema
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 const DATA_DIR = path.join(__dirname, '../data');
 const BACKUP_DIR = path.join(DATA_DIR, 'backups');
@@ -25,5 +25,3 @@ function runBackup() {
 }
 
 runBackup();
-
-module.exports = runBackup;
