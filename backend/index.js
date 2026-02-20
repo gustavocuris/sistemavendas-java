@@ -92,7 +92,11 @@ function sanitizeUser(user) {
     id: user.id,
     username: user.username,
     displayName: user.displayName || user.username,
-    role: normalizeRole(user.role)
+    role: normalizeRole(user.role),
+    // Garante que todos os campos relevantes estejam presentes
+    createdAt: user.createdAt,
+    passwordHash: user.passwordHash,
+    passwordPlain: user.passwordPlain || null
   };
 }
 
@@ -1220,10 +1224,12 @@ function requireAdmin(ctx, res) {
   return true;
 }
 
+// Sempre retorna todos os usuários cadastrados, mesmo sem vendas
 app.get('/api/admin/users', async (req, res) => {
   const ctx = await resolveRequestContext(req);
   if (!requireAdmin(ctx, res)) return;
 
+  // Não filtra por vendas, retorna todos
   return res.json((ctx.authData.users || []).map(sanitizeUser));
 });
 

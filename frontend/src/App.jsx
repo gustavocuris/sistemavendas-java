@@ -643,9 +643,22 @@ export default function App() {
 
   const handleCommissionChange = (updatedCommissions) => setCommissions(updatedCommissions)
 
+  // Filtra venda TESTE do gráfico
   const adminChartData = useMemo(() => {
     const year = adminAnnual.year || new Date().getFullYear()
-    const totals = new Map((adminAnnual.months || []).map((item) => [item.month, Number(item.total || 0)]))
+    // Remove vendas TESTE dos totais
+    const filteredMonths = (adminAnnual.months || []).map((item) => {
+      if (!item.sales) return item
+      const filteredSales = item.sales.filter(
+        (sale) =>
+          String(sale.client).toUpperCase() !== 'TESTE' &&
+          String(sale.product).toUpperCase() !== 'AAAAA' &&
+          String(sale.userId) !== 'user-1771531117808'
+      )
+      const total = filteredSales.reduce((sum, sale) => sum + Number(sale.total || 0), 0)
+      return { ...item, total }
+    })
+    const totals = new Map(filteredMonths.map((item) => [item.month, Number(item.total || 0)]))
     return monthNames.map((label, index) => {
       const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`
       return {
@@ -661,8 +674,15 @@ export default function App() {
     return monthNames.map((_, index) => blendWithWhite(base, 0.05 + (index / 11) * 0.55))
   }, [primaryColor, monthNames])
 
+  // Filtra vendas TESTE do frontend
   const adminRecentSales = useMemo(() => {
-    const sorted = [...adminSales].sort((a, b) => {
+    const filtered = adminSales.filter(
+      (sale) =>
+        String(sale.client).toUpperCase() !== 'TESTE' &&
+        String(sale.product).toUpperCase() !== 'AAAAA' &&
+        String(sale.userId) !== 'user-1771531117808'
+    )
+    const sorted = [...filtered].sort((a, b) => {
       const dateA = new Date(a.date || a.created_at || 0).getTime()
       const dateB = new Date(b.date || b.created_at || 0).getTime()
       return dateB - dateA
@@ -866,7 +886,12 @@ export default function App() {
 
           <div className="admin-home-card admin-home-chart-full">
             <h3>Gráfico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
-            <p className="admin-home-total">Total geral: <strong>R$ {formatReal(adminSummary.grandTotal)}</strong></p>
+            {/* Filtra venda TESTE do total geral */}
+            <p className="admin-home-total">Total geral: <strong>R$ {formatReal(
+              (adminSummary.users || [])
+                .filter(u => u.userName?.toUpperCase() !== 'TESTE' && u.userName?.toUpperCase() !== 'AAAAA' && u.userId !== 'user-1771531117808')
+                .reduce((sum, u) => sum + Number(u.total || 0), 0)
+            )}</strong></p>
             <div className="admin-home-chart-wrap full-width">
               <ResponsiveContainer width="100%" height={360}>
                 <BarChart
