@@ -647,30 +647,27 @@ export default function App() {
   const adminChartData = useMemo(() => {
     const year = adminAnnual.year || new Date().getFullYear()
     // Remove vendas TESTE dos totais
-    // Filtra vendas do gráfico para considerar apenas vendas de contas ativas
-    const activeUserIds = new Set((adminUsers || []).filter(u => u.active !== false && u.role !== 'admin').map(u => u.id))
-    const filteredMonths = (adminAnnual.months || []).map((item) => {
-      if (!item.sales) return item
-      const filteredSales = item.sales.filter(
-        (sale) =>
-          String(sale.client).toUpperCase() !== 'TESTE' &&
-          String(sale.product).toUpperCase() !== 'AAAAA' &&
-          String(sale.userId) !== 'user-1771531117808' &&
-          activeUserIds.has(sale.userId)
-      )
-      const total = filteredSales.reduce((sum, sale) => sum + Number(sale.total || 0), 0)
-      return { ...item, total }
-    })
-    const totals = new Map(filteredMonths.map((item) => [item.month, Number(item.total || 0)]))
+    // Gráfico anual e totais do dashboard usam os totais das tabelas de cada conta ativa
+    const activeUsers = (adminUsers || []).filter(u => u.active !== false && u.role !== 'admin' && u.salesByYearMonth)
+    // Mapeia mês -> soma dos totais de todos os usuários ativos
+    const monthTotals = {}
+    for (const user of activeUsers) {
+      const salesByYearMonth = user.salesByYearMonth || {}
+      const yearData = salesByYearMonth[year] || {}
+      for (const [month, monthData] of Object.entries(yearData)) {
+        if (!monthTotals[month]) monthTotals[month] = 0
+        monthTotals[month] += Number(monthData.total || 0)
+      }
+    }
     return monthNames.map((label, index) => {
       const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`
       return {
         name: label.substring(0, 3),
         month: monthKey,
-        total: totals.get(monthKey) || 0
+        total: monthTotals[String(index + 1).padStart(2, '0')] || 0
       }
     })
-  }, [adminAnnual, monthNames, adminUsers])
+  }, [adminUsers, monthNames, year])
 
   const adminChartColors = useMemo(() => {
     const base = primaryColor || PRESET_COLORS[0].hex
