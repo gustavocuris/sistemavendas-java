@@ -643,20 +643,24 @@ export default function App() {
 
   const handleCommissionChange = (updatedCommissions) => setCommissions(updatedCommissions)
 
-  // Gráfico sincronizado: soma real das vendas válidas de cada mês
+  // Gráfico sincronizado: soma real das vendas válidas de cada mês, usando adminSales
   const adminChartData = useMemo(() => {
     const year = adminAnnual.year || new Date().getFullYear();
-    // Cria um mapa mês -> vendas válidas
+    // Filtra vendas válidas do ano
+    const filteredSales = adminSales.filter(
+      (sale) =>
+        String(sale.client).toUpperCase() !== 'TESTE' &&
+        String(sale.product).toUpperCase() !== 'AAAAA' &&
+        String(sale.userId) !== 'user-1771531117808' &&
+        new Date(sale.date || sale.created_at).getFullYear() === year
+    );
+    // Agrupa por mês
     const salesByMonth = {};
-    (adminAnnual.months || []).forEach((item) => {
-      if (!item.sales) return;
-      const filteredSales = item.sales.filter(
-        (sale) =>
-          String(sale.client).toUpperCase() !== 'TESTE' &&
-          String(sale.product).toUpperCase() !== 'AAAAA' &&
-          String(sale.userId) !== 'user-1771531117808'
-      );
-      salesByMonth[item.month] = filteredSales;
+    filteredSales.forEach((sale) => {
+      const date = new Date(sale.date || sale.created_at);
+      const monthKey = `${year}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      if (!salesByMonth[monthKey]) salesByMonth[monthKey] = [];
+      salesByMonth[monthKey].push(sale);
     });
     return monthNames.map((label, index) => {
       const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`;
@@ -668,7 +672,7 @@ export default function App() {
         total
       };
     });
-  }, [adminAnnual, monthNames]);
+  }, [adminSales, adminAnnual.year, monthNames]);
 
   const adminChartColors = useMemo(() => {
     const base = primaryColor || PRESET_COLORS[0].hex
@@ -888,10 +892,15 @@ export default function App() {
           <div className="admin-home-card admin-home-chart-full">
             <h3>Gráfico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
             {/* Filtra venda TESTE do total geral */}
+            {/* Total geral: soma real das vendas válidas do ano */}
             <p className="admin-home-total">Total geral: <strong>R$ {formatReal(
-              (adminSummary.users || [])
-                .filter(u => u.userName?.toUpperCase() !== 'TESTE' && u.userName?.toUpperCase() !== 'AAAAA' && u.userId !== 'user-1771531117808')
-                .reduce((sum, u) => sum + Number(u.total || 0), 0)
+              adminSales.filter(
+                (sale) =>
+                  String(sale.client).toUpperCase() !== 'TESTE' &&
+                  String(sale.product).toUpperCase() !== 'AAAAA' &&
+                  String(sale.userId) !== 'user-1771531117808' &&
+                  new Date(sale.date || sale.created_at).getFullYear() === (adminAnnual.year || new Date().getFullYear())
+              ).reduce((sum, sale) => sum + Number(sale.total || 0), 0)
             )}</strong></p>
             <div className="admin-home-chart-wrap full-width">
               <ResponsiveContainer width="100%" height={360}>
