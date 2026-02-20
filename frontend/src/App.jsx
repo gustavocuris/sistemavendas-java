@@ -732,6 +732,17 @@ export default function App() {
       )}
       <div className="header-top">
         <div className="theme-controls">
+          {/* Botões de ação grandes ao lado dos controles de tema/logout */}
+          {!isAdmin && (
+            <>
+              <button className="btn-action-large" style={{marginRight: 8}} onClick={() => setShowChart(true)} title="Ver gráfico de vendas">
+                <span style={{fontSize: '2rem'}}>📊</span>
+              </button>
+              <button className="btn-action-large" style={{marginRight: 16}} onClick={() => setShowNotes(true)} title="Ver rascunhos e anotações">
+                <span style={{fontSize: '2rem'}}>📝</span>
+              </button>
+            </>
+          )}
           <button className="btn-theme" onClick={() => setDarkMode(!darkMode)} title="Alternar tema">
             {darkMode ? (
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -857,16 +868,7 @@ export default function App() {
         )}
 
         {/* Botões de ação grandes ao lado dos controles de tema/logout */}
-        {!isAdmin && (
-          <div className="header-actions-large">
-            <button className="btn-action-large" onClick={() => setShowChart(true)} title="Ver gráfico de vendas">
-              <span style={{fontSize: '2rem'}}>📊</span>
-            </button>
-            <button className="btn-action-large" onClick={() => setShowNotes(true)} title="Ver rascunhos e anotações">
-              <span style={{fontSize: '2rem'}}>📝</span>
-            </button>
-          </div>
-        )}
+        {/* Removido: header-actions-large, pois agora os botões estão junto dos controles de tema */}
       </div>
 
       {isAdmin ? (
