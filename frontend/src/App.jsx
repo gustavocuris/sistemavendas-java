@@ -406,8 +406,9 @@ export default function App() {
     setCurrentUser(resolvedUser)
     localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
     axios.defaults.headers.common['x-user-id'] = resolvedUser.id
-    // Dispara o useEffect para carregar dados imediatamente
     setAuthKey((prev) => prev + 1)
+    // Força reload para garantir atualização total
+    window.location.reload()
   }
 
   const handleLogout = () => {
@@ -422,6 +423,8 @@ export default function App() {
     localStorage.removeItem('currentUser')
     delete axios.defaults.headers.common['x-user-id']
     setAuthKey((prev) => prev + 1)
+    // Força reload para garantir atualização total
+    window.location.reload()
   }
 
   const openConfirm = (message, onConfirm) => setConfirmState({ open: true, message, onConfirm })
