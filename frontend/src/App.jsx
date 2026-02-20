@@ -756,6 +756,21 @@ export default function App() {
               <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
             </svg>
           </button>
+          <button className="btn-theme" onClick={() => setShowChart(true)} title="Ver gráfico de vendas">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="12" width="3" height="7"/>
+              <rect x="9" y="8" width="3" height="11"/>
+              <rect x="15" y="4" width="3" height="15"/>
+            </svg>
+          </button>
+          <button className="btn-theme" onClick={() => setShowNotes(true)} title="Ver rascunhos e anotações">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="4" y="4" width="16" height="16" rx="2"/>
+              <line x1="8" y1="8" x2="16" y2="8"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+              <line x1="8" y1="16" x2="12" y2="16"/>
+            </svg>
+          </button>
           <button className="btn-logout" onClick={() => openConfirm('Deseja realmente sair do sistema?', handleLogout)} title="Sair do sistema">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
