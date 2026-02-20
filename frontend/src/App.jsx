@@ -643,16 +643,20 @@ export default function App() {
 
   const handleCommissionChange = (updatedCommissions) => setCommissions(updatedCommissions)
 
-  // Gráfico sincronizado: soma real das vendas válidas de cada mês, usando adminSales
+  // Gráfico sincronizado: soma real das vendas válidas de cada mês, usando adminSales filtradas pelo ano selecionado
   const adminChartData = useMemo(() => {
     const year = adminAnnual.year || new Date().getFullYear();
-    // Filtra vendas válidas do ano
+    // Filtra vendas válidas do ano selecionado
     const filteredSales = adminSales.filter(
-      (sale) =>
-        String(sale.client).toUpperCase() !== 'TESTE' &&
-        String(sale.product).toUpperCase() !== 'AAAAA' &&
-        String(sale.userId) !== 'user-1771531117808' &&
-        new Date(sale.date || sale.created_at).getFullYear() === year
+      (sale) => {
+        const saleDate = new Date(sale.date || sale.created_at);
+        return (
+          String(sale.client).toUpperCase() !== 'TESTE' &&
+          String(sale.product).toUpperCase() !== 'AAAAA' &&
+          String(sale.userId) !== 'user-1771531117808' &&
+          saleDate.getFullYear() === year
+        );
+      }
     );
     // Agrupa por mês
     const salesByMonth = {};
@@ -893,13 +897,18 @@ export default function App() {
             <h3>Gráfico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
             {/* Filtra venda TESTE do total geral */}
             {/* Total geral: soma real das vendas válidas do ano */}
+            {/* Total geral: soma real das vendas válidas do ano selecionado */}
             <p className="admin-home-total">Total geral: <strong>R$ {formatReal(
               adminSales.filter(
-                (sale) =>
-                  String(sale.client).toUpperCase() !== 'TESTE' &&
-                  String(sale.product).toUpperCase() !== 'AAAAA' &&
-                  String(sale.userId) !== 'user-1771531117808' &&
-                  new Date(sale.date || sale.created_at).getFullYear() === (adminAnnual.year || new Date().getFullYear())
+                (sale) => {
+                  const saleDate = new Date(sale.date || sale.created_at);
+                  return (
+                    String(sale.client).toUpperCase() !== 'TESTE' &&
+                    String(sale.product).toUpperCase() !== 'AAAAA' &&
+                    String(sale.userId) !== 'user-1771531117808' &&
+                    saleDate.getFullYear() === (adminAnnual.year || new Date().getFullYear())
+                  );
+                }
               ).reduce((sum, sale) => sum + Number(sale.total || 0), 0)
             )}</strong></p>
             <div className="admin-home-chart-wrap full-width">
