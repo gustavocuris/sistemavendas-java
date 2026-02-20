@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 
+import { triggerBackup } from './trigger-backup.js';
+
 dotenv.config();
 
 const mongoUri = (
@@ -452,6 +454,7 @@ app.post('/api/login', async (req, res) => {
 
   const user = (authData.users || []).find((u) => u.username === username && u.passwordHash === passwordHash);
 
+
   if (user) {
     ensureUserData(user.id);
     console.log('DEBUG LOGIN SUCCESS:', {
@@ -459,6 +462,12 @@ app.post('/api/login', async (req, res) => {
       userId: user.id,
       role: user.role
     });
+    // Trigger backup on login (as a proof of concept, since no logout endpoint exists)
+    try {
+      triggerBackup();
+    } catch (err) {
+      console.error('Failed to trigger backup on login:', err);
+    }
     return res.status(200).json({
       success: true,
       user: sanitizeUser(user)
@@ -671,6 +680,7 @@ app.post('/api/sales', async (req, res) => {
   };
   monthData.sales.push(sale);
   await db.write();
+  try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
   res.status(201).json(sale);
 });
 
@@ -719,6 +729,7 @@ app.put('/api/sales/:id', async (req, res) => {
   renumberIdsForMonth(monthData);
   
   await db.write();
+  try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
   // Return the updated sale with new ID
   const updatedSale = monthData.sales[monthData.sales.length - 1];
   res.json(updatedSale);
@@ -743,6 +754,7 @@ app.delete('/api/sales/:id', async (req, res) => {
   renumberIdsForMonth(monthData);
   
   await db.write();
+  try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
   res.status(204).end();
 });
 
@@ -817,6 +829,7 @@ app.post('/api/comprar-depois', async (req, res) => {
 
   ctx.userData.comprarDepois.push(item);
   await db.write();
+  try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
   res.status(201).json(item);
 });
 
@@ -845,6 +858,7 @@ app.put('/api/comprar-depois/:id', async (req, res) => {
   };
 
   await db.write();
+  try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
   res.json(comprar[itemIndex]);
 });
 
@@ -867,6 +881,7 @@ app.delete('/api/comprar-depois/:id', async (req, res) => {
   });
 
   await db.write();
+  try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
   res.status(204).end();
 });
 
@@ -951,6 +966,7 @@ app.post('/api/falta-pagar', async (req, res) => {
 
   ctx.userData.faltaPagar.push(item);
   await db.write();
+  try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
   res.status(201).json(item);
 });
 
@@ -980,6 +996,7 @@ app.put('/api/falta-pagar/:id', async (req, res) => {
   };
 
   await db.write();
+  try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
   res.json(pagar[itemIndex]);
 });
 
@@ -1002,6 +1019,7 @@ app.delete('/api/falta-pagar/:id', async (req, res) => {
   });
 
   await db.write();
+  try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
   res.status(204).end();
 });
 
