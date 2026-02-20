@@ -704,6 +704,7 @@ export default function App() {
   }, [safeAdminSales])
 
   return (
+
     <div key={`app-${authKey}`} className={`container ${darkMode ? 'dark-mode' : ''}`}>
       {/* Proteção global: mensagem de erro amigável se algum dado essencial estiver ausente */}
       {(!safeAdminSales || !safeAdminUsers || !safeAdminAnnual) && (
@@ -742,7 +743,22 @@ export default function App() {
               <line x1="21" y1="12" x2="9" y2="12"></line>
             </svg>
           </button>
-
+          {isAdmin && (
+            <>
+              <button className="btn-theme" onClick={() => setShowAdminPanel(true)} title="Gerenciar contas (painel)">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <path d="M9 9h6v6H9z"/>
+                </svg>
+              </button>
+              <button className="btn-theme" onClick={() => setShowLoginManager(true)} title="Gerenciar contas (modal)">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 20h9"/>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19.5 2 21l1.5-5L16.5 3.5z"/>
+                </svg>
+              </button>
+            </>
+          )}
           {showColorPicker && (
             <div className="color-picker-dropdown">
               <div className="color-picker-header">
