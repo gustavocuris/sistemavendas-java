@@ -1,3 +1,5 @@
+  // Estado para filtro de usuário no gráfico (inicial: todos)
+  const [selectedChartUserId, setSelectedChartUserId] = useState('ALL')
 import React, { useEffect, useMemo, useState, useCallback } from 'react'
 // Função para formatar números com ponto de milhar e vírgula decimal
 function formatReal(value) {
@@ -894,6 +896,21 @@ export default function App() {
           </div>
 
           <div className="admin-home-card admin-home-chart-full">
+            {/* Seletor de usuário para o gráfico (apenas visual, sem lógica de filtro ainda) */}
+            <div style={{ marginBottom: 16 }}>
+              <label htmlFor="chart-user-select"><strong>Filtrar gráfico por usuário:</strong> </label>
+              <select
+                id="chart-user-select"
+                value={selectedChartUserId}
+                onChange={e => setSelectedChartUserId(e.target.value)}
+                style={{ minWidth: 180, marginLeft: 8 }}
+              >
+                <option value="ALL">Todos</option>
+                {adminUsers.filter(u => u.role !== 'admin').map(u => (
+                  <option key={u.id} value={u.id}>{u.displayName || u.username || u.id}</option>
+                ))}
+              </select>
+            </div>
             <h3>Gráfico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
             {/* Filtra venda TESTE do total geral */}
             {/* Total geral: soma real das vendas válidas do ano */}
