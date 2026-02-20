@@ -643,31 +643,32 @@ export default function App() {
 
   const handleCommissionChange = (updatedCommissions) => setCommissions(updatedCommissions)
 
-  // Filtra venda TESTE do gráfico
+  // Gráfico sincronizado: soma real das vendas válidas de cada mês
   const adminChartData = useMemo(() => {
-    const year = adminAnnual.year || new Date().getFullYear()
-    // Remove vendas TESTE dos totais
-    const filteredMonths = (adminAnnual.months || []).map((item) => {
-      if (!item.sales) return item
+    const year = adminAnnual.year || new Date().getFullYear();
+    // Cria um mapa mês -> vendas válidas
+    const salesByMonth = {};
+    (adminAnnual.months || []).forEach((item) => {
+      if (!item.sales) return;
       const filteredSales = item.sales.filter(
         (sale) =>
           String(sale.client).toUpperCase() !== 'TESTE' &&
           String(sale.product).toUpperCase() !== 'AAAAA' &&
           String(sale.userId) !== 'user-1771531117808'
-      )
-      const total = filteredSales.reduce((sum, sale) => sum + Number(sale.total || 0), 0)
-      return { ...item, total }
-    })
-    const totals = new Map(filteredMonths.map((item) => [item.month, Number(item.total || 0)]))
+      );
+      salesByMonth[item.month] = filteredSales;
+    });
     return monthNames.map((label, index) => {
-      const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`
+      const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`;
+      const sales = salesByMonth[monthKey] || [];
+      const total = sales.reduce((sum, sale) => sum + Number(sale.total || 0), 0);
       return {
         name: label.substring(0, 3),
         month: monthKey,
-        total: totals.get(monthKey) || 0
-      }
-    })
-  }, [adminAnnual, monthNames])
+        total
+      };
+    });
+  }, [adminAnnual, monthNames]);
 
   const adminChartColors = useMemo(() => {
     const base = primaryColor || PRESET_COLORS[0].hex
