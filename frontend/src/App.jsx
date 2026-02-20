@@ -1,3 +1,21 @@
+// Spinner de backup
+function BackupSpinner({ visible }) {
+  if (!visible) return null;
+  return (
+    <div style={{
+      position: 'fixed',
+      right: 24,
+      bottom: 24,
+      zIndex: 9999,
+      background: 'rgba(30,113,69,0.92)',
+      borderRadius: '50%',
+      padding: 16,
+      boxShadow: '0 2px 12px rgba(0,0,0,0.18)'
+    }}>
+      <div className="backup-spinner" style={{ width: 32, height: 32, border: '4px solid #fff', borderTop: '4px solid #4ade80', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }}></div>
+    </div>
+  );
+}
 import React, { useEffect, useMemo, useState, useCallback } from 'react'
 // Função para formatar números com ponto de milhar e vírgula decimal
 function formatReal(value) {
@@ -45,6 +63,7 @@ const getTireTypeLabel = (type) => {
 }
 
 export default function App() {
+    const [showBackupSpinner, setShowBackupSpinner] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('authenticated') === 'true')
   const [authKey, setAuthKey] = useState(0)
   const [currentUser, setCurrentUser] = useState(() => {
@@ -704,8 +723,9 @@ export default function App() {
   }, [safeAdminSales])
 
   return (
-
-    <div key={`app-${authKey}`} className={`container ${darkMode ? 'dark-mode' : ''}`}>
+    <>
+      <BackupSpinner visible={showBackupSpinner} />
+      <div key={`app-${authKey}`} className={`container ${darkMode ? 'dark-mode' : ''}`}>
       {/* Proteção global: mensagem de erro amigável se algum dado essencial estiver ausente */}
       {(!safeAdminSales || !safeAdminUsers || !safeAdminAnnual) && (
         <div style={{color: 'red', padding: 20, fontWeight: 'bold'}}>Erro crítico: Dados essenciais não carregados. Tente recarregar a página ou contate o suporte.</div>
