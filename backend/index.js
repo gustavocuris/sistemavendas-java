@@ -12,6 +12,8 @@ import { triggerBackup } from './trigger-backup.js';
 
 dotenv.config();
 
+
+// ====== CONFIGURAÇÃO DE BANCO DE DADOS ======
 const mongoUri = (
   process.env.MONGODB_URI ||
   process.env.MONGODB_URL ||
@@ -20,19 +22,50 @@ const mongoUri = (
   ''
 ).trim();
 
-if (mongoUri && !process.env.MONGODB_URI) {
-  process.env.MONGODB_URI = mongoUri;
+let db;
+const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true' || process.env.RENDER_EXTERNAL_URL;
+
+if (!mongoUri && isProduction) {
+  console.error('[ERRO CRÍTICO] MONGODB_URI não definido em produção! Configure o MongoDB Atlas e defina a variável de ambiente MONGODB_URI no Render. O backend será finalizado para evitar perda de dados.');
+  process.exit(1);
 }
 
-const shouldUseMongo = Boolean(mongoUri);
-let db;
-
-try {
-  ({ default: db } = await import(shouldUseMongo ? './db-mongo.js' : './db.js'));
-  console.log(`DB source: ${shouldUseMongo ? 'mongodb' : 'file'}`);
-} catch (error) {
-  console.error('Failed to initialize MongoDB, falling back to file DB.', error);
+if (mongoUri) {
+  try {
+    ({ default: db } = await import('./db-mongo.js'));
+    console.log('DB source: mongodb');
+    // Só escrever no boot se houver vendas
+    if (typeof db.data === 'object') {
+      const totalSales = (() => {
+        let total = 0;
+        if (db.data.userData && typeof db.data.userData === 'object') {
+          for (const user of Object.values(db.data.userData)) {
+            for (const month of Object.values(user.months || {})) {
+              total += Array.isArray(month.sales) ? month.sales.length : 0;
+            }
+          }
+        }
+        if (db.data.months && typeof db.data.months === 'object') {
+          for (const month of Object.values(db.data.months)) {
+            total += Array.isArray(month.sales) ? month.sales.length : 0;
+          }
+        }
+        return total;
+      })();
+      if (totalSales > 0) await db.write();
+    }
+  } catch (error) {
+    console.error('[ERRO] Falha ao inicializar MongoDB. Fallback para file DB NÃO será feito em produção.', error);
+    if (isProduction) {
+      process.exit(1);
+    } else {
+      ({ default: db } = await import('./db.js'));
+      console.log('DB source: file (fallback DEV)');
+    }
+  }
+} else {
   ({ default: db } = await import('./db.js'));
+  console.log('DB source: file');
 }
 
 // ...funções utilitárias, constantes, helpers...
@@ -1628,6 +1661,106 @@ app.get('/api/admin/users/credentials', async (req, res) => {
   }));
 
   return res.json(credentials);
+});
+
+// Endpoint admin: recovery de vendas antigas do MongoDB
+app.post('/api/admin/recover-sales-from-mongo', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  // Acesso ao AppData
+  const mongoose = (await import('mongoose')).default;
+  const AppData = mongoose.models.AppData || mongoose.model('AppData');
+
+  // Log infos de conexão
+  const dbName = mongoose.connection.name;
+  const collectionName = AppData.collection.name;
+
+  // Buscar doc principal
+  let main = await AppData.findOne({ key: 'main' }).lean();
+  let candidates = [];
+  if (!main || !main.data || Object.keys(main.data).length === 0) {
+    candidates = await AppData.find({}).lean();
+  } else {
+    candidates = [main];
+  }
+
+  // Função para contar vendas em estrutura
+  function countSales(data) {
+    let total = 0;
+    if (!data) return 0;
+    // userData
+    if (data.userData && typeof data.userData === 'object') {
+      for (const user of Object.values(data.userData)) {
+        for (const month of Object.values(user.months || {})) {
+          total += Array.isArray(month.sales) ? month.sales.length : 0;
+        }
+      }
+    }
+    // months na raiz
+    if (data.months && typeof data.months === 'object') {
+      for (const month of Object.values(data.months)) {
+        total += Array.isArray(month.sales) ? month.sales.length : 0;
+      }
+    }
+    // Estrutura aninhada (data.data)
+    if (data.data && typeof data.data === 'object') {
+      total += countSales(data.data);
+    }
+    return total;
+  }
+
+  // Função para extrair subestrutura correta
+  function extractData(doc) {
+    let d = doc.data;
+    // Se data.data existe e é objeto, descer
+    while (d && d.data && typeof d.data === 'object') {
+      d = d.data;
+    }
+    return d;
+  }
+
+  // Selecionar doc mais completo
+  let bestDoc = null;
+  let bestCount = 0;
+  let bestData = null;
+  let monthsFound = [];
+  let hasUserData = false;
+  for (const doc of candidates) {
+    const d = extractData(doc);
+    const count = countSales(d);
+    if (count > bestCount) {
+      bestDoc = doc;
+      bestCount = count;
+      bestData = d;
+      monthsFound = d && d.months ? Object.keys(d.months) : [];
+      hasUserData = !!(d && d.userData);
+    }
+  }
+
+  // Não sobrescrever se não houver vendas
+  if (!bestDoc || bestCount === 0) {
+    console.log(`[RECOVERY] Nenhum documento com vendas encontrado em ${dbName}.${collectionName}`);
+    return res.status(404).json({ recovered: false, message: 'Nenhum documento com vendas encontrado.' });
+  }
+
+  // Atualizar apenas memória
+  db.data = bestData;
+
+  // Logs detalhados
+  console.log(`[RECOVERY] Banco: ${dbName}`);
+  console.log(`[RECOVERY] Collection: ${collectionName}`);
+  console.log(`[RECOVERY] Doc usado: key=${bestDoc.key}`);
+  console.log(`[RECOVERY] Vendas recuperadas: ${bestCount}`);
+  console.log(`[RECOVERY] Meses encontrados: ${monthsFound.join(', ')}`);
+
+  return res.json({
+    recovered: true,
+    usedKey: bestDoc.key,
+    totalSales: bestCount,
+    hasUserData,
+    monthsFound
+  });
 });
 
 const PORT = process.env.PORT || 3001;
