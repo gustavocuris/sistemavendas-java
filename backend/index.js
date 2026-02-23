@@ -1,5 +1,64 @@
 // ...existing code...
 // ...existing code...
+
+// ================= INÍCIO: imports, dotenv, variáveis, banco, utilitários =================
+
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
+import { triggerBackup } from './trigger-backup.js';
+
+dotenv.config();
+
+const mongoUri = (
+  process.env.MONGODB_URI ||
+  process.env.MONGODB_URL ||
+  process.env.DATABASE_URL ||
+  process.env.MONGO_URL ||
+  ''
+).trim();
+
+if (mongoUri && !process.env.MONGODB_URI) {
+  process.env.MONGODB_URI = mongoUri;
+}
+
+const shouldUseMongo = Boolean(mongoUri);
+let db;
+
+try {
+  ({ default: db } = await import(shouldUseMongo ? './db-mongo.js' : './db.js'));
+  console.log(`DB source: ${shouldUseMongo ? 'mongodb' : 'file'}`);
+} catch (error) {
+  console.error('Failed to initialize MongoDB, falling back to file DB.', error);
+  ({ default: db } = await import('./db.js'));
+}
+
+// ...funções utilitárias, constantes, helpers...
+
+// ================= FIM utilitários =================
+
+const app = express();
+
+// Configuração de CORS
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',').map(url => url.trim())
+  : [
+      'http://localhost:5173', 
+      'http://localhost:5174',
+      'https://sistemavendas-frontend-intercap.onrender.com'
+    ];
+
+app.use(cors({
+  origin: '*',
+  credentials: false
+}));
+
+app.use(express.json());
+
+// ================= ROTAS E ENDPOINTS =================
+
 // Endpoint admin: últimas vendas agregadas de todos usuários
 app.get('/api/admin/sales/latest', async (req, res) => {
   const ctx = await resolveRequestContext(req);
@@ -39,49 +98,8 @@ app.get('/api/admin/sales/latest', async (req, res) => {
 
   return res.json(allSales.slice(0, limit));
 });
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import nodemailer from 'nodemailer';
-import crypto from 'crypto';
+// ...todas as outras rotas e endpoints existentes...
 
-import { triggerBackup } from './trigger-backup.js';
-
-dotenv.config();
-
-const mongoUri = (
-  process.env.MONGODB_URI ||
-  process.env.MONGODB_URL ||
-  process.env.DATABASE_URL ||
-  process.env.MONGO_URL ||
-  ''
-).trim();
-
-if (mongoUri && !process.env.MONGODB_URI) {
-  process.env.MONGODB_URI = mongoUri;
-}
-
-const shouldUseMongo = Boolean(mongoUri);
-let db;
-
-try {
-  ({ default: db } = await import(shouldUseMongo ? './db-mongo.js' : './db.js'));
-  console.log(`DB source: ${shouldUseMongo ? 'mongodb' : 'file'}`);
-} catch (error) {
-  console.error('Failed to initialize MongoDB, falling back to file DB.', error);
-  ({ default: db } = await import('./db.js'));
-}
-
-const app = express();
-
-// Configuração de CORS
-const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',').map(url => url.trim())
-  : [
-      'http://localhost:5173', 
-      'http://localhost:5174',
-      'https://sistemavendas-frontend-intercap.onrender.com'
-    ];
 
 app.use(cors({
   origin: '*',
