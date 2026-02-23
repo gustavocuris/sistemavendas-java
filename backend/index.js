@@ -85,14 +85,19 @@ app.get('/api/admin/sales/latest', async (req, res) => {
     });
   });
 
-  // Ordenar por createdAt desc, fallback para date desc
-  const toTs = (value) => {
-    const parsed = Date.parse(value);
-    return Number.isFinite(parsed) ? parsed : 0;
+  // Ordenar por createdAt desc, fallback para date desc, garantindo precisão por horário
+  const toTs = (sale) => {
+    // Preferir createdAt, depois created_at, depois date
+    const ts = Date.parse(sale.createdAt || sale.created_at || sale.date);
+    return Number.isFinite(ts) ? ts : 0;
   };
   allSales.sort((a, b) => {
-    const aTs = toTs(a.createdAt || a.created_at) || toTs(a.date);
-    const bTs = toTs(b.createdAt || b.created_at) || toTs(b.date);
+    const bTs = toTs(b);
+    const aTs = toTs(a);
+    // Se timestamps forem iguais, priorizar id maior (mais recente)
+    if (bTs === aTs) {
+      return (b.id || 0) - (a.id || 0);
+    }
     return bTs - aTs;
   });
 
