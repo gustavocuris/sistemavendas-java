@@ -14,7 +14,6 @@ function BackupSpinner({ visible }) {
       boxShadow: '0 2px 12px rgba(0,0,0,0.18)'
     }}>
       <div className="backup-spinner" style={{ width: 32, height: 32, border: '4px solid #fff', borderTop: '4px solid #4ade80', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }}></div>
-    </div>
   );
 }
 import React, { useEffect, useMemo, useState, useCallback } from 'react'
