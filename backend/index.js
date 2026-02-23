@@ -30,47 +30,44 @@ if (!mongoUri && isProduction) {
   process.exit(1);
 }
 
-// CORREÇÃO: usar IIFE async para permitir await no topo
-await (async () => {
-  if (mongoUri) {
-    try {
-      ({ default: db } = await import('./db-mongo.js'));
-      console.log('DB source: mongodb');
-      // Só escrever no boot se houver vendas
-      if (typeof db.data === 'object') {
-        const totalSales = (() => {
-          let total = 0;
-          if (db.data.userData && typeof db.data.userData === 'object') {
-            for (const user of Object.values(db.data.userData)) {
-              for (const month of Object.values(user.months || {})) {
-                total += Array.isArray(month.sales) ? month.sales.length : 0;
-              }
-            }
-          }
-          if (db.data.months && typeof db.data.months === 'object') {
-            for (const month of Object.values(db.data.months)) {
+// CORREÇÃO: usar top-level await direto (Node 22+)
+if (mongoUri) {
+  try {
+    ({ default: db } = await import('./db-mongo.js'));
+    console.log('DB source: mongodb');
+    // Só escrever no boot se houver vendas
+    if (typeof db.data === 'object') {
+      const totalSales = (() => {
+        let total = 0;
+        if (db.data.userData && typeof db.data.userData === 'object') {
+          for (const user of Object.values(db.data.userData)) {
+            for (const month of Object.values(user.months || {})) {
               total += Array.isArray(month.sales) ? month.sales.length : 0;
             }
           }
-          return total;
-        })();
-        if (totalSales > 0) await db.write();
-      }
-    } catch (error) {
-      console.error('[ERRO] Falha ao inicializar MongoDB. Fallback para file DB NÃO será feito em produção.', error);
-      if (isProduction) {
-        process.exit(1);
-      } else {
-        ({ default: db } = await import('./db.js'));
-        console.log('DB source: file (fallback DEV)');
-      }
+        }
+        if (db.data.months && typeof db.data.months === 'object') {
+          for (const month of Object.values(db.data.months)) {
+            total += Array.isArray(month.sales) ? month.sales.length : 0;
+          }
+        }
+        return total;
+      })();
+      if (totalSales > 0) await db.write();
     }
-  } else {
-    ({ default: db } = await import('./db.js'));
-    console.log('DB source: file');
+  } catch (error) {
+    console.error('[ERRO] Falha ao inicializar MongoDB. Fallback para file DB NÃO será feito em produção.', error);
+    if (isProduction) {
+      process.exit(1);
+    } else {
+      ({ default: db } = await import('./db.js'));
+      console.log('DB source: file (fallback DEV)');
+    }
   }
-})()();
-
+} else {
+  ({ default: db } = await import('./db.js'));
+  console.log('DB source: file');
+}
 // ...funções utilitárias, constantes, helpers...
 
 // ================= FIM utilitários =================
