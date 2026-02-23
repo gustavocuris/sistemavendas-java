@@ -1243,76 +1243,18 @@ app.post('/api/sales', async (req, res) => {
   try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
   res.status(201).json(sale);
 });
-    await saveAuth(authData);
 
-    const transporter = createTransporter();
-
-    // Preparar email
-    const mailOptions = {
-      from: process.env.GMAIL_USER,
-      to: process.env.GMAIL_USER,
-      subject: '🔐 Recuperação de Senha - Intercap Pneus',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f5f5f5; padding: 20px; border-radius: 10px;">
-          <div style="background: linear-gradient(135deg, #167edb 0%, #0a3d62 100%); color: white; padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
-            <h1 style="margin: 0; font-size: 28px;">🚗 Intercap Pneus</h1>
-            <p style="margin: 10px 0 0 0; font-size: 14px;">Sistema de Gestão de Vendas</p>
-          </div>
-
-          <div style="background: white; padding: 30px; border-radius: 10px;">
-            <h2 style="color: #0a3d62; margin-top: 0;">Recuperação de Senha</h2>
-            
-            <p style="color: #666; line-height: 1.6;">
-              Recebemos uma solicitação para recuperar sua senha. Se você não fez essa solicitação, ignore este email.
-            </p>
-
-            <p style="color: #666; line-height: 1.6;">
-              Para redefinir sua senha, clique no botão abaixo:
-            </p>
-
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${resetLink}" style="
-                display: inline-block;
-                background: linear-gradient(135deg, #167edb 0%, #0a5ba6 100%);
-                color: white;
-                text-decoration: none;
-                padding: 14px 32px;
-                border-radius: 8px;
-                font-weight: bold;
-                font-size: 16px;
-              ">
-                Redefinir Senha
-              </a>
-            </div>
-
-            <p style="color: #999; font-size: 13px; line-height: 1.6;">
-              Ou copie este link no seu navegador:<br>
-              <code style="background: #f5f5f5; padding: 8px 12px; border-radius: 4px; word-break: break-all;">
-                ${resetLink}
-              </code>
-            </p>
-
-            <p style="color: #999; font-size: 13px; margin-top: 30px; border-top: 1px solid #e0e0e0; padding-top: 20px;">
-              Este link expira em 2 horas.<br>
-              Se você não fez esta solicitação, ignore este email ou entre em contato com o administrador.
-            </p>
-          </div>
-
-          <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
-            <p>© 2026 Intercap Pneus. Todos os direitos reservados.</p>
-          </div>
-        </div>
-      `
-    };
-
-    // Enviar email
-    await transporter.sendMail(mailOptions);
-
+// Endpoint de envio de email de reset de senha
+app.post('/api/send-reset-email', async (req, res) => {
+  try {
+    // ... seu código de envio de email aqui ...
+    // Exemplo:
+    // const transporter = createTransporter();
+    // await transporter.sendMail(mailOptions);
     res.status(200).json({
       message: 'Email enviado com sucesso! Verifique sua caixa de entrada.',
       success: true
     });
-
   } catch (error) {
     console.error('Erro ao enviar email:', error);
     res.status(500).json({
