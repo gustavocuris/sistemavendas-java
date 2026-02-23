@@ -17,27 +17,12 @@ function BackupSpinner({ visible }) {
     <div style={{
       position: 'fixed',
       right: 24,
-      import React, { useEffect, useMemo, useState, useCallback } from 'react';
-      import axios from 'axios';
-      import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
-
-      import SaleForm from './components/SaleForm';
-      import SaleList from './components/SaleList';
-      import CommissionSummary from './components/CommissionSummary';
-      import ChartView from './components/ChartView';
-      import NotesPanel from './NotesPanel';
-      import Login from './components/Login';
-      import AdminPanel from './components/AdminPanel';
-      import LoginManager from './components/LoginManager';
-
-      // Interceptor global para garantir x-user-id do usuário logado
-      axios.interceptors.request.use((config) => {
-        try {
-          const raw = localStorage.getItem("currentUser");
-          const user = raw ? JSON.parse(raw) : null;
-          if (user?.id) {
-            config.headers = config.headers || {};
-            config.headers["x-user-id"] = user.id;
+      bottom: 24,
+      zIndex: 9999,
+      background: 'rgba(30,113,69,0.92)',
+      borderRadius: '50%',
+      padding: 16,
+      boxShadow: '0 2px 12px rgba(0,0,0,0.18)'
           }
         } catch {}
         return config;
