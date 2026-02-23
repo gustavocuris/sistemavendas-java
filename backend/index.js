@@ -1,3 +1,4 @@
+// ...existing code...
 // Endpoint admin: últimas vendas agregadas de todos usuários
 app.get('/api/admin/sales/latest', async (req, res) => {
   const ctx = await resolveRequestContext(req);
@@ -25,15 +26,15 @@ app.get('/api/admin/sales/latest', async (req, res) => {
   });
 
   // Ordenar por createdAt desc, fallback para date desc
-    const toTs = (value) => {
-      const parsed = Date.parse(value);
-      return Number.isFinite(parsed) ? parsed : 0;
-    };
-    allSales.sort((a, b) => {
-      const aTs = toTs(a.createdAt || a.created_at) || toTs(a.date);
-      const bTs = toTs(b.createdAt || b.created_at) || toTs(b.date);
-      return bTs - aTs;
-    });
+  const toTs = (value) => {
+    const parsed = Date.parse(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+  allSales.sort((a, b) => {
+    const aTs = toTs(a.createdAt || a.created_at) || toTs(a.date);
+    const bTs = toTs(b.createdAt || b.created_at) || toTs(b.date);
+    return bTs - aTs;
+  });
 
   return res.json(allSales.slice(0, limit));
 });
