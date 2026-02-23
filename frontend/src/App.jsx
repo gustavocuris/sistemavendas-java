@@ -685,16 +685,16 @@ export default function App() {
   const adminChartData = useMemo(() => {
     const year = adminAnnual.year || new Date().getFullYear();
     const activeUserIds = new Set((adminUsers || []).filter(u => u.active !== false && u.role !== 'admin').map(u => u.id));
-    // Aggregate sales month-by-month for all users, matching sales table logic
+    // Use exatamente os registros da tabela de Visualizar Vendas (adminSales filtrado)
+    const filteredSales = (adminSales || []).filter(
+      (sale) =>
+        String(sale.client || '').toUpperCase() !== 'TESTE' &&
+        String(sale.product || '').toUpperCase() !== 'AAAAA' &&
+        String(sale.userId || '') !== 'user-1771531117808' &&
+        activeUserIds.has(sale.userId)
+    );
     const monthlyTotals = {};
-    (adminSales || []).forEach((sale) => {
-      // Filtering: exclude TESTE, ghost sales, inactive/admin users
-      if (
-        String(sale.client || '').toUpperCase() === 'TESTE' ||
-        String(sale.product || '').toUpperCase() === 'AAAAA' ||
-        String(sale.userId || '') === 'user-1771531117808' ||
-        !activeUserIds.has(sale.userId)
-      ) return;
+    filteredSales.forEach((sale) => {
       const saleDate = new Date(sale.date || sale.created_at);
       const saleYear = saleDate.getFullYear();
       if (saleYear !== year) return;
@@ -725,23 +725,25 @@ export default function App() {
   // Filtra vendas TESTE do frontend
   const adminRecentSales = useMemo(() => {
     try {
+      const activeUserIds = new Set((adminUsers || []).filter(u => u.active !== false && u.role !== 'admin').map(u => u.id));
       const filtered = safeAdminSales.filter(
         (sale) =>
           String(sale.client || '').toUpperCase() !== 'TESTE' &&
           String(sale.product || '').toUpperCase() !== 'AAAAA' &&
-          String(sale.userId || '') !== 'user-1771531117808'
-      )
+          String(sale.userId || '') !== 'user-1771531117808' &&
+          activeUserIds.has(sale.userId)
+      );
       const sorted = [...filtered].sort((a, b) => {
-        const dateA = new Date(a.date || a.created_at || 0).getTime()
-        const dateB = new Date(b.date || b.created_at || 0).getTime()
-        return dateB - dateA
-      })
-      return sorted.slice(0, 5)
+        const dateA = new Date(a.date || a.created_at || 0).getTime();
+        const dateB = new Date(b.date || b.created_at || 0).getTime();
+        return dateB - dateA;
+      });
+      return sorted.slice(0, 5);
     } catch (err) {
-      console.error('Erro ao calcular adminRecentSales:', err)
-      return []
+      console.error('Erro ao calcular adminRecentSales:', err);
+      return [];
     }
-  }, [safeAdminSales])
+  }, [safeAdminSales, adminUsers])
 
   return (
     <>
@@ -1010,6 +1012,7 @@ export default function App() {
         </>
       )}
 
+
       {showAdminPanel && isAdmin && (
         <AdminPanel
           isOpen={showAdminPanel}
@@ -1018,6 +1021,12 @@ export default function App() {
           onUsersRefresh={loadAdminUsers}
           selectedUserId={selectedUserId}
           onSelectUser={setSelectedUserId}
+          onSalesChanged={async () => {
+            await loadAdminSales(adminSearch);
+            await loadAdminSummary();
+            await loadAdminAnnual();
+            setChartRefresh((prev) => prev + 1);
+          }}
         />
       )}
 
@@ -1033,6 +1042,12 @@ export default function App() {
           onRefresh={loadAdminCredentials}
           adminLoading={adminLoading}
           darkMode={darkMode}
+          onSalesChanged={async () => {
+            await loadAdminSales(adminSearch);
+            await loadAdminSummary();
+            await loadAdminAnnual();
+            setChartRefresh((prev) => prev + 1);
+          }}
         />
       )}
 
