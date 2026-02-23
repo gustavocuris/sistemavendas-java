@@ -30,6 +30,20 @@ function formatReal(value) {
     .toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 import axios from 'axios'
+import axios from 'axios'
+
+// Interceptor global para garantir x-user-id do usuário logado
+axios.interceptors.request.use((config) => {
+  try {
+    const raw = localStorage.getItem("currentUser");
+    const user = raw ? JSON.parse(raw) : null;
+    if (user?.id) {
+      config.headers = config.headers || {};
+      config.headers["x-user-id"] = user.id;
+    }
+  } catch {}
+  return config;
+});
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts'
 import SaleForm from './components/SaleForm'
 import SaleList from './components/SaleList'
@@ -91,7 +105,8 @@ export default function App() {
   const [adminSearch, setAdminSearch] = useState('')
   const [adminSales, setAdminSales] = useState([])
   const [adminSummary, setAdminSummary] = useState({ grandTotal: 0, users: [] })
-  const [adminAnnual, setAdminAnnual] = useState({ year: new Date().getFullYear(), months: [] })
+  const [adminLatestSales, setAdminLatestSales] = useState([])
+  const [adminAnnual, setAdminAnnual] = useState([]) // para gráfico anual (12 meses)
   const [adminCredentials, setAdminCredentials] = useState([])
   const [activeLoginId, setActiveLoginId] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -266,27 +281,37 @@ export default function App() {
 
   // Fetch latest sales for admin dashboard (limit 5, all users)
   const loadAdminSales = async () => {
-    if (!isAdmin) return
-    try {
-      const res = await axios.get(`${API}/admin/sales/latest?limit=5`)
-      const list = Array.isArray(res.data) ? res.data : []
-      setAdminSales(list)
-    } catch (err) {
-      setAdminSales([])
-      console.error('Erro ao carregar últimas vendas admin:', err)
-    }
-  }
+  // Últimas vendas do ADM (endpoint correto)
+  const loadAdminLatestSales = async () => {
+    const url = `${API}/admin/sales/latest?limit=5`;
+    const res = await axios.get(url);
+    setAdminLatestSales(Array.isArray(res.data) ? res.data : []);
+  };
+
+  // Gráfico anual ADM
+  const loadAdminAnnual = async (year) => {
+    const yearFinal = year || new Date().getFullYear();
+    const url = `${API}/admin/sales/annual?year=${yearFinal}`;
+    const res = await axios.get(url);
+    console.log("[ADM annual] url:", url);
+    console.log("[ADM annual] months:", res.data?.months);
+    setAdminAnnual(Array.isArray(res.data?.months) ? res.data.months : []);
+  };
   // Polling for admin dashboard: refresh latest sales and annual summary every 10s
+  // Polling só quando admin logado
   useEffect(() => {
-    if (!isAdmin) return;
-    const poll = async () => {
-      await loadAdminSales();
-      await loadAdminAnnual();
-    };
-    poll(); // initial load
-    const interval = setInterval(poll, 10000);
-    return () => clearInterval(interval);
-  }, [isAdmin]);
+    if (!currentUser || currentUser.role !== "admin") return;
+
+    loadAdminLatestSales();
+    loadAdminAnnual(new Date().getFullYear());
+
+    const t = setInterval(() => {
+      loadAdminLatestSales();
+      loadAdminAnnual(new Date().getFullYear());
+    }, 10000);
+
+    return () => clearInterval(t);
+  }, [currentUser?.id, currentUser?.role]);
 
   const loadAdminSummary = async () => {
     if (!isAdmin) return
@@ -604,10 +629,10 @@ export default function App() {
     setMonthsWithData((prev) => (prev.includes(currentMonth) ? prev : [...prev, currentMonth]))
     await load()
     await loadMonths()
-    // Always refresh admin dashboard after sale creation
-    if (isAdmin) {
-      await loadAdminSales();
-      await loadAdminAnnual();
+    // se admin estiver logado, atualiza na hora
+    if (currentUser?.role === "admin") {
+      await loadAdminLatestSales();
+      await loadAdminAnnual(new Date().getFullYear());
     }
     setChartRefresh((prev) => prev + 1)
   }
@@ -733,27 +758,8 @@ export default function App() {
   const safeAdminAnnual = adminAnnual && typeof adminAnnual === 'object' ? adminAnnual : { year: new Date().getFullYear(), months: [] };
 
   // Filtra vendas TESTE do frontend
-  const adminRecentSales = useMemo(() => {
-    try {
-      const activeUserIds = new Set((adminUsers || []).filter(u => u.active !== false && u.role !== 'admin').map(u => u.id));
-      const filtered = safeAdminSales.filter(
-        (sale) =>
-          String(sale.client || '').toUpperCase() !== 'TESTE' &&
-          String(sale.product || '').toUpperCase() !== 'AAAAA' &&
-          String(sale.userId || '') !== 'user-1771531117808' &&
-          activeUserIds.has(sale.userId)
-      );
-      const sorted = [...filtered].sort((a, b) => {
-        const dateA = new Date(a.date || a.created_at || 0).getTime();
-        const dateB = new Date(b.date || b.created_at || 0).getTime();
-        return dateB - dateA;
-      });
-      return sorted.slice(0, 5);
-    } catch (err) {
-      console.error('Erro ao calcular adminRecentSales:', err);
-      return [];
-    }
-  }, [safeAdminSales, adminUsers])
+  // Últimas vendas ADM já vêm limitadas do backend
+  const adminRecentSales = adminLatestSales;
 
   return (
     <>
@@ -922,46 +928,14 @@ export default function App() {
           <div className="admin-home-card admin-home-sales-top">
             <div className="admin-home-row-head">
               <h3>Últimas vendas feitas</h3>
-              <div className="admin-home-search-row">
-                <input
-                  className="admin-home-search"
-                  value={adminSearch}
-                  onChange={(event) => setAdminSearch(event.target.value)}
-                  placeholder="Buscar últimas vendas"
-                />
-                <button className="admin-home-btn" onClick={() => loadAdminSales(adminSearch)} disabled={adminLoading}>Buscar</button>
-              </div>
             </div>
-
-            <div className="admin-home-table-wrap">
-              <table className="admin-home-table">
-                <thead>
-                  <tr>
-                    <th>CLIENTE</th>
-                    <th>PRODUTO</th>
-                    <th>QUANTIDADE</th>
-                    <th>VALOR DA VENDA</th>
-                    <th>CONTA</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {adminRecentSales.map((sale, index) => (
-                    <tr key={`${sale.userId}-${sale.id}-${index}`}>
-                      <td>{sale.client}</td>
-                      <td>{sale.product}</td>
-                      <td>{sale.quantity || '-'}</td>
-                      <td>R$ {formatReal(sale.total)}</td>
-                      <td>{sale.userName}</td>
-                    </tr>
-                  ))}
-                  {adminSales.length === 0 && (
-                    <tr>
-                      <td colSpan={5}>Nenhuma venda encontrada.</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <ul style={{ listStyle: 'none', padding: 0 }}>
+              {adminLatestSales.map((sale) => (
+                <li key={`${sale.userId}-${sale.month}-${sale.id}-${sale.createdAt || sale.date}`}>
+                  <b>{sale.userName}</b> — {sale.client} — R$ {Number(sale.total || 0).toFixed(2)}
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div className="admin-home-card admin-home-chart-full">
