@@ -671,32 +671,34 @@ export default function App() {
 
   // Filtra venda TESTE do gráfico
   const adminChartData = useMemo(() => {
-    const year = adminAnnual.year || new Date().getFullYear()
-    // Remove vendas TESTE dos totais
-    // Filtra vendas do gráfico para considerar apenas vendas de contas ativas
-    const activeUserIds = new Set((adminUsers || []).filter(u => u.active !== false && u.role !== 'admin').map(u => u.id))
-    const filteredMonths = (adminAnnual.months || []).map((item) => {
-      if (!item.sales) return item
-      const filteredSales = item.sales.filter(
-        (sale) =>
-          String(sale.client).toUpperCase() !== 'TESTE' &&
-          String(sale.product).toUpperCase() !== 'AAAAA' &&
-          String(sale.userId) !== 'user-1771531117808' &&
-          activeUserIds.has(sale.userId)
-      )
-      const total = filteredSales.reduce((sum, sale) => sum + Number(sale.total || 0), 0)
-      return { ...item, total }
-    })
-    const totals = new Map(filteredMonths.map((item) => [item.month, Number(item.total || 0)]))
+    const year = adminAnnual.year || new Date().getFullYear();
+    const activeUserIds = new Set((adminUsers || []).filter(u => u.active !== false && u.role !== 'admin').map(u => u.id));
+    // Aggregate sales month-by-month for all users, matching sales table logic
+    const monthlyTotals = {};
+    (adminSales || []).forEach((sale) => {
+      // Filtering: exclude TESTE, ghost sales, inactive/admin users
+      if (
+        String(sale.client || '').toUpperCase() === 'TESTE' ||
+        String(sale.product || '').toUpperCase() === 'AAAAA' ||
+        String(sale.userId || '') === 'user-1771531117808' ||
+        !activeUserIds.has(sale.userId)
+      ) return;
+      const saleDate = new Date(sale.date || sale.created_at);
+      const saleYear = saleDate.getFullYear();
+      if (saleYear !== year) return;
+      const saleMonth = String(saleDate.getMonth() + 1).padStart(2, '0');
+      const monthKey = `${year}-${saleMonth}`;
+      monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(sale.total || 0);
+    });
     return monthNames.map((label, index) => {
-      const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`
+      const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`;
       return {
         name: label.substring(0, 3),
         month: monthKey,
-        total: totals.get(monthKey) || 0
-      }
-    })
-  }, [adminAnnual, monthNames, adminUsers])
+        total: monthlyTotals[monthKey] || 0
+      };
+    });
+  }, [adminSales, adminUsers, adminAnnual, monthNames]);
 
   const adminChartColors = useMemo(() => {
     const base = primaryColor || PRESET_COLORS[0].hex
