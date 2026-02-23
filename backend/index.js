@@ -1,3 +1,42 @@
+// Endpoint admin: últimas vendas agregadas de todos usuários
+app.get('/api/admin/sales/latest', async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  const limit = Math.max(1, Math.min(50, Number(req.query.limit) || 5));
+  const usersMap = new Map((ctx.authData.users || []).map((u) => [u.id, u]));
+  const allSales = [];
+
+  Object.entries(db.data.userData || {}).forEach(([userId, userData]) => {
+    Object.entries(userData.months || {}).forEach(([monthKey, monthData]) => {
+      (monthData.sales || []).forEach((sale) => {
+        let userName = usersMap.get(userId)?.displayName || usersMap.get(userId)?.username || userId;
+        if (userName === 'Administrador' || userName === 'ADM' || userId === 'adm') {
+          userName = 'GUSTAVO';
+        }
+        allSales.push({
+          ...sale,
+          userId,
+          userName,
+          month: monthKey
+        });
+      });
+    });
+  });
+
+  // Ordenar por createdAt desc, fallback para date desc
+    const toTs = (value) => {
+      const parsed = Date.parse(value);
+      return Number.isFinite(parsed) ? parsed : 0;
+    };
+    allSales.sort((a, b) => {
+      const aTs = toTs(a.createdAt || a.created_at) || toTs(a.date);
+      const bTs = toTs(b.createdAt || b.created_at) || toTs(b.date);
+      return bTs - aTs;
+    });
+
+  return res.json(allSales.slice(0, limit));
+});
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -676,7 +715,8 @@ app.post('/api/sales', async (req, res) => {
     base_trade: !!base_trade,
     tread_type: tread_type || '',
     desfecho: desfecho || 'entrega',
-    total
+    total,
+    createdAt: new Date().toISOString()
   };
   monthData.sales.push(sale);
   await db.write();
@@ -710,20 +750,22 @@ app.put('/api/sales/:id', async (req, res) => {
     return res.status(400).json({ error: 'Tread type is required for this tire type' });
   }
   
-  monthData.sales[saleIndex] = {
-    id: Number(id),
-    date,
-    client,
-    phone: phone || '',
-    product,
-    unit_price: Number(unit_price),
-    quantity: qty,
-    tire_type,
-    base_trade: !!base_trade,
-    tread_type: tread_type || '',
-    desfecho: desfecho || 'entrega',
-    total
-  };
+    const existing = monthData.sales[saleIndex];
+    monthData.sales[saleIndex] = {
+      id: Number(id),
+      date,
+      client,
+      phone: phone || '',
+      product,
+      unit_price: Number(unit_price),
+      quantity: qty,
+      tire_type,
+      base_trade: !!base_trade,
+      tread_type: tread_type || '',
+      desfecho: desfecho || 'entrega',
+      total,
+      createdAt: existing.createdAt || existing.created_at || new Date().toISOString()
+    };
   
   // Renumber all IDs to be sequential (1, 2, 3, ...)
   renumberIdsForMonth(monthData);
@@ -1072,7 +1114,8 @@ app.post('/api/falta-pagar/:id/convert-to-sale', async (req, res) => {
     tire_type: pagarItem.tire_type,
     base_trade: !!pagarItem.base_trade,
     desfecho: pagarItem.desfecho || 'entrega',
-    total
+      total,
+      createdAt: pagarItem.created_at || new Date().toISOString()
   };
 
   monthData.sales.push(sale);
