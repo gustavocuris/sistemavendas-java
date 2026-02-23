@@ -937,9 +937,14 @@ export default function App() {
             <h3>Gráfico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
             {/* Filtra venda TESTE do total geral */}
             <p className="admin-home-total">Total geral: <strong>R$ {formatReal(
-              (adminSummary.users || [])
-                .filter(u => u.userName?.toUpperCase() !== 'TESTE' && u.userName?.toUpperCase() !== 'AAAAA' && u.userId !== 'user-1771531117808')
-                .reduce((sum, u) => sum + Number(u.total || 0), 0)
+              (adminSales || [])
+                .filter(sale =>
+                  String(sale.client || '').toUpperCase() !== 'TESTE' &&
+                  String(sale.product || '').toUpperCase() !== 'AAAAA' &&
+                  String(sale.userId || '') !== 'user-1771531117808' &&
+                  (adminUsers || []).some(u => u.id === sale.userId && u.active !== false && u.role !== 'admin')
+                )
+                .reduce((sum, sale) => sum + Number(sale.total || 0), 0)
             )}</strong></p>
             <div className="admin-home-chart-wrap full-width">
               <ResponsiveContainer width="100%" height={360}>
