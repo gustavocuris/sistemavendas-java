@@ -1,4 +1,15 @@
-// ...existing code...
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import axios from 'axios';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
+import SaleForm from './components/SaleForm';
+import SaleList from './components/SaleList';
+import CommissionSummary from './components/CommissionSummary';
+import ChartView from './components/ChartView';
+import NotesPanel from './NotesPanel';
+import Login from './components/Login';
+import AdminPanel from './components/AdminPanel';
+import LoginManager from './components/LoginManager';
+
 // Spinner de backup
 function BackupSpinner({ visible }) {
   if (!visible) return null;
