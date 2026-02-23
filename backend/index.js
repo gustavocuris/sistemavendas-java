@@ -947,8 +947,6 @@ app.get('/api/admin/sales/latest', async (req, res) => {
   });
 
   return res.json(allSales.slice(0, limit));
-});
-  }
 
   comprar[itemIndex] = {
     ...comprar[itemIndex],
