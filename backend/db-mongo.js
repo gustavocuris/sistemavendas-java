@@ -1,3 +1,5 @@
+dotenv.config();
+
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
@@ -11,17 +13,7 @@ const MONGODB_URI = (
   'mongodb://localhost:27017/sistemavendas'
 ).trim();
 
-let mongoReady = false;
-
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    console.log('MongoDB conectado');
-    mongoReady = true;
-  })
-  .catch(err => {
-    console.error('Erro MongoDB:', err);
-    mongoReady = true;
-  });
+let connected = false;
 
 const appDataSchema = new mongoose.Schema({
   key: { type: String, unique: true },
@@ -51,10 +43,9 @@ const authSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-const AppData = mongoose.model('AppData', appDataSchema);
-const Auth = mongoose.model('Auth', authSchema);
+const AppData = mongoose.models.AppData || mongoose.model('AppData', appDataSchema);
+const Auth = mongoose.models.Auth || mongoose.model('Auth', authSchema);
 
-class DB {
   constructor() {
     this.data = {
       nextId: 1,
@@ -70,125 +61,47 @@ class DB {
     };
   }
 
-  async load() {
+  async init() {
+    // readyState: 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
+    if (mongoose.connection.readyState === 1 || mongoose.connection.readyState === 2) return;
     try {
-      const doc = await AppData.findOne({ key: 'main' });
-      if (doc && doc.data) {
-        this.data = doc.data;
-      } else {
-        await AppData.create({ key: 'main', data: this.data });
-      }
-
-      if (!this.data.commissions) {
-        this.data.commissions = { new: 5, recap: 8, recapping: 10, service: 0 };
-      }
-      if (!this.data.months) this.data.months = {};
-      if (!Array.isArray(this.data.comprarDepois)) this.data.comprarDepois = [];
-      if (!Array.isArray(this.data.faltaPagar)) this.data.faltaPagar = [];
-
-      if (!this.data.nextId) {
-        let maxId = 0;
-        Object.values(this.data.months || {}).forEach(monthData => {
-          monthData.sales.forEach(sale => {
-            maxId = Math.max(maxId, sale.id || 0);
-          });
-        });
-        this.data.nextId = maxId + 1;
-      }
-
-      await this.save();
-      console.log('Dados carregados do MongoDB');
+      await mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 10000 });
+      console.log('MongoDB conectado');
     } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-    }
-  }
-
-  async save() {
-    try {
-      await AppData.findOneAndUpdate(
-        { key: 'main' },
-        { data: this.data, updatedAt: new Date() },
-        { upsert: true }
-      );
-      console.log('Dados salvos no MongoDB');
-    } catch (error) {
-      console.error('Erro ao salvar dados:', error);
-    }
-  }
-
-  async write() {
-    await this.save();
-  }
-
-  async read() {
-    await this.load();
-  }
-
-  async getAuth() {
-    try {
-      const auth = await Auth.findOne({ _type: 'main' });
-      return auth || null;
-    } catch (error) {
-      console.error('Erro ao carregar auth:', error);
-      return null;
-    }
-  }
-
-  async setAuth(authData) {
-    try {
-      await Auth.findOneAndUpdate(
-        { _type: 'main' },
-        authData,
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-      );
-      console.log('Autenticacao salva no MongoDB');
-    } catch (error) {
-      console.error('Erro ao salvar auth:', error);
+      console.error('Erro MongoDB:', error);
       throw error;
     }
   }
 
-  async init() {
-    try {
-      // Aguardar conexão estar pronta
-      let timeout = 0;
-      while (!mongoReady && timeout < 5000) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        timeout += 100;
-      }
-
-      if (!mongoReady) {
-        console.warn('MongoDB não está pronto para inicialização');
-        return;
-      }
-
-      // Remover índice antigo duplicado se existir
-      try {
-        const authIndexes = await Auth.collection.getIndexes();
-        if (authIndexes.username_1) {
-          await Auth.collection.dropIndex('username_1');
-          console.log('Índice antigo username_1 removido');
-        }
-      } catch (err) {
-        // Ignorar se não existir
-      }
-
-      // Verificar e limpar duplicatas
-      const auths = await Auth.find().exec();
-      if (auths.length > 0) {
-        console.log(`Encontradas ${auths.length} autenticações no Mongo`);
-        // Manter apenas um registro com _type: 'main'
-        const mainAuth = auths.find(a => a._type === 'main');
-        if (mainAuth && auths.length > 1) {
-          const toDelete = auths.filter(a => a._id.toString() !== mainAuth._id.toString());
-          await Auth.deleteMany({ _id: { $in: toDelete.map(a => a._id) } });
-          console.log(`Removidas ${toDelete.length} autenticações duplicadas`);
-        }
-      }
-    } catch (error) {
-      console.error('Erro ao inicializar:', error);
-    }
+  async read() {
+    await this.init();
+    const doc = await AppData.findOne({ key: 'main' }).lean();
+    if (doc?.data) this.data = doc.data;
   }
+
+  async write() {
+    await this.init();
+    await AppData.updateOne(
+      { key: 'main' },
+      { $set: { data: this.data, updatedAt: new Date() } },
+      { upsert: true }
+    );
+  }
+
+  async getAuth() {
+    await this.init();
+    return await Auth.findOne({ _type: 'main' }).lean();
+  }
+
+  async setAuth(authData) {
+    await this.init();
+    await Auth.updateOne(
+      { _type: 'main' },
+      { $set: { ...authData, _type: 'main' } },
+      { upsert: true }
+    );
+  }
+}
 }
 
 const db = new DB();
