@@ -25,8 +25,7 @@ function BackupSpinner({ visible }) {
 import React, { useEffect, useMemo, useState, useCallback } from 'react'
 // Função para formatar números com ponto de milhar e vírgula decimal
 function formatReal(value) {
-  return Number(value || 0)
-    .toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return Number(value || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 // ...existing code...
 import axios from 'axios'
