@@ -595,6 +595,12 @@ export default function App() {
     setMonthsWithData((prev) => (prev.includes(currentMonth) ? prev : [...prev, currentMonth]))
     await load()
     await loadMonths()
+    // Atualiza área admin automaticamente
+    if (isAdmin) {
+      await loadAdminSales(adminSearch)
+      await loadAdminSummary()
+      await loadAdminAnnual()
+    }
     setChartRefresh((prev) => prev + 1)
   }
 
@@ -602,6 +608,12 @@ export default function App() {
     await axios.put(`${API}/sales/${id}`, { ...payload, month: currentMonth })
     setEditing(null)
     await load()
+    // Atualiza área admin automaticamente
+    if (isAdmin) {
+      await loadAdminSales(adminSearch)
+      await loadAdminSummary()
+      await loadAdminAnnual()
+    }
     setChartRefresh((prev) => prev + 1)
   }
 
@@ -618,6 +630,12 @@ export default function App() {
       const res = await axios.get(`${API}/sales?month=${currentMonth}`)
       if (res.data.length === 0) {
         setMonthsWithData((prev) => prev.filter((m) => m !== currentMonth))
+      }
+      // Atualiza área admin automaticamente
+      if (isAdmin) {
+        await loadAdminSales(adminSearch)
+        await loadAdminSummary()
+        await loadAdminAnnual()
       }
       setChartRefresh((prev) => prev + 1)
     })
