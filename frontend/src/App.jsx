@@ -595,12 +595,10 @@ export default function App() {
     setMonthsWithData((prev) => (prev.includes(currentMonth) ? prev : [...prev, currentMonth]))
     await load()
     await loadMonths()
-    // Atualiza área admin automaticamente
-    if (isAdmin) {
-      await loadAdminSales(adminSearch)
-      await loadAdminSummary()
-      await loadAdminAnnual()
-    }
+    // Sempre atualiza área admin
+    await loadAdminSales(adminSearch)
+    await loadAdminSummary()
+    await loadAdminAnnual()
     setChartRefresh((prev) => prev + 1)
   }
 
@@ -608,12 +606,10 @@ export default function App() {
     await axios.put(`${API}/sales/${id}`, { ...payload, month: currentMonth })
     setEditing(null)
     await load()
-    // Atualiza área admin automaticamente
-    if (isAdmin) {
-      await loadAdminSales(adminSearch)
-      await loadAdminSummary()
-      await loadAdminAnnual()
-    }
+    // Sempre atualiza área admin
+    await loadAdminSales(adminSearch)
+    await loadAdminSummary()
+    await loadAdminAnnual()
     setChartRefresh((prev) => prev + 1)
   }
 
@@ -631,12 +627,10 @@ export default function App() {
       if (res.data.length === 0) {
         setMonthsWithData((prev) => prev.filter((m) => m !== currentMonth))
       }
-      // Atualiza área admin automaticamente
-      if (isAdmin) {
-        await loadAdminSales(adminSearch)
-        await loadAdminSummary()
-        await loadAdminAnnual()
-      }
+      // Sempre atualiza área admin
+      await loadAdminSales(adminSearch)
+      await loadAdminSummary()
+      await loadAdminAnnual()
       setChartRefresh((prev) => prev + 1)
     })
   }
@@ -961,7 +955,7 @@ export default function App() {
           <div className="admin-home-card admin-home-chart-full">
             <h3>Gráfico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
             {/* Filtra venda TESTE do total geral */}
-            <p className="admin-home-total">Total geral: <strong>R$ {formatReal(
+            <p className="admin-home-total">VENDAS TOTAL: <strong>R$ {formatReal(
               (adminSales || [])
                 .filter(sale =>
                   String(sale.client || '').toUpperCase() !== 'TESTE' &&
