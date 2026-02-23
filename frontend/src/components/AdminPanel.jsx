@@ -84,6 +84,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
       setCreateForm(emptyCreate)
       await onUsersRefresh()
       alert('Usuário criado com sucesso!')
+      if (onSalesChanged) await onSalesChanged();
     } catch (error) {
       alert(error.response?.data?.message || 'Erro ao criar usuário')
     } finally {
@@ -110,6 +111,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
       await onUsersRefresh()
       setEditForm((prev) => ({ ...prev, password: '' }))
       alert('Usuário atualizado com sucesso!')
+      if (onSalesChanged) await onSalesChanged();
     } catch (error) {
       alert(error.response?.data?.message || 'Erro ao atualizar usuário')
     } finally {
@@ -126,6 +128,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
       await axios.delete(`${API}/admin/users/${userId}`)
       await onUsersRefresh()
       alert('Usuário removido com sucesso!')
+      if (onSalesChanged) await onSalesChanged();
     } catch (error) {
       alert(error.response?.data?.message || 'Erro ao remover usuário')
     } finally {
@@ -148,6 +151,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
         }
       })
       alert('Comissões atualizadas com sucesso!')
+      if (onSalesChanged) await onSalesChanged();
     } catch (error) {
       alert(error.response?.data?.message || 'Erro ao salvar comissões')
     } finally {
@@ -166,6 +170,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
 
       const response = await axios.get(`${API}/admin/sales/search?${params.toString()}`)
       setSearchResults(Array.isArray(response.data) ? response.data : [])
+      if (onSalesChanged) await onSalesChanged();
     } catch (error) {
       alert(error.response?.data?.message || 'Erro ao buscar vendas')
     } finally {
@@ -278,6 +283,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
 
       const response = await axios.get(`${API}/admin/sales/summary?${params.toString()}`)
       setSummaryData(response.data || { grandTotal: 0, users: [] })
+      if (onSalesChanged) await onSalesChanged();
     } catch (error) {
       alert(error.response?.data?.message || 'Erro ao carregar resumo')
     } finally {
