@@ -948,7 +948,6 @@ app.get('/api/admin/sales/latest', async (req, res) => {
 
   return res.json(allSales.slice(0, limit));
 });
-    return res.status(404).json({ error: 'Item não encontrado' });
   }
 
   comprar[itemIndex] = {
