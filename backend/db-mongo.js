@@ -43,9 +43,11 @@ const authSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+
 const AppData = mongoose.models.AppData || mongoose.model('AppData', appDataSchema);
 const Auth = mongoose.models.Auth || mongoose.model('Auth', authSchema);
 
+class DB {
   constructor() {
     this.data = {
       nextId: 1,
@@ -62,7 +64,6 @@ const Auth = mongoose.models.Auth || mongoose.model('Auth', authSchema);
   }
 
   async init() {
-    // readyState: 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
     if (mongoose.connection.readyState === 1 || mongoose.connection.readyState === 2) return;
     try {
       await mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 10000 });
@@ -101,7 +102,6 @@ const Auth = mongoose.models.Auth || mongoose.model('Auth', authSchema);
       { upsert: true }
     );
   }
-}
 }
 
 const db = new DB();
