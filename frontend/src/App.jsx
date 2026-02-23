@@ -6,63 +6,80 @@ function BackupSpinner({ visible }) {
     <div style={{
       position: 'fixed',
       right: 24,
-      bottom: 24,
-      zIndex: 9999,
-      background: 'rgba(30,113,69,0.92)',
-      borderRadius: '50%',
-      padding: 16,
-      boxShadow: '0 2px 12px rgba(0,0,0,0.18)'
-    }}>
-      <div className="backup-spinner" style={{ width: 32, height: 32, border: '4px solid #fff', borderTop: '4px solid #4ade80', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }}></div>
-  );
-}
-import React, { useEffect, useMemo, useState, useCallback } from 'react'
-// ...existing code...
-// Função para formatar números com ponto de milhar e vírgula decimal
-function formatReal(value) {
-  return Number(value || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-// ...existing code...
-import axios from 'axios'
+      import React, { useEffect, useMemo, useState, useCallback } from 'react';
+      import axios from 'axios';
+      import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 
-// Interceptor global para garantir x-user-id do usuário logado
-axios.interceptors.request.use((config) => {
-  try {
-    const raw = localStorage.getItem("currentUser");
-    const user = raw ? JSON.parse(raw) : null;
-    if (user?.id) {
-      config.headers = config.headers || {};
-      config.headers["x-user-id"] = user.id;
-    }
-  } catch {}
-  return config;
-});
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts'
-import SaleForm from './components/SaleForm'
-import SaleList from './components/SaleList'
-import CommissionSummary from './components/CommissionSummary'
-import ChartView from './components/ChartView'
-import NotesPanel from './NotesPanel'
-import Login from './components/Login'
-import AdminPanel from './components/AdminPanel'
-import LoginManager from './components/LoginManager'
+      import SaleForm from './components/SaleForm';
+      import SaleList from './components/SaleList';
+      import CommissionSummary from './components/CommissionSummary';
+      import ChartView from './components/ChartView';
+      import NotesPanel from './NotesPanel';
+      import Login from './components/Login';
+      import AdminPanel from './components/AdminPanel';
+      import LoginManager from './components/LoginManager';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-const API = `${API_BASE_URL}/api`
+      // Interceptor global para garantir x-user-id do usuário logado
+      axios.interceptors.request.use((config) => {
+        try {
+          const raw = localStorage.getItem("currentUser");
+          const user = raw ? JSON.parse(raw) : null;
+          if (user?.id) {
+            config.headers = config.headers || {};
+            config.headers["x-user-id"] = user.id;
+          }
+        } catch {}
+        return config;
+      });
 
-const PRESET_COLORS = [
-  { name: 'Verde', hex: '#1e7145', dark: '#0f4620', light: '#4ade80' },
-  { name: 'Azul', hex: '#0d47a1', dark: '#051541', light: '#2196f3' },
-  { name: 'Vermelho', hex: '#d32f2f', dark: '#7f1d1d', light: '#ef4444' },
-  { name: 'Roxo', hex: '#6a1b9a', dark: '#360853', light: '#9c27b0' },
-  { name: 'Rosa Pink', hex: '#ec4899', dark: '#be185d', light: '#f472b6' },
-  { name: 'All Black', hex: '#1a1a1a', dark: '#0d0d0d', light: '#2d2d2d' }
-]
+      // Função para formatar números
+      function formatReal(value) {
+        return Number(value || 0).toLocaleString('pt-BR', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
 
-const emptyNewUser = {
-  displayName: '',
-  username: '',
-  password: ''
+      // Spinner de backup
+      function BackupSpinner({ visible }) {
+        if (!visible) return null;
+        return (
+          <div style={{
+            position: 'fixed',
+            right: 24,
+            bottom: 24,
+            zIndex: 9999,
+            background: 'rgba(30,113,69,0.92)',
+            borderRadius: '50%',
+            padding: 16,
+            boxShadow: '0 2px 12px rgba(0,0,0,0.18)'
+          }}>
+            <div
+              className="backup-spinner"
+              style={{
+                width: 32,
+                height: 32,
+                border: '4px solid #fff',
+                borderTop: '4px solid #4ade80',
+                borderRadius: '50%',
+                animation: 'spin 0.7s linear infinite'
+              }}
+            />
+          </div>
+        );
+      }
+
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const API = `${API_BASE_URL}/api`;
+
+      const PRESET_COLORS = [
+        { name: 'Verde', hex: '#1e7145', dark: '#0f4620', light: '#4ade80' },
+        { name: 'Azul', hex: '#0d47a1', dark: '#051541', light: '#2196f3' },
+        { name: 'Vermelho', hex: '#d32f2f', dark: '#7f1d1d', light: '#ef4444' },
+        { name: 'Roxo', hex: '#6a1b9a', dark: '#360853', light: '#9c27b0' },
+        { name: 'Rosa Pink', hex: '#ec4899', dark: '#be185d', light: '#f472b6' },
+        { name: 'All Black', hex: '#1a1a1a', dark: '#0d0d0d', light: '#2d2d2d' }
+      ];
 }
 
 const TIRE_TYPE_LABELS = {
