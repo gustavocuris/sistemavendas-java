@@ -1190,9 +1190,4 @@ export default function App() {
           </div>
         </div>
       )}
-  return (
-    <>
-      {/* TODO: todo o conteúdo do App.jsx, exceto export default function App() e return */}
-    </>
-  );
 }
