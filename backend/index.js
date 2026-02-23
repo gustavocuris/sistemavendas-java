@@ -68,17 +68,21 @@ app.get('/api/admin/sales/latest', async (req, res) => {
   const usersMap = new Map((ctx.authData.users || []).map((u) => [u.id, u]));
   const allSales = [];
 
-  Object.entries(db.data.userData || {}).forEach(([userId, userData]) => {
+  // Garantir que todos os usuários cadastrados sejam considerados
+  (ctx.authData.users || []).forEach((user) => {
+    const userId = user.id;
+    const userName = user.displayName || user.username || userId;
+    const userData = (db.data.userData || {})[userId] || {};
     Object.entries(userData.months || {}).forEach(([monthKey, monthData]) => {
       (monthData.sales || []).forEach((sale) => {
-        let userName = usersMap.get(userId)?.displayName || usersMap.get(userId)?.username || userId;
-        if (userName === 'Administrador' || userName === 'ADM' || userId === 'adm') {
-          userName = 'GUSTAVO';
+        let finalUserName = userName;
+        if (finalUserName === 'Administrador' || finalUserName === 'ADM' || userId === 'adm') {
+          finalUserName = 'GUSTAVO';
         }
         allSales.push({
           ...sale,
           userId,
-          userName,
+          userName: finalUserName,
           month: monthKey
         });
       });
@@ -1587,7 +1591,11 @@ app.get('/api/admin/sales/annual', async (req, res) => {
   const monthTotals = {};
   const usersMap = new Map((ctx.authData.users || []).map((u) => [u.id, u]));
 
-  Object.entries(db.data.userData || {}).forEach(([userId, userData]) => {
+  // Garantir que todos os usuários cadastrados sejam considerados
+  (ctx.authData.users || []).forEach((user) => {
+    const userId = user.id;
+    const userName = user.displayName || user.username || userId;
+    const userData = (db.data.userData || {})[userId] || {};
     Object.entries(userData.months || {}).forEach(([monthKey, monthData]) => {
       if (monthKey < fromMonth || monthKey > toMonth) return;
       const total = (monthData.sales || []).reduce((acc, sale) => acc + Number(sale.total || 0), 0);
@@ -1599,7 +1607,6 @@ app.get('/api/admin/sales/annual', async (req, res) => {
         };
       }
       monthTotals[monthKey].total += total;
-      const userName = usersMap.get(userId)?.displayName || usersMap.get(userId)?.username || userId;
       monthTotals[monthKey].users[userName] = (monthTotals[monthKey].users[userName] || 0) + total;
     });
   });
