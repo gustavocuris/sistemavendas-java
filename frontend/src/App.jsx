@@ -10,6 +10,9 @@ import Login from './components/Login';
 import AdminPanel from './components/AdminPanel';
 import LoginManager from './components/LoginManager';
 
+// Corrige erro de referência: define emptyNewUser
+const emptyNewUser = { displayName: '', username: '', password: '' };
+
 // Interceptor global para garantir x-user-id do usuário logado
 axios.interceptors.request.use((config) => {
   try {
