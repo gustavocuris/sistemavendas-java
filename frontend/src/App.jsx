@@ -71,7 +71,6 @@ const PRESET_COLORS = [
   { name: 'Rosa Pink', hex: '#ec4899', dark: '#be185d', light: '#f472b6' },
   { name: 'All Black', hex: '#1a1a1a', dark: '#0d0d0d', light: '#2d2d2d' }
 ];
-}
 
 const TIRE_TYPE_LABELS = {
   'new': 'NOVO',
@@ -85,7 +84,7 @@ const getTireTypeLabel = (type) => {
 }
 
 export default function App() {
-    const [showBackupSpinner, setShowBackupSpinner] = useState(false)
+  const [showBackupSpinner, setShowBackupSpinner] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('authenticated') === 'true')
   const [authKey, setAuthKey] = useState(0)
   const [currentUser, setCurrentUser] = useState(() => {
@@ -620,7 +619,7 @@ export default function App() {
     return <Login key={`login-${authKey}`} onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />
   }
 
-  const create = async (payload) => {
+  // ...existing code...
     await axios.post(`${API}/sales`, { ...payload, month: currentMonth })
     setMonthsWithData((prev) => (prev.includes(currentMonth) ? prev : [...prev, currentMonth]))
     await load()
@@ -1188,7 +1187,9 @@ export default function App() {
           </div>
         </div>
       )}
-
-    </div>
+  return (
+    <>
+      {/* TODO: todo o conteúdo do App.jsx, exceto export default function App() e return */}
+    </>
   );
 }
