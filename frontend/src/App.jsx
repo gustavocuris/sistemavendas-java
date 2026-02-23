@@ -264,20 +264,29 @@ export default function App() {
     }
   }
 
-  const loadAdminSales = async (query = '') => {
+  // Fetch latest sales for admin dashboard (limit 5, all users)
+  const loadAdminSales = async () => {
     if (!isAdmin) return
-    const params = new URLSearchParams()
-    if (query.trim()) params.append('q', query.trim())
-    const url = `${API}/admin/sales/search${params.toString() ? `?${params.toString()}` : ''}`
-    const res = await axios.get(url)
-    const list = Array.isArray(res.data) ? res.data : []
-    const sorted = [...list].sort((a, b) => {
-      const dateA = new Date(a.date || a.created_at || 0).getTime()
-      const dateB = new Date(b.date || b.created_at || 0).getTime()
-      return dateB - dateA
-    })
-    setAdminSales(sorted)
+    try {
+      const res = await axios.get(`${API}/admin/sales/latest?limit=5`)
+      const list = Array.isArray(res.data) ? res.data : []
+      setAdminSales(list)
+    } catch (err) {
+      setAdminSales([])
+      console.error('Erro ao carregar últimas vendas admin:', err)
+    }
   }
+  // Polling for admin dashboard: refresh latest sales and annual summary every 10s
+  useEffect(() => {
+    if (!isAdmin) return;
+    const poll = async () => {
+      await loadAdminSales();
+      await loadAdminAnnual();
+    };
+    poll(); // initial load
+    const interval = setInterval(poll, 10000);
+    return () => clearInterval(interval);
+  }, [isAdmin]);
 
   const loadAdminSummary = async () => {
     if (!isAdmin) return
@@ -595,10 +604,11 @@ export default function App() {
     setMonthsWithData((prev) => (prev.includes(currentMonth) ? prev : [...prev, currentMonth]))
     await load()
     await loadMonths()
-    // Sempre atualiza área admin
-    await loadAdminSales(adminSearch)
-    await loadAdminSummary()
-    await loadAdminAnnual()
+    // Always refresh admin dashboard after sale creation
+    if (isAdmin) {
+      await loadAdminSales();
+      await loadAdminAnnual();
+    }
     setChartRefresh((prev) => prev + 1)
   }
 
