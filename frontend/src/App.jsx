@@ -20,7 +20,6 @@ function BackupSpinner({ visible }) {
       boxShadow: '0 2px 12px rgba(0,0,0,0.18)'
     }}>
       <div className="backup-spinner" style={{ width: 32, height: 32, border: '4px solid #fff', borderTop: '4px solid #4ade80', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }}></div>
-    </div>
   );
 }
 import React, { useEffect, useMemo, useState, useCallback } from 'react'
@@ -29,7 +28,7 @@ function formatReal(value) {
   return Number(value || 0)
     .toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
-import axios from 'axios'
+// ...existing code...
 import axios from 'axios'
 
 // Interceptor global para garantir x-user-id do usuário logado
@@ -319,12 +318,7 @@ export default function App() {
     setAdminSummary(res.data || { grandTotal: 0, users: [] })
   }
 
-  const loadAdminAnnual = async () => {
-    if (!isAdmin) return
-    const year = new Date().getFullYear()
-    const res = await axios.get(`${API}/admin/sales/annual?year=${year}`)
-    setAdminAnnual(res.data || { year, months: [] })
-  }
+// ...existing code...
 
   const loadAdminCredentials = async () => {
     if (!isAdmin) return
@@ -760,11 +754,9 @@ export default function App() {
   // Filtra vendas TESTE do frontend
   // Últimas vendas ADM já vêm limitadas do backend
   const adminRecentSales = adminLatestSales;
-
-  return (
-    <>
-      <BackupSpinner visible={showBackupSpinner} />
-      <div key={`app-${authKey}`} className={`container ${darkMode ? 'dark-mode' : ''}`}>
+  // ...existing code...
+  // Remover return duplicado
+  // O return correto está no final do arquivo
       {/* Proteção global: mensagem de erro amigável se algum dado essencial estiver ausente */}
       {(!safeAdminSales || !safeAdminUsers || !safeAdminAnnual) && (
         <div style={{color: 'red', padding: 20, fontWeight: 'bold'}}>Erro crítico: Dados essenciais não carregados. Tente recarregar a página ou contate o suporte.</div>
@@ -1196,6 +1188,6 @@ export default function App() {
       )}
 
     </div>
-    </>
-  )
+    </div>
+  );
 }
