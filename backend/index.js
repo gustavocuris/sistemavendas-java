@@ -899,53 +899,55 @@ app.put('/api/commissions', async (req, res) => {
 // ===== FLUXO DE VENDAS =====
 
 // ===== VAI COMPRAR (DEPOIS) =====
-app.get('/api/comprar-depois', async (req, res) => {
+app.get('/api/admin/sales/latest', async (req, res) => {
   const ctx = await resolveRequestContext(req);
-  const comprar = ctx.userData.comprarDepois || [];
-  const sorted = comprar.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  res.json(sorted);
+  if (!requireAdmin(ctx, res)) return;
+
+  const limit = Math.max(1, Math.min(50, Number(req.query.limit) || 5));
+  const usersMap = new Map((ctx.authData.users || []).map(u => [u.id, u]));
+
+  const allSales = [];
+
+  // Percorre userData (todos usuários)
+  Object.entries(db.data.userData || {}).forEach(([userId, userData]) => {
+    Object.entries(userData.months || {}).forEach(([monthKey, monthData]) => {
+      (monthData.sales || []).forEach((sale) => {
+        let userName =
+          usersMap.get(userId)?.displayName ||
+          usersMap.get(userId)?.username ||
+          userId;
+
+        allSales.push({
+          ...sale,
+          userId,
+          userName,
+          month: monthKey
+        });
+      });
+    });
+  });
+
+  // Percorre legado (caso exista)
+  Object.entries(db.data.months || {}).forEach(([monthKey, monthData]) => {
+    (monthData.sales || []).forEach((sale) => {
+      allSales.push({
+        ...sale,
+        userId: 'legacy',
+        userName: 'LEGADO',
+        month: monthKey
+      });
+    });
+  });
+
+  // Ordenação robusta
+  allSales.sort((a, b) => {
+    const ad = a.createdAt || a.created_at || a.date || '';
+    const bd = b.createdAt || b.created_at || b.date || '';
+    return new Date(bd).getTime() - new Date(ad).getTime();
+  });
+
+  return res.json(allSales.slice(0, limit));
 });
-
-app.post('/api/comprar-depois', async (req, res) => {
-  const { client, phone, product, tire_type, unit_price, quantity, desfecho, base_trade } = req.body;
-  if (!client || !product || !tire_type || unit_price == null) {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
-
-  const ctx = await resolveRequestContext(req);
-
-  if (!Array.isArray(ctx.userData.comprarDepois)) {
-    ctx.userData.comprarDepois = [];
-  }
-
-  const item = {
-    id: ctx.userData.comprarDepois.length + 1,
-    client,
-    phone: phone || '',
-    product,
-    tire_type,
-    base_trade: !!base_trade,
-    unit_price: Number(unit_price),
-    quantity: Number(quantity) || 1,
-    desfecho: desfecho || 'entrega',
-    created_at: new Date().toISOString()
-  };
-
-  ctx.userData.comprarDepois.push(item);
-  await db.write();
-  try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
-  res.status(201).json(item);
-});
-
-app.put('/api/comprar-depois/:id', async (req, res) => {
-  const { id } = req.params;
-  const { client, phone, product, tire_type, unit_price, quantity, desfecho, base_trade } = req.body;
-
-  const ctx = await resolveRequestContext(req);
-  const comprar = ctx.userData.comprarDepois || [];
-  const itemIndex = comprar.findIndex(i => i.id == id);
-
-  if (itemIndex === -1) {
     return res.status(404).json({ error: 'Item não encontrado' });
   }
 
@@ -1193,47 +1195,57 @@ app.post('/api/falta-pagar/:id/convert-to-sale', async (req, res) => {
 });
 
 // Get full database (debug/view)
-app.get('/api/database', (req, res) => {
-  res.json(db.data);
+app.post('/api/sales', async (req, res) => {
+  // Validação explícita do x-user-id
+  const headerUserId = String(req.headers["x-user-id"] || "").trim();
+  if (!headerUserId) return res.status(401).json({ message: "x-user-id ausente" });
+  const authData = await getAuthData();
+  const exists = (authData.users || []).some(u => u.id === headerUserId);
+  if (!exists) return res.status(401).json({ message: "x-user-id inválido" });
+
+  const ctx = await resolveRequestContext(req);
+
+  console.log("[POST /api/sales] header x-user-id:", req.headers["x-user-id"]);
+  console.log("[POST /api/sales] requester:", ctx.requester?.id, ctx.requester?.username, ctx.requester?.role);
+  console.log("[POST /api/sales] targetUserId:", ctx.targetUserId);
+
+  // ...existing code for extracting fields...
+  const { date, client, phone, product, unit_price, quantity, tire_type, desfecho, month, base_trade, tread_type } = req.body;
+  const qty = Number(quantity);
+  if (!Number.isInteger(qty) || qty < 1) {
+    return res.status(400).json({ error: 'Quantity must be a positive integer (minimum 1)' });
+  }
+  const targetMonth = month || getCurrentMonth();
+  // Ensure month exists
+  if (!ctx.userData.months[targetMonth]) {
+    ctx.userData.months[targetMonth] = {
+      sales: []
+    };
+  }
+  const monthData = ctx.userData.months[targetMonth];
+  const id = monthData.sales.length + 1;
+  const total = Number(unit_price) * qty;
+  const sale = {
+    id,
+    date,
+    client,
+    phone: phone || '',
+    product,
+    unit_price: Number(unit_price),
+    quantity: qty,
+    tire_type,
+    base_trade: !!base_trade,
+    tread_type: tread_type || '',
+    desfecho: desfecho || 'entrega',
+    total,
+    createdAt: new Date().toISOString()
+  };
+  monthData.sales.push(sale);
+  console.log("[POST /api/sales] saved sale for user:", ctx.targetUserId, "month:", targetMonth, "total sales in month:", monthData.sales.length);
+  await db.write();
+  try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
+  res.status(201).json(sale);
 });
-
-// Email configuration for password recovery
-function createTransporter() {
-  return nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_PASSWORD
-    }
-  });
-}
-
-// Forgot password endpoint
-app.post('/api/forgot-password', async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email || !email.includes('@')) {
-      return res.status(400).json({ message: 'Email inválido' });
-    }
-
-    if (!process.env.GMAIL_USER || !process.env.GMAIL_PASSWORD) {
-      return res.status(500).json({
-        message: 'Email nao configurado. Defina GMAIL_USER e GMAIL_PASSWORD no backend/.env'
-      });
-    }
-
-    const authData = await getAuthData();
-
-    // Gerar token simples (tempo + random)
-    const resetToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
-    const resetExpires = Date.now() + (2 * 60 * 60 * 1000);
-    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5174'}/?token=${resetToken}`;
-
-    authData.resetToken = resetToken;
-    authData.resetTokenExpires = resetExpires;
     await saveAuth(authData);
 
     const transporter = createTransporter();
@@ -1387,6 +1399,7 @@ app.post('/api/admin/users', async (req, res) => {
 
   ctx.authData.users.push(newUser);
   ensureUserData(newUser.id);
+  console.log("[ADMIN create user] ensured userData:", newUser.id);
   await saveAuth(ctx.authData);
   await db.write();
 
