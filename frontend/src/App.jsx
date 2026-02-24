@@ -85,6 +85,9 @@ const getTireTypeLabel = (type) => {
 }
 
 export default function App() {
+  console.log("APP RENDER ✅", new Date().toISOString());
+  // O return correto está no final do arquivo, com tabelas, área admin, etc.
+}
   const [showBackupSpinner, setShowBackupSpinner] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('authenticated') === 'true')
   const [authKey, setAuthKey] = useState(0)
@@ -1188,9 +1191,3 @@ export default function App() {
           </div>
         </div>
       )}
-  return (
-    <>
-      {/* TODO: todo o conteúdo do App.jsx, exceto export default function App() e return */}
-    </>
-  );
-}
