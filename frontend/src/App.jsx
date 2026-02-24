@@ -458,33 +458,35 @@ export default function App() {
   }
 
   const handleLogin = (user) => {
-    setIsAuthenticated(true)
-    localStorage.setItem('authenticated', 'true')
+    const resolvedUser = user || { id: 'adm', username: 'ADM', displayName: 'Administrador', role: 'admin' };
 
-    const resolvedUser = user || { id: 'adm', username: 'ADM', displayName: 'Administrador', role: 'admin' }
-    setCurrentUser(resolvedUser)
-    localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
-    axios.defaults.headers.common['x-user-id'] = resolvedUser.id
-    setAuthKey((prev) => prev + 1)
-    // Força reload para garantir atualização total
-    window.location.reload()
-  }
+    setIsAuthenticated(true);
+    localStorage.setItem('authenticated', 'true');
+
+    setCurrentUser(resolvedUser);
+    localStorage.setItem('currentUser', JSON.stringify(resolvedUser));
+
+    axios.defaults.headers.common['x-user-id'] = resolvedUser.id;
+    setAuthKey((prev) => prev + 1);
+  };
 
   const handleLogout = () => {
-    setIsAuthenticated(false)
-    setCurrentUser(null)
-    setAdminUsers([])
-    setAdminSales([])
-    setAdminSummary({ grandTotal: 0, users: [] })
-    setAdminAnnual({ year: new Date().getFullYear(), months: [] })
-    setAdminCredentials([])
-    localStorage.removeItem('authenticated')
-    localStorage.removeItem('currentUser')
-    delete axios.defaults.headers.common['x-user-id']
-    setAuthKey((prev) => prev + 1)
-    // Força reload para garantir atualização total
-    window.location.reload()
-  }
+    setIsAuthenticated(false);
+    localStorage.removeItem('authenticated');
+
+    setCurrentUser(null);
+    localStorage.removeItem('currentUser');
+
+    delete axios.defaults.headers.common['x-user-id'];
+
+    setAdminUsers([]);
+    setAdminSales([]);
+    setAdminSummary({ grandTotal: 0, users: [] });
+    setAdminAnnual({ year: new Date().getFullYear(), months: [] });
+    setAdminCredentials([]);
+
+    setAuthKey((prev) => prev + 1);
+  };
 
   const openConfirm = (message, onConfirm) => setConfirmState({ open: true, message, onConfirm })
   const closeConfirm = () => setConfirmState({ open: false, message: '', onConfirm: null })
@@ -619,12 +621,81 @@ export default function App() {
   const applyColor = (colorHex) => setPrimaryColor(colorHex)
   const handleColorSelect = (colorHex) => applyColor(colorHex)
 
-  if (!isAuthenticated) {
-    return <Login key={`login-${authKey}`} onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />
+  // LOG AUTH para debug
+  console.log("AUTH", isAuthenticated, currentUser, isAdmin);
+
+  // Fallback visual obrigatório se autenticado mas sem usuário
+  const mustShowFallback = isAuthenticated && !currentUser;
+  if (mustShowFallback) {
+    return <div style={{ padding: 24 }}>Carregando usuário...</div>;
   }
 
-  // ...existing code...
-  // (O resto do componente permanece igual, incluindo funções auxiliares, handlers, e o layout do return)
-  // O return final do componente deve ser igual ao anterior, garantindo que o componente feche corretamente.
-  // ...existing code...
+  if (!isAuthenticated) {
+    return <Login key={`login-${authKey}`} onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />;
+  }
+
+  // Função create corrigida
+  const create = async (payload) => {
+    await axios.post(`${API}/sales`, { ...payload, month: currentMonth })
+    setMonthsWithData((prev) => (prev.includes(currentMonth) ? prev : [...prev, currentMonth]))
+    await load()
+    await loadMonths()
+    if (isAdmin) {
+      await loadAdminLatestSales()
+      await loadAdminAnnual(new Date().getFullYear())
+    }
+    setChartRefresh((prev) => prev + 1)
+  }
+
+  // --- RETURN PRINCIPAL DO APP ---
+  return (
+    <div className="app-container">
+      <div className="header-top">
+        <h1>{isAdmin ? 'ÁREA ADMINISTRADOR' : 'Tabela de Vendas'}</h1>
+      </div>
+      <div className="main-content">
+        {isLoading && <div style={{ padding: 16 }}>Carregando...</div>}
+        {isAdmin ? (
+          <div style={{ padding: 16 }}>
+            <h2>Bem-vindo, {currentUser?.displayName || 'Admin'}!</h2>
+            <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
+              <button onClick={() => setShowAdminPanel(true)}>Abrir AdminPanel</button>
+              <button onClick={() => setShowLoginManager(true)}>Abrir LoginManager</button>
+            </div>
+            <div style={{ marginTop: 16 }}>
+              <p>Últimas vendas: {adminLatestSales?.length || 0}</p>
+            </div>
+            <div style={{marginTop:24}}>
+              <AdminPanel
+                isOpen={showAdminPanel}
+                onClose={() => setShowAdminPanel(false)}
+                users={adminUsers}
+                onUsersRefresh={loadAdminUsers}
+                selectedUserId={selectedUserId}
+                onSelectUser={setSelectedUserId}
+                onSalesChanged={async () => {
+                  await loadAdminSales(adminSearch);
+                  await loadAdminSummary();
+                  await loadAdminAnnual();
+                  setChartRefresh((prev) => prev + 1);
+                }}
+              />
+              <LoginManager
+                isOpen={showLoginManager}
+                onClose={() => setShowLoginManager(false)}
+                users={adminUsers}
+                onUsersRefresh={loadAdminUsers}
+              />
+            </div>
+          </div>
+        ) : (
+          <>
+            <SaleForm onCreate={create} onUpdate={() => {}} editing={editing} currentMonth={currentMonth} />
+            <SaleList sales={sales} onEdit={setEditing} onDelete={() => {}} onCopy={() => {}} />
+            <CommissionSummary sales={sales} commissions={commissions} onCommissionChange={() => {}} />
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
