@@ -1,3 +1,5 @@
+// Corrige erro de referência: define emptyNewUser
+const emptyNewUser = { displayName: '', username: '', password: '' };
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import axios from 'axios';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
