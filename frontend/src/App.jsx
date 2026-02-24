@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import { emptyNewUser } from './constants/defaults';
 import axios from 'axios';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 import SaleForm from './components/SaleForm';
@@ -110,7 +111,7 @@ export default function App() {
   const [adminCredentials, setAdminCredentials] = useState([])
   const [activeLoginId, setActiveLoginId] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [newUserForm, setNewUserForm] = useState(emptyNewUser)
+  const [newUserForm, setNewUserForm] = useState(emptyNewUser ?? { displayName: '', username: '', password: '' })
   const [adminLoading, setAdminLoading] = useState(false)
   const [viewUserSalesId, setViewUserSalesId] = useState(null)
   const [viewUserSalesData, setViewUserSalesData] = useState(null)
