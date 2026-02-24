@@ -10,9 +10,6 @@ import Login from './components/Login';
 import AdminPanel from './components/AdminPanel';
 import LoginManager from './components/LoginManager';
 
-// Corrige erro de referência: define emptyNewUser
-const emptyNewUser = { displayName: '', username: '', password: '' };
-
 // Interceptor global para garantir x-user-id do usuário logado
 axios.interceptors.request.use((config) => {
   try {
@@ -282,40 +279,39 @@ export default function App() {
     }
   }
 
-
-  // Admin: buscar últimas vendas (limit 5)
-  const loadAdminLatestSales = useCallback(async () => {
+  // Fetch latest sales for admin dashboard (limit 5, all users)
+  const loadAdminSales = async () => {
+  // Últimas vendas do ADM (endpoint correto)
+  const loadAdminLatestSales = async () => {
     const url = `${API}/admin/sales/latest?limit=5`;
     const res = await axios.get(url);
     setAdminLatestSales(Array.isArray(res.data) ? res.data : []);
-  }, [isAdmin]);
+  };
 
-  // Admin: buscar gráfico anual
-  const loadAdminAnnual = useCallback(async (year) => {
+  // Gráfico anual ADM
+  const loadAdminAnnual = async (year) => {
     const yearFinal = year || new Date().getFullYear();
     const url = `${API}/admin/sales/annual?year=${yearFinal}`;
     const res = await axios.get(url);
-    setAdminAnnual(res.data);
-  }, [isAdmin]);
-
-  // Admin: buscar vendas (com busca)
-  const loadAdminSales = useCallback(async (search = '') => {
-    const url = `${API}/admin/sales/search?q=${encodeURIComponent(search)}`;
-    const res = await axios.get(url);
-    setAdminSales(Array.isArray(res.data) ? res.data : []);
-  }, [isAdmin]);
-
-  // Polling admin dashboard: últimas vendas e gráfico anual
+    console.log("[ADM annual] url:", url);
+    console.log("[ADM annual] months:", res.data?.months);
+    setAdminAnnual(Array.isArray(res.data?.months) ? res.data.months : []);
+  };
+  // Polling for admin dashboard: refresh latest sales and annual summary every 10s
+  // Polling só quando admin logado
   useEffect(() => {
-    if (!isAdmin) return;
+    if (!currentUser || currentUser.role !== "admin") return;
+
     loadAdminLatestSales();
     loadAdminAnnual(new Date().getFullYear());
+
     const t = setInterval(() => {
       loadAdminLatestSales();
       loadAdminAnnual(new Date().getFullYear());
     }, 10000);
+
     return () => clearInterval(t);
-  }, [isAdmin, loadAdminLatestSales, loadAdminAnnual]);
+  }, [currentUser?.id, currentUser?.role]);
 
   const loadAdminSummary = async () => {
     if (!isAdmin) return
@@ -458,35 +454,33 @@ export default function App() {
   }
 
   const handleLogin = (user) => {
-    const resolvedUser = user || { id: 'adm', username: 'ADM', displayName: 'Administrador', role: 'admin' };
+    setIsAuthenticated(true)
+    localStorage.setItem('authenticated', 'true')
 
-    setIsAuthenticated(true);
-    localStorage.setItem('authenticated', 'true');
-
-    setCurrentUser(resolvedUser);
-    localStorage.setItem('currentUser', JSON.stringify(resolvedUser));
-
-    axios.defaults.headers.common['x-user-id'] = resolvedUser.id;
-    setAuthKey((prev) => prev + 1);
-  };
+    const resolvedUser = user || { id: 'adm', username: 'ADM', displayName: 'Administrador', role: 'admin' }
+    setCurrentUser(resolvedUser)
+    localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
+    axios.defaults.headers.common['x-user-id'] = resolvedUser.id
+    setAuthKey((prev) => prev + 1)
+    // Força reload para garantir atualização total
+    window.location.reload()
+  }
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem('authenticated');
-
-    setCurrentUser(null);
-    localStorage.removeItem('currentUser');
-
-    delete axios.defaults.headers.common['x-user-id'];
-
-    setAdminUsers([]);
-    setAdminSales([]);
-    setAdminSummary({ grandTotal: 0, users: [] });
-    setAdminAnnual({ year: new Date().getFullYear(), months: [] });
-    setAdminCredentials([]);
-
-    setAuthKey((prev) => prev + 1);
-  };
+    setIsAuthenticated(false)
+    setCurrentUser(null)
+    setAdminUsers([])
+    setAdminSales([])
+    setAdminSummary({ grandTotal: 0, users: [] })
+    setAdminAnnual({ year: new Date().getFullYear(), months: [] })
+    setAdminCredentials([])
+    localStorage.removeItem('authenticated')
+    localStorage.removeItem('currentUser')
+    delete axios.defaults.headers.common['x-user-id']
+    setAuthKey((prev) => prev + 1)
+    // Força reload para garantir atualização total
+    window.location.reload()
+  }
 
   const openConfirm = (message, onConfirm) => setConfirmState({ open: true, message, onConfirm })
   const closeConfirm = () => setConfirmState({ open: false, message: '', onConfirm: null })
@@ -621,81 +615,581 @@ export default function App() {
   const applyColor = (colorHex) => setPrimaryColor(colorHex)
   const handleColorSelect = (colorHex) => applyColor(colorHex)
 
-  // LOG AUTH para debug
-  console.log("AUTH", isAuthenticated, currentUser, isAdmin);
-
-  // Fallback visual obrigatório se autenticado mas sem usuário
-  const mustShowFallback = isAuthenticated && !currentUser;
-  if (mustShowFallback) {
-    return <div style={{ padding: 24 }}>Carregando usuário...</div>;
-  }
-
   if (!isAuthenticated) {
-    return <Login key={`login-${authKey}`} onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />;
+    return <Login key={`login-${authKey}`} onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />
   }
 
-  // Função create corrigida
-  const create = async (payload) => {
+  // ...existing code...
     await axios.post(`${API}/sales`, { ...payload, month: currentMonth })
     setMonthsWithData((prev) => (prev.includes(currentMonth) ? prev : [...prev, currentMonth]))
     await load()
     await loadMonths()
-    if (isAdmin) {
-      await loadAdminLatestSales()
-      await loadAdminAnnual(new Date().getFullYear())
+    // se admin estiver logado, atualiza na hora
+    if (currentUser?.role === "admin") {
+      await loadAdminLatestSales();
+      await loadAdminAnnual(new Date().getFullYear());
     }
     setChartRefresh((prev) => prev + 1)
   }
 
-  // --- RETURN PRINCIPAL DO APP ---
-  return (
-    <div className="app-container">
+  const update = async (id, payload) => {
+    await axios.put(`${API}/sales/${id}`, { ...payload, month: currentMonth })
+    setEditing(null)
+    await load()
+    // Sempre atualiza área admin
+    await loadAdminSales(adminSearch)
+    await loadAdminSummary()
+    await loadAdminAnnual()
+    setChartRefresh((prev) => prev + 1)
+  }
+
+  const remove = (id) => {
+    openConfirm('Deseja realmente apagar essa venda?', async () => {
+      try {
+        await axios.delete(`${API}/sales/${id}?month=${currentMonth}`)
+      } catch (err) {
+        console.error('Erro ao deletar venda:', err)
+        alert('Erro ao deletar venda. Tente novamente.')
+        return
+      }
+      await load()
+      const res = await axios.get(`${API}/sales?month=${currentMonth}`)
+      if (res.data.length === 0) {
+        setMonthsWithData((prev) => prev.filter((m) => m !== currentMonth))
+      }
+      // Sempre atualiza área admin
+      await loadAdminSales(adminSearch)
+      await loadAdminSummary()
+      await loadAdminAnnual()
+      setChartRefresh((prev) => prev + 1)
+    })
+  }
+
+  const handleCopy = (sale) => {
+    const { id, ...saleData } = sale
+    setCopiedSale(saleData)
+  }
+
+  const handlePaste = () => {
+    if (copiedSale) {
+      setEditing(null)
+      setPastedSale({ ...copiedSale, date: '' })
+      setCopiedSale(null)
+    }
+  }
+
+  const createNewMonth = async (monthNum, year) => {
+    const monthStr = `${year}-${String(monthNum).padStart(2, '0')}`
+    try {
+      await axios.post(`${API}/months`, { month: monthStr })
+      await loadMonths()
+      setCurrentMonth(monthStr)
+    } catch (err) {
+      console.error('Erro ao criar mês:', err)
+    }
+  }
+
+  const handlePrevYear = () => setSelectedYear((prev) => prev - 1)
+  const handleNextYear = () => setSelectedYear((prev) => prev + 1)
+
+  const handleSelectMonth = (monthNum) => {
+    const monthStr = `${selectedYear}-${String(monthNum).padStart(2, '0')}`
+    if (!availableMonths.includes(monthStr)) {
+      createNewMonth(monthNum, selectedYear)
+    } else {
+      setCurrentMonth(monthStr)
+    }
+    setShowMonthSelector(false)
+  }
+
+  const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+
+  const formatMonthName = (monthStr) => {
+    const [year, month] = monthStr.split('-')
+    return `${monthNames[parseInt(month) - 1]} ${year}`
+  }
+
+  const handleCommissionChange = (updatedCommissions) => setCommissions(updatedCommissions)
+
+  // Filtra venda TESTE do gráfico
+  const adminChartData = useMemo(() => {
+    const year = adminAnnual.year || new Date().getFullYear();
+    const activeUserIds = new Set((adminUsers || []).filter(u => u.active !== false && u.role !== 'admin').map(u => u.id));
+    // Use exatamente os registros da tabela de Visualizar Vendas (adminSales filtrado)
+    const filteredSales = (adminSales || []).filter(
+      (sale) =>
+        String(sale.client || '').toUpperCase() !== 'TESTE' &&
+        String(sale.product || '').toUpperCase() !== 'AAAAA' &&
+        String(sale.userId || '') !== 'user-1771531117808' &&
+        activeUserIds.has(sale.userId)
+    );
+    const monthlyTotals = {};
+    filteredSales.forEach((sale) => {
+      const saleDate = new Date(sale.date || sale.created_at);
+      const saleYear = saleDate.getFullYear();
+      if (saleYear !== year) return;
+      const saleMonth = String(saleDate.getMonth() + 1).padStart(2, '0');
+      const monthKey = `${year}-${saleMonth}`;
+      monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(sale.total || 0);
+    });
+    return monthNames.map((label, index) => {
+      const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`;
+      return {
+        name: label.substring(0, 3),
+        month: monthKey,
+        total: monthlyTotals[monthKey] || 0
+      };
+    });
+  }, [adminSales, adminUsers, adminAnnual, monthNames]);
+
+  const adminChartColors = useMemo(() => {
+    const base = primaryColor || PRESET_COLORS[0].hex
+    return monthNames.map((_, index) => blendWithWhite(base, 0.05 + (index / 11) * 0.55))
+  }, [primaryColor, monthNames])
+
+  // Proteção: garantir arrays/objetos válidos
+  const safeAdminSales = Array.isArray(adminSales) ? adminSales : [];
+  const safeAdminUsers = Array.isArray(adminUsers) ? adminUsers : [];
+  const safeAdminAnnual = adminAnnual && typeof adminAnnual === 'object' ? adminAnnual : { year: new Date().getFullYear(), months: [] };
+
+  // Filtra vendas TESTE do frontend
+  // Últimas vendas ADM já vêm limitadas do backend
+  const adminRecentSales = adminLatestSales;
+  // ...existing code...
+  // Remover return duplicado
+  // O return correto está no final do arquivo
+      {/* Proteção global: mensagem de erro amigável se algum dado essencial estiver ausente */}
+      {(!safeAdminSales || !safeAdminUsers || !safeAdminAnnual) && (
+        <div style={{color: 'red', padding: 20, fontWeight: 'bold'}}>Erro crítico: Dados essenciais não carregados. Tente recarregar a página ou contate o suporte.</div>
+      )}
       <div className="header-top">
+        <div className="theme-controls">
+          <button className="btn-theme" onClick={() => setDarkMode(!darkMode)} title="Alternar tema">
+            {darkMode ? (
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+            ) : (
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            )}
+          </button>
+          <button className="btn-theme" onClick={() => setShowColorPicker(!showColorPicker)} title="Personalizar cores">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+            </svg>
+          </button>
+          {!isAdmin && (
+            <>
+              <button className="btn-theme" onClick={() => setShowChart(true)} title="Ver gráfico de vendas">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="12" width="3" height="7"/>
+                  <rect x="9" y="8" width="3" height="11"/>
+                  <rect x="15" y="4" width="3" height="15"/>
+                </svg>
+              </button>
+              <button className="btn-theme" onClick={() => setShowNotes(true)} title="Ver rascunhos e anotações">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="4" y="4" width="16" height="16" rx="2"/>
+                  <line x1="8" y1="8" x2="16" y2="8"/>
+                  <line x1="8" y1="12" x2="16" y2="12"/>
+                  <line x1="8" y1="16" x2="12" y2="16"/>
+                </svg>
+              </button>
+              <button className="btn-logout" onClick={() => openConfirm('Deseja realmente sair do sistema?', handleLogout)} title="Sair do sistema">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </button>
+            </>
+          )}
+          {/* Botão de sair do sistema agora é o último */}
+          {isAdmin && (
+            <>
+              <button className="btn-theme" onClick={() => setShowAdminPanel(true)} title="Gerenciar contas (painel)">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <path d="M9 9h6v6H9z"/>
+                </svg>
+              </button>
+              <button className="btn-theme" onClick={() => setShowLoginManager(true)} title="Gerenciar contas (modal)">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 20h9"/>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19.5 2 21l1.5-5L16.5 3.5z"/>
+                </svg>
+              </button>
+              <button className="btn-logout" onClick={() => openConfirm('Deseja realmente sair do sistema?', handleLogout)} title="Sair do sistema">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </button>
+            </>
+          )}
+          {showColorPicker && (
+            <div className="color-picker-dropdown">
+              <div className="color-picker-header">
+                <span>Escolher cor principal</span>
+                <button onClick={() => setShowColorPicker(false)}>✕</button>
+              </div>
+              <div className="color-presets">
+                {PRESET_COLORS.map((color) => (
+                  <button
+                    key={color.hex}
+                    className={`color-preset-btn ${primaryColor === color.hex ? 'active' : ''}`}
+                    onClick={() => handleColorSelect(color.hex)}
+                    title={color.name}
+                    style={{ background: `linear-gradient(135deg, ${color.hex} 0%, ${color.dark} 100%)` }}
+                  >
+                    <span className="color-name">{color.name}</span>
+                    {primaryColor === color.hex && <span className="color-check">✓</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
         <h1>{isAdmin ? 'ÁREA ADMINISTRADOR' : 'Tabela de Vendas'}</h1>
-      </div>
-      <div className="main-content">
-        {isLoading && <div style={{ padding: 16 }}>Carregando...</div>}
-        {isAdmin ? (
-          <div style={{ padding: 16 }}>
-            <h2>Bem-vindo, {currentUser?.displayName || 'Admin'}!</h2>
-            <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
-              <button onClick={() => setShowAdminPanel(true)}>Abrir AdminPanel</button>
-              <button onClick={() => setShowLoginManager(true)}>Abrir LoginManager</button>
-            </div>
-            <div style={{ marginTop: 16 }}>
-              <p>Últimas vendas: {adminLatestSales?.length || 0}</p>
-            </div>
-            <div style={{marginTop:24}}>
-              <AdminPanel
-                isOpen={showAdminPanel}
-                onClose={() => setShowAdminPanel(false)}
-                users={adminUsers}
-                onUsersRefresh={loadAdminUsers}
-                selectedUserId={selectedUserId}
-                onSelectUser={setSelectedUserId}
-                onSalesChanged={async () => {
-                  await loadAdminSales(adminSearch);
-                  await loadAdminSummary();
-                  await loadAdminAnnual();
-                  setChartRefresh((prev) => prev + 1);
-                }}
-              />
-              <LoginManager
-                isOpen={showLoginManager}
-                onClose={() => setShowLoginManager(false)}
-                users={adminUsers}
-                onUsersRefresh={loadAdminUsers}
-              />
-            </div>
+
+        {!isAdmin && (
+          <div className="month-controls">
+            <button className="btn-month" onClick={() => setShowMonthSelector(!showMonthSelector)} title="Selecionar mês">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              <span>{formatMonthName(currentMonth)}</span>
+            </button>
+            {showMonthSelector && (
+              <div className="month-selector-dropdown">
+                <div className="month-selector-header">
+                  <button className="btn-arrow" onClick={handlePrevYear} title="Ano anterior">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+                  <span className="year-display">{selectedYear}</span>
+                  <button className="btn-arrow" onClick={handleNextYear} title="Próximo ano">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+                  <button onClick={() => setShowMonthSelector(false)}>✕</button>
+                </div>
+
+                <div className="months-grid">
+                  {monthNames.map((monthName, index) => {
+                    const monthNum = index + 1
+                    const monthStr = `${selectedYear}-${String(monthNum).padStart(2, '0')}`
+                    const hasData = monthsWithData.includes(monthStr)
+                    return (
+                      <button
+                        key={monthNum}
+                        className={`month-button ${hasData ? 'exists' : ''} ${currentMonth === monthStr ? 'active' : ''}`}
+                        onClick={() => handleSelectMonth(monthNum)}
+                        title={`${monthName} ${selectedYear}`}
+                      >
+                        <span className="month-label">{monthName.substring(0, 3)}</span>
+                        <span className="month-indicator">{hasData ? '✓' : '+'}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
-        ) : (
-          <>
-            <SaleForm onCreate={create} onUpdate={() => {}} editing={editing} currentMonth={currentMonth} />
-            <SaleList sales={sales} onEdit={setEditing} onDelete={() => {}} onCopy={() => {}} />
-            <CommissionSummary sales={sales} commissions={commissions} onCommissionChange={() => {}} />
-          </>
         )}
       </div>
-    </div>
+
+      {isAdmin ? (
+        <div className="admin-home-layout">
+          <div className="admin-home-card admin-home-sales-top">
+            <div className="admin-home-row-head">
+              <h3>Últimas vendas feitas</h3>
+            </div>
+            <ul style={{ listStyle: 'none', padding: 0 }}>
+              {adminLatestSales.map((sale) => (
+                <li key={`${sale.userId}-${sale.month}-${sale.id}-${sale.createdAt || sale.date}`}>
+                  <b>{sale.userName}</b> — {sale.client} — R$ {Number(sale.total || 0).toFixed(2)}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="admin-home-card admin-home-chart-full">
+            <h3>Gráfico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
+            {/* Filtra venda TESTE do total geral */}
+            <p className="admin-home-total">VENDAS TOTAL: <strong>R$ {formatReal(
+              (adminSales || [])
+                .filter(sale =>
+                  String(sale.client || '').toUpperCase() !== 'TESTE' &&
+                  String(sale.product || '').toUpperCase() !== 'AAAAA' &&
+                  String(sale.userId || '') !== 'user-1771531117808' &&
+                  (adminUsers || []).some(u => u.id === sale.userId && u.active !== false && u.role !== 'admin')
+                )
+                .reduce((sum, sale) => sum + Number(sale.total || 0), 0)
+            )}</strong></p>
+            <div className="admin-home-chart-wrap full-width">
+              <ResponsiveContainer width="100%" height={360}>
+                <BarChart
+                  data={adminChartData}
+                  margin={{ top: 12, right: 16, left: 0, bottom: 16 }}
+                  barCategoryGap="2%"
+                  barGap={0}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip formatter={(value) => `R$ ${formatReal(value)}`} labelFormatter={(label, payload) => payload?.[0]?.payload?.month || label} />
+                  <Bar dataKey="total" radius={[0, 0, 0, 0]} barSize={55}>
+                    {adminChartData.map((entry, index) => (
+                      <Cell key={`month-${entry.month}`} fill={adminChartColors[index % adminChartColors.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+
+        </div>
+      ) : (
+        <>
+          <div className="grid">
+            <SaleForm
+              onCreate={create}
+              onUpdate={update}
+              editing={editing}
+              currentMonth={currentMonth}
+              copiedSale={copiedSale}
+              pastedSale={pastedSale}
+              onPasteApplied={() => setPastedSale(null)}
+              onPaste={handlePaste}
+            />
+            <SaleList sales={sales} onEdit={setEditing} onDelete={remove} onCopy={handleCopy} />
+          </div>
+          <CommissionSummary sales={sales} commissions={commissions} onCommissionChange={handleCommissionChange} />
+          {showChart && <ChartView year={selectedYear} onClose={() => setShowChart(false)} refreshKey={chartRefresh} primaryColor={primaryColor} darkMode={darkMode} />}
+          <NotesPanel isOpen={showNotes} onClose={() => setShowNotes(false)} darkMode={darkMode} currentMonth={currentMonth} onSaleAdded={load} onMonthChange={setCurrentMonth} />
+        </>
+      )}
+
+
+      {showAdminPanel && isAdmin && (
+        <AdminPanel
+          isOpen={showAdminPanel}
+          onClose={() => setShowAdminPanel(false)}
+          users={adminUsers}
+          onUsersRefresh={loadAdminUsers}
+          selectedUserId={selectedUserId}
+          onSelectUser={setSelectedUserId}
+          onSalesChanged={async () => {
+            await loadAdminSales(adminSearch);
+            await loadAdminSummary();
+            await loadAdminAnnual();
+            setChartRefresh((prev) => prev + 1);
+          }}
+        />
+      )}
+
+      {showLoginManager && isAdmin && (
+        <LoginManager
+          isOpen={showLoginManager}
+          onClose={() => setShowLoginManager(false)}
+          adminCredentials={adminCredentials}
+          onCreateUser={createUser}
+          onUpdateUser={updateUser}
+          onDeleteUser={deleteUser}
+          onViewUserSales={loadUserSalesAndYears}
+          onRefresh={loadAdminCredentials}
+          adminLoading={adminLoading}
+          darkMode={darkMode}
+          onSalesChanged={async () => {
+            await loadAdminSales(adminSearch);
+            await loadAdminSummary();
+            await loadAdminAnnual();
+            setChartRefresh((prev) => prev + 1);
+          }}
+        />
+      )}
+
+      {confirmState.open && (
+        <div className="modal-overlay">
+          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+            <div className="modal-header">
+              <h3 id="confirm-title">CONFIRMAÇÃO</h3>
+              <button className="modal-close" onClick={closeConfirm} aria-label="Fechar">✕</button>
+            </div>
+            <div className="modal-body">
+              <p>{confirmState.message}</p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn-secondary" type="button" onClick={closeConfirm}>CANCELAR</button>
+              <button className="btn-primary" type="button" onClick={handleConfirm}>SIM</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <footer className="app-footer">
+        <div className="footer-content">
+          <div className="footer-system">
+            <strong>SV SISTEMA DE VENDAS 2026</strong>
+          </div>
+          <div className="footer-divider">•</div>
+          <div className="footer-security">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>Security and Privacy Protected</span>
+          </div>
+          <div className="footer-divider">•</div>
+          <div className="footer-author">
+            Developed by <strong>Gustavo Curis de Francisco</strong>
+          </div>
+        </div>
+      </footer>
+
+      {/* Modal de Vendas do Usuário */}
+      {viewUserSalesData && (
+        <div className="login-manager-overlay">
+          <div className={`user-sales-modal ${darkMode ? 'dark-mode' : ''}`}>
+            <div className="login-manager-header">
+              <h2>Vendas de {viewUserSalesData.userName}</h2>
+              <button 
+                className="login-manager-close" 
+                onClick={() => { 
+                  setViewUserSalesId(null)
+                  setViewUserSalesData(null)
+                  setSelectedSalesYear(null)
+                  setSelectedSalesMonth(null)
+                }}
+                title="Fechar"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="user-sales-controls">
+              <div className="user-sales-select-group">
+                <label htmlFor="year-select">Ano:</label>
+                <select 
+                  id="year-select"
+                  className="user-sales-select"
+                  value={selectedSalesYear || ''}
+                  onChange={(e) => {
+                    const year = e.target.value
+                    setSelectedSalesYear(year)
+                    // Auto-select first month of the selected year
+                    const months = Object.keys(viewUserSalesData.salesByYearMonth[year] || {}).sort((a, b) => Number(b) - Number(a))
+                    setSelectedSalesMonth(months.length > 0 ? months[0] : null)
+                  }}
+                >
+                  <option value="">Selecione um ano</option>
+                  {Object.keys(viewUserSalesData.salesByYearMonth)
+                    .sort((a, b) => Number(b) - Number(a))
+                    .map((year) => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                </select>
+              </div>
+
+              {selectedSalesYear && (
+                <div className="user-sales-select-group">
+                  <label htmlFor="month-select">Mês:</label>
+                  <select 
+                    id="month-select"
+                    className="user-sales-select"
+                    value={selectedSalesMonth || ''}
+                    onChange={(e) => setSelectedSalesMonth(e.target.value)}
+                  >
+                    <option value="">Selecione um mês</option>
+                    {Object.keys(viewUserSalesData.salesByYearMonth[selectedSalesYear] || {})
+                      .sort((a, b) => Number(b) - Number(a))
+                      .map((month) => {
+                        const monthData = viewUserSalesData.salesByYearMonth[selectedSalesYear][month]
+                        return (
+                          <option key={`${selectedSalesYear}-${month}`} value={month}>
+                            {monthData.monthName}
+                          </option>
+                        )
+                      })}
+                  </select>
+                </div>
+              )}
+            </div>
+
+            <div className="user-sales-content">
+              {Object.keys(viewUserSalesData.salesByYearMonth).length === 0 ? (
+                <p className="user-sales-empty">Nenhuma venda encontrada</p>
+              ) : selectedSalesYear && selectedSalesMonth ? (
+                (() => {
+                  const monthData = viewUserSalesData.salesByYearMonth[selectedSalesYear]?.[selectedSalesMonth]
+                  if (!monthData) {
+                    return <p className="user-sales-empty">Nenhuma venda neste mês</p>
+                  }
+                  return (
+                    <div className="user-sales-month-single">
+                      <div className="user-sales-month-header">
+                        <h4>{monthData.monthName}</h4>
+                        <span className="user-sales-month-total">
+                          Total: R$ {formatReal(monthData.total)}
+                        </span>
+                      </div>
+                      <table className="user-sales-table">
+                        <thead>
+                          <tr>
+                            <th>Data</th>
+                            <th>Produto</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                            <th>Quantidade</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {monthData.sales.map((sale, idx) => {
+                            const saleDate = new Date(sale.date || sale.created_at)
+                            const formattedDate = saleDate.toLocaleDateString('pt-BR')
+                            return (
+                              <tr key={`${selectedSalesYear}-${selectedSalesMonth}-${idx}`}>
+                                <td>{formattedDate}</td>
+                                <td>{sale.product || '-'}</td>
+                                <td>{getTireTypeLabel(sale.tire_type)}</td>
+                                <td>R$ {formatReal(sale.total)}</td>
+                                <td>{sale.quantity || '-'}</td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )
+                })()
+              ) : (
+                <p className="user-sales-empty">Selecione um ano e mês para visualizar</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+  return (
+    <>
+      {/* TODO: todo o conteúdo do App.jsx, exceto export default function App() e return */}
+    </>
   );
 }
