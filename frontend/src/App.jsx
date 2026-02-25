@@ -621,17 +621,18 @@ export default function App() {
     return <Login key={`login-${authKey}`} onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />
   }
 
-  // ...existing code...
-    await axios.post(`${API}/sales`, { ...payload, month: currentMonth })
-    setMonthsWithData((prev) => (prev.includes(currentMonth) ? prev : [...prev, currentMonth]))
-    await load()
-    await loadMonths()
+  // Função para criar venda (corrige erro de build: await fora de função)
+  const create = async (payload) => {
+    await axios.post(`${API}/sales`, { ...payload, month: currentMonth });
+    setMonthsWithData((prev) => (prev.includes(currentMonth) ? prev : [...prev, currentMonth]));
+    await load();
+    await loadMonths();
     // se admin estiver logado, atualiza na hora
     if (currentUser?.role === "admin") {
       await loadAdminLatestSales();
       await loadAdminAnnual(new Date().getFullYear());
     }
-    setChartRefresh((prev) => prev + 1)
+    setChartRefresh((prev) => prev + 1);
   }
 
   const update = async (id, payload) => {
