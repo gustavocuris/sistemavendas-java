@@ -86,71 +86,68 @@ const getTireTypeLabel = (type) => {
 
 export default function App() {
   console.log("APP RENDER ✅", new Date().toISOString());
-  // O return correto está no final do arquivo, com tabelas, área admin, etc.
-}
-  const [showBackupSpinner, setShowBackupSpinner] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('authenticated') === 'true')
-  const [authKey, setAuthKey] = useState(0)
+  // Todos os hooks e lógica devem estar dentro da função App
+  const [showBackupSpinner, setShowBackupSpinner] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('authenticated') === 'true');
+  const [authKey, setAuthKey] = useState(0);
   const [currentUser, setCurrentUser] = useState(() => {
     try {
-      const saved = localStorage.getItem('currentUser')
-      return saved ? JSON.parse(saved) : null
+      const saved = localStorage.getItem('currentUser');
+      return saved ? JSON.parse(saved) : null;
     } catch {
-      return null
+      return null;
     }
-  })
+  });
+  const isAdmin = currentUser?.role === 'admin';
+  const [adminUsers, setAdminUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState('');
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [showLoginManager, setShowLoginManager] = useState(false);
+  const [adminSearch, setAdminSearch] = useState('');
+  const [adminSales, setAdminSales] = useState([]);
+  const [adminSummary, setAdminSummary] = useState({ grandTotal: 0, users: [] });
+  const [adminLatestSales, setAdminLatestSales] = useState([]);
+  const [adminAnnual, setAdminAnnual] = useState([]); // para gráfico anual (12 meses)
+  const [adminCredentials, setAdminCredentials] = useState([]);
+  const [activeLoginId, setActiveLoginId] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [newUserForm, setNewUserForm] = useState(emptyNewUser ?? { displayName: '', username: '', password: '' });
+  const [adminLoading, setAdminLoading] = useState(false);
+  const [viewUserSalesId, setViewUserSalesId] = useState(null);
+  const [viewUserSalesData, setViewUserSalesData] = useState(null);
+  const [selectedSalesYear, setSelectedSalesYear] = useState(null);
+  const [selectedSalesMonth, setSelectedSalesMonth] = useState(null);
 
-  const isAdmin = currentUser?.role === 'admin'
-
-  const [adminUsers, setAdminUsers] = useState([])
-  const [selectedUserId, setSelectedUserId] = useState('')
-  const [showAdminPanel, setShowAdminPanel] = useState(false)
-  const [showLoginManager, setShowLoginManager] = useState(false)
-  const [adminSearch, setAdminSearch] = useState('')
-  const [adminSales, setAdminSales] = useState([])
-  const [adminSummary, setAdminSummary] = useState({ grandTotal: 0, users: [] })
-  const [adminLatestSales, setAdminLatestSales] = useState([])
-  const [adminAnnual, setAdminAnnual] = useState([]) // para gráfico anual (12 meses)
-  const [adminCredentials, setAdminCredentials] = useState([])
-  const [activeLoginId, setActiveLoginId] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [newUserForm, setNewUserForm] = useState(emptyNewUser ?? { displayName: '', username: '', password: '' })
-  const [adminLoading, setAdminLoading] = useState(false)
-  const [viewUserSalesId, setViewUserSalesId] = useState(null)
-  const [viewUserSalesData, setViewUserSalesData] = useState(null)
-  const [selectedSalesYear, setSelectedSalesYear] = useState(null)
-  const [selectedSalesMonth, setSelectedSalesMonth] = useState(null)
-
-  const [sales, setSales] = useState([])
-  const [editing, setEditing] = useState(null)
-  const [copiedSale, setCopiedSale] = useState(null)
-  const [pastedSale, setPastedSale] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [commissions, setCommissions] = useState({ new: 5, recap: 8, recapping: 10, service: 0 })
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true')
-  const [primaryColor, setPrimaryColor] = useState(() => localStorage.getItem('primaryColor') || PRESET_COLORS[0].hex)
-  const [showColorPicker, setShowColorPicker] = useState(false)
-  const [availableMonths, setAvailableMonths] = useState([])
-  const [monthsWithData, setMonthsWithData] = useState([])
+  const [sales, setSales] = useState([]);
+  const [editing, setEditing] = useState(null);
+  const [copiedSale, setCopiedSale] = useState(null);
+  const [pastedSale, setPastedSale] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [commissions, setCommissions] = useState({ new: 5, recap: 8, recapping: 10, service: 0 });
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
+  const [primaryColor, setPrimaryColor] = useState(() => localStorage.getItem('primaryColor') || PRESET_COLORS[0].hex);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [availableMonths, setAvailableMonths] = useState([]);
+  const [monthsWithData, setMonthsWithData] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(() => {
     const saved = localStorage.getItem('currentMonth')
     if (saved) return saved
     const now = new Date()
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-  })
-  const [showMonthSelector, setShowMonthSelector] = useState(false)
+  });
+  const [showMonthSelector, setShowMonthSelector] = useState(false);
   const [selectedYear, setSelectedYear] = useState(() => {
     const saved = localStorage.getItem('currentMonth')
     return saved ? parseInt(saved.split('-')[0]) : new Date().getFullYear()
-  })
+  });
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const saved = localStorage.getItem('currentMonth')
     return saved ? parseInt(saved.split('-')[1]) : new Date().getMonth() + 1
-  })
-  const [showChart, setShowChart] = useState(false)
-  const [chartRefresh, setChartRefresh] = useState(0)
-  const [showNotes, setShowNotes] = useState(false)
-  const [confirmState, setConfirmState] = useState({ open: false, message: '', onConfirm: null })
+  });
+  const [showChart, setShowChart] = useState(false);
+  const [chartRefresh, setChartRefresh] = useState(0);
+  const [showNotes, setShowNotes] = useState(false);
+  const [confirmState, setConfirmState] = useState({ open: false, message: '', onConfirm: null });
 
   const hexToRgbString = (hex) => {
     if (!hex) return '0, 0, 0'
@@ -285,45 +282,46 @@ export default function App() {
 
   // Fetch latest sales for admin dashboard (limit 5, all users)
   const loadAdminSales = async () => {
-  // Últimas vendas do ADM (endpoint correto)
-  const loadAdminLatestSales = async () => {
-    const url = `${API}/admin/sales/latest?limit=5`;
-    const res = await axios.get(url);
-    setAdminLatestSales(Array.isArray(res.data) ? res.data : []);
-  };
+    // Últimas vendas do ADM (endpoint correto)
+    const loadAdminLatestSales = async () => {
+      const url = `${API}/admin/sales/latest?limit=5`;
+      const res = await axios.get(url);
+      setAdminLatestSales(Array.isArray(res.data) ? res.data : []);
+    };
 
-  // Gráfico anual ADM
-  const loadAdminAnnual = async (year) => {
-    const yearFinal = year || new Date().getFullYear();
-    const url = `${API}/admin/sales/annual?year=${yearFinal}`;
-    const res = await axios.get(url);
-    console.log("[ADM annual] url:", url);
-    console.log("[ADM annual] months:", res.data?.months);
-    setAdminAnnual(Array.isArray(res.data?.months) ? res.data.months : []);
-  };
-  // Polling for admin dashboard: refresh latest sales and annual summary every 10s
-  // Polling só quando admin logado
-  useEffect(() => {
-    if (!currentUser || currentUser.role !== "admin") return;
+    // Gráfico anual ADM
+    const loadAdminAnnual = async (year) => {
+      const yearFinal = year || new Date().getFullYear();
+      const url = `${API}/admin/sales/annual?year=${yearFinal}`;
+      const res = await axios.get(url);
+      console.log("[ADM annual] url:", url);
+      console.log("[ADM annual] months:", res.data?.months);
+      setAdminAnnual(Array.isArray(res.data?.months) ? res.data.months : []);
+    };
+    // Polling for admin dashboard: refresh latest sales and annual summary every 10s
+    // Polling só quando admin logado
+    useEffect(() => {
+      if (!currentUser || currentUser.role !== "admin") return;
 
-    loadAdminLatestSales();
-    loadAdminAnnual(new Date().getFullYear());
-
-    const t = setInterval(() => {
       loadAdminLatestSales();
       loadAdminAnnual(new Date().getFullYear());
-    }, 10000);
 
-    return () => clearInterval(t);
-  }, [currentUser?.id, currentUser?.role]);
+      const t = setInterval(() => {
+        loadAdminLatestSales();
+        loadAdminAnnual(new Date().getFullYear());
+      }, 10000);
 
-  const loadAdminSummary = async () => {
-    if (!isAdmin) return
-    const res = await axios.get(`${API}/admin/sales/summary`)
-    setAdminSummary(res.data || { grandTotal: 0, users: [] })
+      return () => clearInterval(t);
+    }, [currentUser?.id, currentUser?.role]);
+
+    const loadAdminSummary = async () => {
+      if (!isAdmin) return
+      const res = await axios.get(`${API}/admin/sales/summary`)
+      setAdminSummary(res.data || { grandTotal: 0, users: [] })
+    }
+
+    loadAdminSummary()
   }
-
-// ...existing code...
 
   const loadAdminCredentials = async () => {
     if (!isAdmin) return
@@ -1191,3 +1189,6 @@ export default function App() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
