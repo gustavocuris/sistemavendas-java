@@ -85,10 +85,19 @@ const getTireTypeLabel = (type) => {
 
 export default function App() {
   console.log("APP RENDER ✅", new Date().toISOString());
+
   // Todos os hooks e lógica devem estar dentro da função App
   const [showBackupSpinner, setShowBackupSpinner] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('authenticated') === 'true');
-  // Funções e hooks acima...
+  const [authKey, setAuthKey] = useState(0);
+  const [primaryColor, setPrimaryColor] = useState(PRESET_COLORS[0].hex);
+  const [darkMode, setDarkMode] = useState(false);
+  const [adminSales, setAdminSales] = useState([]);
+  const [adminUsers, setAdminUsers] = useState([]);
+  const [adminAnnual, setAdminAnnual] = useState({});
+
+  // Dummy handleLogin para evitar ReferenceError (substitua pela real se necessário)
+  const handleLogin = () => {};
 
   // --- INÍCIO DO JSX ---
   return (
