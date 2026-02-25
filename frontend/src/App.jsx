@@ -1,3 +1,7 @@
+const SAFE_EMPTY_NEW_USER = { displayName: '', username: '', password: '' };
+  const [newUserForm, setNewUserForm] = useState(
+    (typeof emptyNewUser !== 'undefined' && emptyNewUser) ? emptyNewUser : SAFE_EMPTY_NEW_USER
+  );
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import axios from 'axios';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
@@ -344,6 +348,7 @@ export default function App() {
         role: 'user'
       })
       setNewUserForm(emptyNewUser)
+        setNewUserForm((typeof emptyNewUser !== 'undefined' && emptyNewUser) ? emptyNewUser : SAFE_EMPTY_NEW_USER)
       await loadAdminUsers()
       await loadAdminCredentials()
       alert('Usuário criado com sucesso!')
