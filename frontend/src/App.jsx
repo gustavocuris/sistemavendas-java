@@ -57,6 +57,7 @@ function BackupSpinner({ visible }) {
           animation: 'spin 0.7s linear infinite'
         }}
       />
+    </div>
   );
 }
 
