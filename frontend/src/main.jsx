@@ -1,3 +1,5 @@
+import * as ReactNS from 'react'
+console.log('REACT MODULE', ReactNS, ReactNS?.useState)
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
