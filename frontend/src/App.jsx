@@ -125,17 +125,6 @@ export default function App() {
       )}
     </div>
   );
-    // Força reload para garantir atualização total
-    window.location.reload()
-  }
-
-  const openConfirm = (message, onConfirm) => setConfirmState({ open: true, message, onConfirm })
-  const closeConfirm = () => setConfirmState({ open: false, message: '', onConfirm: null })
-
-  const handleConfirm = async () => {
-    if (confirmState.onConfirm) await confirmState.onConfirm()
-    closeConfirm()
-  }
 
   useEffect(() => {
     if (!isAuthenticated) {
