@@ -323,7 +323,7 @@ export default function App() {
     setAdminSummary(res.data || { grandTotal: 0, users: [] })
   }
 
-// Deploy trigger: alteração mínima para forçar rebuild
+// Deploy trigger: alteração mínima para forçar rebuild (2)
 
   const loadAdminCredentials = async () => {
     if (!isAdmin) return
