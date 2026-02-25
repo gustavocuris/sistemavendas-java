@@ -1,15 +1,14 @@
 
 import React from 'react'
-console.log("MAIN LOADED ✅", new Date().toISOString());
-import { createRoot } from 'react-dom/client'
+import ReactDOM from 'react-dom/client'
 import App from './App'
-import ErrorBoundary from './ErrorBoundary.jsx';
+import ErrorBoundary from './ErrorBoundary.jsx'
 import './styles.css'
-console.log("MOUNTING REACT ✅", document.getElementById("root"));
 
-// ...existing code...
+console.log("MAIN LOADED ✅", new Date().toISOString())
+console.log("MOUNTING REACT ✅", document.getElementById("root"))
 
-createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
       <App />
