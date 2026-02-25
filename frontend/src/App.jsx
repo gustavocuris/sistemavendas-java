@@ -95,6 +95,14 @@ export default function App() {
   const [adminSales, setAdminSales] = useState([]);
   const [adminUsers, setAdminUsers] = useState([]);
   const [adminAnnual, setAdminAnnual] = useState({});
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('currentUser');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
 
   // Dummy handleLogin para evitar ReferenceError (substitua pela real se necessário)
   const handleLogin = () => {};
