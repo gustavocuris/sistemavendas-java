@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
 
 const formatBRL = (value) => {

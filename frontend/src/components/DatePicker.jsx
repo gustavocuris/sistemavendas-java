@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function DatePicker({ value, onChange, currentMonth }) {
   const [showCalendar, setShowCalendar] = useState(false)
