@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+// import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 const API = `${import.meta.env.VITE_API_URL}/api`
 
@@ -176,6 +176,17 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
     } finally {
       setLoading(false)
     }
+/*
+              <ResponsiveContainer width="100%" height={320}>
+                <BarChart data={chartData} margin={{ top: 8, right: 16, left: 0, bottom: 24 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" angle={-20} textAnchor="end" height={72} />
+                  <YAxis />
+                  <Tooltip formatter={(value) => `R$ ${Number(value).toFixed(2)}`} />
+                  <Bar dataKey="total" fill="var(--primary-color)" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+*/
   }
 
   const sortValue = (sale, key) => {

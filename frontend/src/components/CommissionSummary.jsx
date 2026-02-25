@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import axios from 'axios'
 
 const formatBRL = (value) => {
@@ -11,7 +11,7 @@ export default function CommissionSummary({ sales, commissions, onCommissionChan
   const [localCommissions, setLocalCommissions] = useState(commissions)
 
   // Atualizar quando commissions externas mudam
-  React.useEffect(() => {
+  useEffect(() => {
     setLocalCommissions(commissions)
   }, [commissions])
 

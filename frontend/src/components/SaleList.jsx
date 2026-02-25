@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 const tireTypeLabel = { new: 'Novo', recap: 'Recapado', recapping: 'Recapagem', service: 'Sv Borracharia' }
 const desfechoLabel = { entrega: 'Entrega ao Cliente', piratininga: 'Coleta Piratininga', belavista: 'Coleta Bela Vista' }

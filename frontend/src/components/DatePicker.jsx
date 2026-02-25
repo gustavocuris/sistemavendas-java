@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 export default function DatePicker({ value, onChange, currentMonth }) {
   const [showCalendar, setShowCalendar] = useState(false)
@@ -16,7 +16,7 @@ export default function DatePicker({ value, onChange, currentMonth }) {
   const [currentDate, setCurrentDate] = useState(getInitialDate())
   
   // Atualiza quando currentMonth mudar
-  React.useEffect(() => {
+    useEffect(() => {
     if (currentMonth && !value) {
       const [year, month] = currentMonth.split('-')
       setCurrentDate(new Date(parseInt(year), parseInt(month) - 1))

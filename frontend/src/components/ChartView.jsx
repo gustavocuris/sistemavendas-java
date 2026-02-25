@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Cell,
-} from 'recharts'
+// import {
+//   BarChart,
+//   Bar,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   Tooltip,
+//   Legend,
+//   ResponsiveContainer,
+//   Cell,
+// } from 'recharts'
 
 const API = `${import.meta.env.VITE_API_URL}/api`
 
@@ -266,6 +266,7 @@ const ChartView = ({ year, onClose, refreshKey, primaryColor, darkMode }) => {
         </div>
 
         <div className="chart-container">
+/*
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
@@ -305,6 +306,7 @@ const ChartView = ({ year, onClose, refreshKey, primaryColor, darkMode }) => {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
+*/
         </div>
 
         <div className="chart-stats">

@@ -2,9 +2,9 @@ const SAFE_EMPTY_NEW_USER = { displayName: '', username: '', password: '' };
   const [newUserForm, setNewUserForm] = useState(
     (typeof emptyNewUser !== 'undefined' && emptyNewUser) ? emptyNewUser : SAFE_EMPTY_NEW_USER
   );
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import axios from 'axios';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
+// import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 import SaleForm from './components/SaleForm';
 import SaleList from './components/SaleList';
 import CommissionSummary from './components/CommissionSummary';
@@ -950,6 +950,7 @@ export default function App() {
                 .reduce((sum, sale) => sum + Number(sale.total || 0), 0)
             )}</strong></p>
             <div className="admin-home-chart-wrap full-width">
+/*
               <ResponsiveContainer width="100%" height={360}>
                 <BarChart
                   data={adminChartData}
@@ -968,6 +969,7 @@ export default function App() {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+*/
             </div>
           </div>
 
