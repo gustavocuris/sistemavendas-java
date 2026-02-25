@@ -108,16 +108,6 @@ export default function App() {
       )}
     </div>
   );
-    setCurrentUser(null)
-    setAdminUsers([])
-    setAdminSales([])
-    setAdminSummary({ grandTotal: 0, users: [] })
-    setAdminAnnual({ year: new Date().getFullYear(), months: [] })
-    setAdminCredentials([])
-    localStorage.removeItem('authenticated')
-    localStorage.removeItem('currentUser')
-    delete axios.defaults.headers.common['x-user-id']
-    setAuthKey((prev) => prev + 1)
     // Força reload para garantir atualização total
     window.location.reload()
   }
