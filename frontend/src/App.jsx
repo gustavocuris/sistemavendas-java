@@ -245,9 +245,7 @@ export default function App() {
   const applyColor = (colorHex) => setPrimaryColor(colorHex)
   const handleColorSelect = (colorHex) => applyColor(colorHex)
 
-  if (!isAuthenticated) {
-    return <Login key={`login-${authKey}`} onLogin={handleLogin} primaryColor={primaryColor} darkMode={darkMode} />
-  }
+
 
   // Função para criar venda (corrige erro de build: await fora de função)
   const create = async (payload) => {
