@@ -1134,7 +1134,7 @@ body.dark-mode .admin-viewing-label {
 .list table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.85em;
+  font-size: 1.05em;
   table-layout: auto;
 }
 
@@ -1144,7 +1144,7 @@ body.dark-mode .admin-viewing-label {
   padding: 13px 12px;
   text-align: left;
   font-weight: 900;
-  font-size: 0.9em;
+  font-size: 1.1em;
   text-transform: uppercase;
   letter-spacing: 0.9px;
   border-bottom: 3px solid var(--primary-color);
@@ -1178,7 +1178,7 @@ body.dark-mode .admin-viewing-label {
   border-bottom: 1px solid rgba(var(--primary-color-rgb), 0.2);
   color: var(--primary-dark);
   font-weight: 700;
-  font-size: 0.85em;
+  font-size: 1.05em;
   line-height: 1.4;
   text-align: left;
   vertical-align: middle;
