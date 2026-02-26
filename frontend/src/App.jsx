@@ -923,7 +923,7 @@ export default function App() {
         <div className="admin-home-layout">
           <div className="admin-home-card admin-home-sales-top">
             <div className="admin-home-row-head">
-              <h3>Últimas vendas feitas</h3>
+              <h3>{"ÚLTIMAS VENDAS FEITAS"}</h3>
             </div>
             <div className="list">
               <div className="list-wrapper">
@@ -954,7 +954,7 @@ export default function App() {
           </div>
 
           <div className="admin-home-card admin-home-chart-full">
-            <h3>Gráfico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
+            <h3>{`GRÁFICO ANUAL DE VENDAS MENSAIS TOTAIS (${adminAnnual.year || new Date().getFullYear()})`}</h3>
             {/* Filtra venda TESTE do total geral */}
             <p className="admin-home-total">VENDAS TOTAL: <strong>R$ {formatReal(
               (adminSales || [])
