@@ -925,13 +925,30 @@ export default function App() {
             <div className="admin-home-row-head">
               <h3>Últimas vendas feitas</h3>
             </div>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              {adminLatestSales.map((sale) => (
-                <li key={`${sale.userId}-${sale.month}-${sale.id}-${sale.createdAt || sale.date}`}>
-                  <b>{sale.userName}</b> — {sale.client} — R$ {Number(sale.total || 0).toFixed(2)}
-                </li>
-              ))}
-            </ul>
+            <div className="list-wrapper">
+              <table className="admin-latest-sales-table">
+                <thead>
+                  <tr>
+                    <th>Vendedor</th>
+                    <th>Cliente</th>
+                    <th>Produto</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {adminLatestSales.map((sale) => (
+                    <tr key={`${sale.userId}-${sale.month}-${sale.id}-${sale.createdAt || sale.date}`}>
+                      <td><b>{sale.userName}</b></td>
+                      <td>{sale.client}</td>
+                      <td>{sale.product || '-'}</td>
+                      <td>R$ {Number(sale.total || 0).toFixed(2)}</td>
+                      <td>{sale.date ? (typeof sale.date === 'string' && sale.date.includes('-') ? sale.date.split('-').reverse().join('/') : sale.date) : '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div className="admin-home-card admin-home-chart-full">
