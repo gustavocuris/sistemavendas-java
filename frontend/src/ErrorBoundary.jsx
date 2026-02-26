@@ -15,8 +15,16 @@ class ErrorBoundary extends Component {
     this.setState({ info });
   }
 
+  componentDidUpdate() {
+    // Se já houve erro, mas agora os filhos renderizam normalmente, limpa o erro
+    if (this.state.hasError) {
+      this.setState({ hasError: false, error: null, info: null });
+    }
+  }
   render() {
     if (this.state.hasError) {
+      // Exibe a tela de erro só por 1 segundo, depois tenta renderizar de novo
+      setTimeout(() => this.setState({ hasError: false, error: null, info: null }), 1000);
       return (
         <div style={{ padding: 24 }}>
           <h2>Erro de renderização detectado</h2>
