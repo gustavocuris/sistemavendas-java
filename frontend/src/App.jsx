@@ -943,7 +943,7 @@ export default function App() {
                         <td>{sale.date ? (typeof sale.date === 'string' && sale.date.includes('-') ? sale.date.split('-').reverse().join('/') : sale.date) : '-'}</td>
                         <td>{sale.client}</td>
                         <td>{sale.product || '-'}</td>
-                        <td>R$ {Number(sale.total || 0).toFixed(2)}</td>
+                        <td>R$ {Number(sale.total || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                         <td>{String(sale.userName || '').toUpperCase()}</td>
                       </tr>
                     ))}
