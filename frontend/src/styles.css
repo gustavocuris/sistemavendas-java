@@ -92,13 +92,13 @@ h1 {
 }
 
 body.dark-mode .admin-user-select {
-  background: #111827;
-  border-color: #334155;
+  background: #181c24;
+  border-color: #22304a;
   color: #e2e8f0;
 }
 
 body.dark-mode .admin-viewing-label {
-  color: #94a3b8;
+  color: #bfc9d9;
 }
 
 .btn-month {
