@@ -930,21 +930,21 @@ export default function App() {
                 <table>
                   <thead>
                     <tr>
-                      <th>Vendedor</th>
+                      <th>Data</th>
                       <th>Cliente</th>
                       <th>Produto</th>
                       <th>Valor</th>
-                      <th>Data</th>
+                      <th>Vendedor</th>
                     </tr>
                   </thead>
                   <tbody>
                     {adminLatestSales.map((sale) => (
                       <tr key={`${sale.userId}-${sale.month}-${sale.id}-${sale.createdAt || sale.date}`}>
-                        <td>{sale.userName}</td>
+                        <td>{sale.date ? (typeof sale.date === 'string' && sale.date.includes('-') ? sale.date.split('-').reverse().join('/') : sale.date) : '-'}</td>
                         <td>{sale.client}</td>
                         <td>{sale.product || '-'}</td>
                         <td>R$ {Number(sale.total || 0).toFixed(2)}</td>
-                        <td>{sale.date ? (typeof sale.date === 'string' && sale.date.includes('-') ? sale.date.split('-').reverse().join('/') : sale.date) : '-'}</td>
+                        <td>{sale.userName}</td>
                       </tr>
                     ))}
                   </tbody>
