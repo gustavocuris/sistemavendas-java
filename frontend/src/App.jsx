@@ -944,7 +944,7 @@ export default function App() {
                         <td>{sale.client}</td>
                         <td>{sale.product || '-'}</td>
                         <td>R$ {Number(sale.total || 0).toFixed(2)}</td>
-                        <td>{sale.userName}</td>
+                        <td>{String(sale.userName || '').toUpperCase()}</td>
                       </tr>
                     ))}
                   </tbody>
