@@ -26,7 +26,7 @@ const emptyCommissions = {
   service: 0
 }
 
-export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, selectedUserId, onSelectUser }) {
+export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, selectedUserId, onSelectUser, darkMode }) {
   const [activeTab, setActiveTab] = useState('users')
   const [createForm, setCreateForm] = useState(emptyCreate)
   const [editForm, setEditForm] = useState(emptyEdit)
