@@ -83,10 +83,10 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
       await axios.post(`${API}/admin/users`, createForm)
       setCreateForm(emptyCreate)
       await onUsersRefresh()
-      alert('Usuário criado com sucesso!')
+      // alert removed
       if (onSalesChanged) await onSalesChanged();
     } catch (error) {
-      alert(error.response?.data?.message || 'Erro ao criar usuário')
+      console.error(error.response?.data?.message || 'Erro ao criar usuário')
     } finally {
       setLoading(false)
     }
@@ -110,10 +110,10 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
       await axios.put(`${API}/admin/users/${editForm.id}`, payload)
       await onUsersRefresh()
       setEditForm((prev) => ({ ...prev, password: '' }))
-      alert('Usuário atualizado com sucesso!')
+      // alert removed
       if (onSalesChanged) await onSalesChanged();
     } catch (error) {
-      alert(error.response?.data?.message || 'Erro ao atualizar usuário')
+      console.error(error.response?.data?.message || 'Erro ao atualizar usuário')
     } finally {
       setLoading(false)
     }
@@ -127,10 +127,10 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
     try {
       await axios.delete(`${API}/admin/users/${userId}`)
       await onUsersRefresh()
-      alert('Usuário removido com sucesso!')
+      // alert removed
       if (onSalesChanged) await onSalesChanged();
     } catch (error) {
-      alert(error.response?.data?.message || 'Erro ao remover usuário')
+      console.error(error.response?.data?.message || 'Erro ao remover usuário')
     } finally {
       setLoading(false)
     }
@@ -150,10 +150,10 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
           service: Number(commissionsForm.service)
         }
       })
-      alert('Comissões atualizadas com sucesso!')
+      // alert removed
       if (onSalesChanged) await onSalesChanged();
     } catch (error) {
-      alert(error.response?.data?.message || 'Erro ao salvar comissões')
+      console.error(error.response?.data?.message || 'Erro ao salvar comissões')
     } finally {
       setLoading(false)
     }
@@ -172,7 +172,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
       setSearchResults(Array.isArray(response.data) ? response.data : [])
       if (onSalesChanged) await onSalesChanged();
     } catch (error) {
-      alert(error.response?.data?.message || 'Erro ao buscar vendas')
+      console.error(error.response?.data?.message || 'Erro ao buscar vendas')
     } finally {
       setLoading(false)
     }
@@ -232,7 +232,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
 
   const exportCsv = (filename, rows) => {
     if (!rows || rows.length === 0) {
-      alert('Não há dados para exportar.')
+      // alert removed
       return
     }
 
@@ -296,7 +296,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
       setSummaryData(response.data || { grandTotal: 0, users: [] })
       if (onSalesChanged) await onSalesChanged();
     } catch (error) {
-      alert(error.response?.data?.message || 'Erro ao carregar resumo')
+      console.error(error.response?.data?.message || 'Erro ao carregar resumo')
     } finally {
       setLoading(false)
     }
