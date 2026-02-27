@@ -25,13 +25,8 @@ class ErrorBoundary extends Component {
 
   render() {
     if (this.state.hasError) {
-      return (
-        <div style={{ padding: 24 }}>
-          <h2>Erro de renderização detectado</h2>
-          <pre>{String(this.state.error?.message)}</pre>
-          <pre>{this.state.info?.componentStack}</pre>
-        </div>
-      );
+      // Não renderiza nada em caso de erro
+      return null;
     }
     return this.props.children;
   }
