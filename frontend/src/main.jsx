@@ -6,14 +6,22 @@ import './styles.css'
 
 import { useState, useEffect } from 'react';
 
+
 function ErrorBoundaryWithReset() {
   const [resetKey, setResetKey] = useState(0);
+  const [transitioning, setTransitioning] = useState(false);
   useEffect(() => {
-    // Escuta login/logout ou troca de tela principal
-    const handler = () => setResetKey((k) => k + 1);
+    const handler = () => {
+      setTransitioning(true);
+      setTimeout(() => {
+        setResetKey((k) => k + 1);
+        setTransitioning(false);
+      }, 100); // 100ms para evitar flash
+    };
     window.addEventListener('reset-error-boundary', handler);
     return () => window.removeEventListener('reset-error-boundary', handler);
   }, []);
+  if (transitioning) return null;
   return (
     <ErrorBoundary resetKey={resetKey}>
       <App />
