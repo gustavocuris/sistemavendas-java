@@ -4240,11 +4240,44 @@ body.dark-mode .admin-total-label {
   grid-column: 1 / -1;
 }
 
+
 .admin-home-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: #18181b;
+  border: 1px solid #232323;
   border-radius: 14px;
   padding: 14px;
+}
+
+body.dark-mode .admin-home-card {
+  background: #18181b !important;
+  border-color: #232323 !important;
+  color: #e5e7eb !important;
+}
+
+.admin-home-row-head {
+  background: transparent;
+  color: var(--primary-color);
+}
+
+body.dark-mode .admin-home-row-head {
+  background: transparent !important;
+  color: #e5e7eb !important;
+}
+
+.admin-home-layout {
+  background: transparent;
+}
+
+body.dark-mode .admin-home-layout {
+  background: transparent !important;
+}
+
+.admin-home-sales-top {
+  background: transparent;
+}
+
+body.dark-mode .admin-home-sales-top {
+  background: transparent !important;
 }
 
 .admin-home-card h3 {
