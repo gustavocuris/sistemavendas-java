@@ -405,35 +405,49 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
             </div>
 
             <div className="list-wrapper">
-              <table className="list">
-                <thead>
-                  <tr>
-                    <th><button className="admin-sort-btn" onClick={() => setSort('userName')}>Usuário {sortIndicator('userName')}</button></th>
-                    <th><button className="admin-sort-btn" onClick={() => setSort('month')}>Mês {sortIndicator('month')}</button></th>
-                    <th><button className="admin-sort-btn" onClick={() => setSort('client')}>Cliente {sortIndicator('client')}</button></th>
-                    <th><button className="admin-sort-btn" onClick={() => setSort('phone')}>Telefone {sortIndicator('phone')}</button></th>
-                    <th><button className="admin-sort-btn" onClick={() => setSort('product')}>Produto {sortIndicator('product')}</button></th>
-                    <th><button className="admin-sort-btn" onClick={() => setSort('total')}>Total {sortIndicator('total')}</button></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedResults.map((sale, index) => (
-                    <tr key={`${sale.userId}-${sale.month}-${sale.id}-${index}`}>
-                      <td>{sale.userName}</td>
-                      <td>{sale.month}</td>
-                      <td>{sale.client}</td>
-                      <td>{sale.phone || '-'}</td>
-                      <td>{sale.product}</td>
-                      <td>R$ {Number(sale.total || 0).toFixed(2)}</td>
-                    </tr>
-                  ))}
-                  {paginatedResults.length === 0 && (
-                    <tr>
-                      <td colSpan={6}>Nenhuma venda encontrada para os filtros informados.</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+              <div className={`list-admin-sales${darkMode ? ' dark-mode' : ''}`}>
+                <div className="list-header-with-sort">
+                  <h2>Últimas Vendas</h2>
+                  <button 
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="btn-theme"
+                    title={darkMode ? "Desativar modo escuro" : "Ativar modo escuro"}
+                  >
+                    {darkMode ? '🌙' : '☀️'}
+                  </button>
+                </div>
+                <div className="list-wrapper">
+                  <table className="list">
+                    <thead>
+                      <tr>
+                        <th><button className="admin-sort-btn" onClick={() => setSort('userName')}>Usuário {sortIndicator('userName')}</button></th>
+                        <th><button className="admin-sort-btn" onClick={() => setSort('month')}>Mês {sortIndicator('month')}</button></th>
+                        <th><button className="admin-sort-btn" onClick={() => setSort('client')}>Cliente {sortIndicator('client')}</button></th>
+                        <th><button className="admin-sort-btn" onClick={() => setSort('phone')}>Telefone {sortIndicator('phone')}</button></th>
+                        <th><button className="admin-sort-btn" onClick={() => setSort('product')}>Produto {sortIndicator('product')}</button></th>
+                        <th><button className="admin-sort-btn" onClick={() => setSort('total')}>Total {sortIndicator('total')}</button></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paginatedResults.map((sale, index) => (
+                        <tr key={`${sale.userId}-${sale.month}-${sale.id}-${index}`}>
+                          <td>{sale.userName}</td>
+                          <td>{sale.month}</td>
+                          <td>{sale.client}</td>
+                          <td>{sale.phone || '-'}</td>
+                          <td>{sale.product}</td>
+                          <td>R$ {Number(sale.total || 0).toFixed(2)}</td>
+                        </tr>
+                      ))}
+                      {paginatedResults.length === 0 && (
+                        <tr>
+                          <td colSpan={6}>Nenhuma venda encontrada para os filtros informados.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
 
             <div className="admin-pagination">
