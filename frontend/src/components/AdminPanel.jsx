@@ -404,8 +404,8 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
               <span>Resultados: {sortedSearchResults.length}</span>
             </div>
 
-            <div className="admin-results-table-wrap">
-              <table className="admin-results-table">
+            <div className="list-wrapper">
+              <table className="list">
                 <thead>
                   <tr>
                     <th><button className="admin-sort-btn" onClick={() => setSort('userName')}>Usuário {sortIndicator('userName')}</button></th>
