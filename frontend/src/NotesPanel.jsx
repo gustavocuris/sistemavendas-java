@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { normalizeMojibakeText } from './utils/text';
 
 const API = `${import.meta.env.VITE_API_URL}/api`;
 
@@ -199,7 +200,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
     return badge.label;
   };
 
-  const getDesfechoLabel = (value) => DESFECHO_OPTIONS.find(d => d.value === value)?.label || value;
+  const getDesfechoLabel = (value) => normalizeMojibakeText(DESFECHO_OPTIONS.find(d => d.value === value)?.label || value);
 
   if (!isOpen) return null;
 
@@ -327,9 +328,9 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                       {comprarDepois.map((item) => (
                         <tr key={item.id}>
                           <td style={{ textAlign: 'center', fontWeight: '700', color: 'var(--primary-color)' }}>{item.id}</td>
-                          <td>{item.client}</td>
+                          <td>{normalizeMojibakeText(item.client)}</td>
                           <td>{item.phone}</td>
-                          <td>{item.product}</td>
+                          <td>{normalizeMojibakeText(item.product)}</td>
                           <td><span className="flow-badge">{getTireTypeBadge(item)}</span></td>
                           <td style={{ textAlign: 'right', fontWeight: '700' }}>R$ {formatPrice(Math.round(item.unit_price * 100))}</td>
                           <td style={{ textAlign: 'center', fontWeight: '700' }}>{item.quantity}</td>
@@ -432,9 +433,9 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                       {faltaPagar.map((item) => (
                         <tr key={item.id}>
                           <td style={{ textAlign: 'center', fontWeight: '700', color: '#ef4444' }}>{item.id}</td>
-                          <td>{item.client}</td>
+                          <td>{normalizeMojibakeText(item.client)}</td>
                           <td>{item.phone}</td>
-                          <td>{item.product}</td>
+                          <td>{normalizeMojibakeText(item.product)}</td>
                           <td><span className="flow-badge">{getTireTypeBadge(item)}</span></td>
                           <td style={{ textAlign: 'right', fontWeight: '700' }}>R$ {formatPrice(Math.round(item.unit_price * 100))}</td>
                           <td style={{ textAlign: 'center', fontWeight: '700' }}>{item.quantity}</td>

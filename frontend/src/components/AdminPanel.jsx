@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
+import { normalizeMojibakeText } from '../utils/text'
 // import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 const API = `${import.meta.env.VITE_API_URL}/api`
@@ -431,11 +432,11 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
                     <tbody>
                       {paginatedResults.map((sale, index) => (
                         <tr key={`${sale.userId}-${sale.month}-${sale.id}-${index}`}>
-                          <td>{sale.userName}</td>
+                          <td>{normalizeMojibakeText(sale.userName)}</td>
                           <td>{sale.month}</td>
-                          <td>{sale.client}</td>
+                          <td>{normalizeMojibakeText(sale.client)}</td>
                           <td>{sale.phone || '-'}</td>
-                          <td>{sale.product}</td>
+                          <td>{normalizeMojibakeText(sale.product)}</td>
                           <td>R$ {Number(sale.total || 0).toFixed(2)}</td>
                         </tr>
                       ))}
