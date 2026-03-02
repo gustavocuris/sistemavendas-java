@@ -1,8 +1,15 @@
-const rawApiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:3001').trim()
-
-export const API_ORIGIN = rawApiUrl
+const FALLBACK_API_ORIGIN = 'https://sistemavendas-backend-intercap.onrender.com'
+const rawApiUrl = String(import.meta.env.VITE_API_URL || '').trim()
+const normalizedApiUrl = rawApiUrl
   .replace(/\/+$/, '')
   .replace(/\/api$/i, '')
+
+const isAbsoluteHttpUrl = /^https?:\/\//i.test(normalizedApiUrl)
+const isLocalDev = typeof window !== 'undefined' && /localhost|127\.0\.0\.1/i.test(window.location.hostname)
+
+export const API_ORIGIN = isAbsoluteHttpUrl
+  ? normalizedApiUrl
+  : (isLocalDev ? 'http://localhost:3001' : FALLBACK_API_ORIGIN)
 
 export const API_BASE = `${API_ORIGIN}/api`
 
