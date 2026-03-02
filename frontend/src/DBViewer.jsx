@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { apiUrl } from './utils/api';
 
 function DBViewer({ isOpen, onClose }) {
   const [dbData, setDbData] = useState(null);
@@ -27,7 +28,7 @@ function DBViewer({ isOpen, onClose }) {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/database`);
+      const response = await fetch(apiUrl('/database'));
       if (!response.ok) throw new Error('Erro ao carregar banco de dados');
       const data = await response.json();
       setDbData(data);

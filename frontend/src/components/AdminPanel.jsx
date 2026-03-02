@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
 import { normalizeMojibakeText } from '../utils/text'
+import { API_BASE } from '../utils/api'
 // import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
-const API = `${import.meta.env.VITE_API_URL}/api`
+const API = API_BASE
 
 const emptyCreate = {
   username: '',

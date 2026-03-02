@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { API_BASE } from '../utils/api'
 
 export default function Login({ onLogin, primaryColor, darkMode }) {
   const [username, setUsername] = useState('')
@@ -27,7 +28,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
   const [resetError, setResetError] = useState('')
   const [resetSuccess, setResetSuccess] = useState('')
 
-  const API = `${import.meta.env.VITE_API_URL}/api`
+  const API = API_BASE
 
   const handleSubmit = async (e) => {
     e.preventDefault()

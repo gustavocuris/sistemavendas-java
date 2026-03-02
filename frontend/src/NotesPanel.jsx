@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { normalizeMojibakeText } from './utils/text';
+import { API_BASE } from './utils/api';
 
-const API = `${import.meta.env.VITE_API_URL}/api`;
+const API = API_BASE;
 
 const TIRE_TYPES = [
   { value: 'new', label: 'Pneu Novo' },

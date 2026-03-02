@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { API_BASE } from '../utils/api'
 // import {
 //   BarChart,
 //   Bar,
@@ -12,7 +13,7 @@ import axios from 'axios'
 //   Cell,
 // } from 'recharts'
 
-const API = `${import.meta.env.VITE_API_URL}/api`
+const API = API_BASE
 
 // Função para converter HEX para RGB
 const hexToRgb = (hex) => {
