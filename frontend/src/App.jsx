@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+﻿import { useEffect, useMemo, useState, useCallback } from 'react';
 import axios from 'axios';
 // import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 import SaleForm from './components/SaleForm';
@@ -12,7 +12,7 @@ import LoginManager from './components/LoginManager';
 
 const SAFE_EMPTY_NEW_USER = { displayName: '', username: '', password: '' };
 
-// Interceptor global para garantir x-user-id do usuário logado
+// Interceptor global para garantir x-user-id do usuÃ¡rio logado
 axios.interceptors.request.use((config) => {
   try {
     const raw = localStorage.getItem("currentUser");
@@ -25,7 +25,7 @@ axios.interceptors.request.use((config) => {
   return config;
 });
 
-// Função para formatar números
+// FunÃ§Ã£o para formatar nÃºmeros
 function formatReal(value) {
   return Number(value || 0).toLocaleString('pt-BR', {
     minimumFractionDigits: 2,
@@ -313,7 +313,7 @@ export default function App() {
     }
   }
 
-  // Função correta para carregar vendas admin
+  // FunÃ§Ã£o correta para carregar vendas admin
   const loadAdminSales = useCallback(async (search = '') => {
     if (!isAdmin) return;
     const qs = search ? `?q=${encodeURIComponent(search)}` : '';
@@ -321,7 +321,7 @@ export default function App() {
     setAdminSales(Array.isArray(res.data) ? res.data : []);
   }, [isAdmin]);
 
-// Deploy trigger: alteração mínima para forçar rebuild (2)
+// Deploy trigger: alteraÃ§Ã£o mÃ­nima para forÃ§ar rebuild (2)
 
   const loadAdminCredentials = async () => {
     if (!isAdmin) return
@@ -348,9 +348,9 @@ export default function App() {
       setNewUserForm(SAFE_EMPTY_NEW_USER)
       await loadAdminUsers()
       await loadAdminCredentials()
-      alert('Usuário criado com sucesso!')
+      alert('UsuÃ¡rio criado com sucesso!')
     } catch (err) {
-      alert(err.response?.data?.message || 'Erro ao criar usuário')
+      alert(err.response?.data?.message || 'Erro ao criar usuÃ¡rio')
     } finally {
       setAdminLoading(false)
     }
@@ -367,9 +367,9 @@ export default function App() {
       })
       await loadAdminUsers()
       await loadAdminCredentials()
-      alert('Usuário criado com sucesso!')
+      alert('UsuÃ¡rio criado com sucesso!')
     } catch (err) {
-      alert(err.response?.data?.message || 'Erro ao criar usuário')
+      alert(err.response?.data?.message || 'Erro ao criar usuÃ¡rio')
     } finally {
       setAdminLoading(false)
     }
@@ -381,9 +381,9 @@ export default function App() {
       await axios.delete(`${API}/admin/users/${userId}`)
       await loadAdminUsers()
       await loadAdminCredentials()
-      alert('Usuário deletado com sucesso!')
+      alert('UsuÃ¡rio deletado com sucesso!')
     } catch (err) {
-      alert(err.response?.data?.message || 'Erro ao deletar usuário')
+      alert(err.response?.data?.message || 'Erro ao deletar usuÃ¡rio')
     } finally {
       setAdminLoading(false)
     }
@@ -399,9 +399,9 @@ export default function App() {
       })
       await loadAdminUsers()
       await loadAdminCredentials()
-      alert('Usuário atualizado com sucesso!')
+      alert('UsuÃ¡rio atualizado com sucesso!')
     } catch (err) {
-      alert(err.response?.data?.message || 'Erro ao atualizar usuário')
+      alert(err.response?.data?.message || 'Erro ao atualizar usuÃ¡rio')
     } finally {
       setAdminLoading(false)
     }
@@ -413,7 +413,7 @@ export default function App() {
       const res = await axios.get(`${API}/admin/user-sales/${userId}`)
       const allSales = Array.isArray(res.data) ? res.data : []
 
-      // Agrupar vendas por ano e mês
+      // Agrupar vendas por ano e mÃªs
       const salesByYearMonth = {}
       allSales.forEach((sale) => {
         const saleDate = new Date(sale.date || sale.created_at)
@@ -435,7 +435,7 @@ export default function App() {
         salesByYearMonth[year][month].total += Number(sale.total || 0)
       })
 
-      // Inicializar ano/mês selecionados
+      // Inicializar ano/mÃªs selecionados
       const years = Object.keys(salesByYearMonth).sort((a, b) => Number(b) - Number(a))
       const firstYear = years.length > 0 ? years[0] : null
       const firstMonth = firstYear ? Object.keys(salesByYearMonth[firstYear]).sort((a, b) => Number(b) - Number(a))[0] : null
@@ -449,7 +449,7 @@ export default function App() {
       setSelectedSalesYear(firstYear)
       setSelectedSalesMonth(firstMonth)
     } catch (err) {
-      alert('Erro ao carregar vendas do usuário: ' + (err.response?.data?.message || err.message))
+      alert('Erro ao carregar vendas do usuÃ¡rio: ' + (err.response?.data?.message || err.message))
     } finally {
       setAdminLoading(false)
     }
@@ -464,7 +464,7 @@ export default function App() {
     localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
     axios.defaults.headers.common['x-user-id'] = resolvedUser.id
     setAuthKey((prev) => prev + 1)
-    // Força reload para garantir atualização total
+    // ForÃ§a reload para garantir atualizaÃ§Ã£o total
     window.location.reload()
   }
 
@@ -480,7 +480,7 @@ export default function App() {
     localStorage.removeItem('currentUser')
     delete axios.defaults.headers.common['x-user-id']
     setAuthKey((prev) => prev + 1)
-    // Força reload para garantir atualização total
+    // ForÃ§a reload para garantir atualizaÃ§Ã£o total
     window.location.reload()
   }
 
@@ -505,7 +505,7 @@ export default function App() {
       localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
     }
 
-    // Carregar dados APÓS settar o header
+    // Carregar dados APÃ“S settar o header
     const loadAfterAuth = async () => {
       const isAdminUser = resolvedUser.role === 'admin'
       
@@ -522,7 +522,7 @@ export default function App() {
         const [months, monthsWithSales] = await Promise.all([loadMonths(), loadMonthsWithSales()])
         console.log('DEBUG loadAfterAuth: months=', months, 'monthsWithSales=', monthsWithSales)
         
-        // Preferir mês salvo no localStorage se tiver vendas, senão ir pro primeiro com vendas
+        // Preferir mÃªs salvo no localStorage se tiver vendas, senÃ£o ir pro primeiro com vendas
         let targetMonth = currentMonth
         if (monthsWithSales.length > 0) {
           if (!monthsWithSales.includes(currentMonth)) {
@@ -600,7 +600,7 @@ export default function App() {
         localStorage.removeItem('authenticated')
         localStorage.removeItem('currentUser')
         delete axios.defaults.headers.common['x-user-id']
-        alert('Sessão encerrada por inatividade.')
+        alert('SessÃ£o encerrada por inatividade.')
       }, INACTIVITY_TIME)
     }
 
@@ -637,7 +637,7 @@ export default function App() {
     await axios.put(`${API}/sales/${id}`, { ...payload, month: currentMonth })
     setEditing(null)
     await load()
-    // Sempre atualiza área admin
+    // Sempre atualiza Ã¡rea admin
     await loadAdminSales(adminSearch)
     await loadAdminSummary()
     await loadAdminAnnual()
@@ -658,7 +658,7 @@ export default function App() {
       if (res.data.length === 0) {
         setMonthsWithData((prev) => prev.filter((m) => m !== currentMonth))
       }
-      // Sempre atualiza área admin
+      // Sempre atualiza Ã¡rea admin
       await loadAdminSales(adminSearch)
       await loadAdminSummary()
       await loadAdminAnnual()
@@ -686,7 +686,7 @@ export default function App() {
       await loadMonths()
       setCurrentMonth(monthStr)
     } catch (err) {
-      console.error('Erro ao criar mês:', err)
+      console.error('Erro ao criar mÃªs:', err)
     }
   }
 
@@ -703,7 +703,7 @@ export default function App() {
     setShowMonthSelector(false)
   }
 
-  const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+  const monthNames = ['Janeiro', 'Fevereiro', 'MarÃ§o', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
   const formatMonthName = (monthStr) => {
     const [year, month] = monthStr.split('-')
@@ -712,7 +712,7 @@ export default function App() {
 
   const handleCommissionChange = (updatedCommissions) => setCommissions(updatedCommissions)
 
-  // Filtra venda TESTE do gráfico
+  // Filtra venda TESTE do grÃ¡fico
   const adminChartData = useMemo(() => {
     const year = adminAnnual.year || new Date().getFullYear();
     const activeUserIds = new Set((adminUsers || []).filter(u => u.active !== false && u.role !== 'admin').map(u => u.id));
@@ -748,22 +748,22 @@ export default function App() {
     return monthNames.map((_, index) => blendWithWhite(base, 0.05 + (index / 11) * 0.55))
   }, [primaryColor, monthNames])
 
-  // Proteção: garantir arrays/objetos válidos
+  // ProteÃ§Ã£o: garantir arrays/objetos vÃ¡lidos
   const safeAdminSales = Array.isArray(adminSales) ? adminSales : [];
   const safeAdminUsers = Array.isArray(adminUsers) ? adminUsers : [];
   const safeAdminAnnual = adminAnnual && typeof adminAnnual === 'object' ? adminAnnual : { year: new Date().getFullYear(), months: [] };
 
   // Filtra vendas TESTE do frontend
-  // Últimas vendas ADM já vêm limitadas do backend
+  // Ãšltimas vendas ADM jÃ¡ vÃªm limitadas do backend
   const adminRecentSales = adminLatestSales;
   // ...existing code...
   // Remover return duplicado
-  // O return correto está no final do arquivo
+  // O return correto estÃ¡ no final do arquivo
   return (
     <>
-      {/* Proteção global: mensagem de erro amigável se algum dado essencial estiver ausente */}
+      {/* ProteÃ§Ã£o global: mensagem de erro amigÃ¡vel se algum dado essencial estiver ausente */}
       {(!safeAdminSales || !safeAdminUsers || !safeAdminAnnual) && (
-        <div style={{color: 'red', padding: 20, fontWeight: 'bold'}}>Erro crítico: Dados essenciais não carregados. Tente recarregar a página ou contate o suporte.</div>
+        <div style={{color: 'red', padding: 20, fontWeight: 'bold'}}>Erro crÃ­tico: Dados essenciais nÃ£o carregados. Tente recarregar a pÃ¡gina ou contate o suporte.</div>
       )}
       <div className="header-top">
         <div className="theme-controls">
@@ -793,14 +793,14 @@ export default function App() {
           </button>
           {!isAdmin && (
             <>
-              <button className="btn-theme" onClick={() => setShowChart(true)} title="Ver gráfico de vendas">
+              <button className="btn-theme" onClick={() => setShowChart(true)} title="Ver grÃ¡fico de vendas">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="12" width="3" height="7"/>
                   <rect x="9" y="8" width="3" height="11"/>
                   <rect x="15" y="4" width="3" height="15"/>
                 </svg>
               </button>
-              <button className="btn-theme" onClick={() => setShowNotes(true)} title="Ver rascunhos e anotações">
+              <button className="btn-theme" onClick={() => setShowNotes(true)} title="Ver rascunhos e anotaÃ§Ãµes">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="4" y="4" width="16" height="16" rx="2"/>
                   <line x1="8" y1="8" x2="16" y2="8"/>
@@ -817,7 +817,7 @@ export default function App() {
               </button>
             </>
           )}
-          {/* Botão de sair do sistema agora é o último */}
+          {/* BotÃ£o de sair do sistema agora Ã© o Ãºltimo */}
           {isAdmin && (
             <>
               <button className="btn-theme" onClick={() => setShowAdminPanel(true)} title="Gerenciar contas (painel)">
@@ -845,7 +845,7 @@ export default function App() {
             <div className="color-picker-dropdown">
               <div className="color-picker-header">
                 <span>Escolher cor principal</span>
-                <button onClick={() => setShowColorPicker(false)}>✕</button>
+                <button onClick={() => setShowColorPicker(false)}>âœ•</button>
               </div>
               <div className="color-presets">
                 {PRESET_COLORS.map((color) => (
@@ -857,7 +857,7 @@ export default function App() {
                     style={{ background: `linear-gradient(135deg, ${color.hex} 0%, ${color.dark} 100%)` }}
                   >
                     <span className="color-name">{color.name}</span>
-                    {primaryColor === color.hex && <span className="color-check">✓</span>}
+                    {primaryColor === color.hex && <span className="color-check">âœ“</span>}
                   </button>
                 ))}
               </div>
@@ -865,11 +865,11 @@ export default function App() {
           )}
         </div>
 
-        <h1>{isAdmin ? 'ÁREA ADMINISTRADOR' : 'Tabela de Vendas'}</h1>
+        <h1>{isAdmin ? 'ÃREA ADMINISTRADOR' : 'Tabela de Vendas • Build R2'}</h1>
 
         {!isAdmin && (
           <div className="month-controls">
-            <button className="btn-month" onClick={() => setShowMonthSelector(!showMonthSelector)} title="Selecionar mês">
+            <button className="btn-month" onClick={() => setShowMonthSelector(!showMonthSelector)} title="Selecionar mÃªs">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                 <line x1="16" y1="2" x2="16" y2="6"/>
@@ -887,12 +887,12 @@ export default function App() {
                     </svg>
                   </button>
                   <span className="year-display">{selectedYear}</span>
-                  <button className="btn-arrow" onClick={handleNextYear} title="Próximo ano">
+                  <button className="btn-arrow" onClick={handleNextYear} title="PrÃ³ximo ano">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                   </button>
-                  <button onClick={() => setShowMonthSelector(false)}>✕</button>
+                  <button onClick={() => setShowMonthSelector(false)}>âœ•</button>
                 </div>
 
                 <div className="months-grid">
@@ -908,7 +908,7 @@ export default function App() {
                         title={`${monthName} ${selectedYear}`}
                       >
                         <span className="month-label">{monthName.substring(0, 3)}</span>
-                        <span className="month-indicator">{hasData ? '✓' : '+'}</span>
+                        <span className="month-indicator">{hasData ? 'âœ“' : '+'}</span>
                       </button>
                     )
                   })}
@@ -923,19 +923,19 @@ export default function App() {
         <div className="admin-home-layout">
           <div className="admin-home-card admin-home-sales-top">
             <div className="admin-home-row-head">
-              <h3>Últimas vendas feitas</h3>
+              <h3>Ãšltimas vendas feitas</h3>
             </div>
             <ul style={{ listStyle: 'none', padding: 0 }}>
               {adminLatestSales.map((sale) => (
                 <li key={`${sale.userId}-${sale.month}-${sale.id}-${sale.createdAt || sale.date}`}>
-                  <b>{sale.userName}</b> — {sale.client} — R$ {Number(sale.total || 0).toFixed(2)}
+                  <b>{sale.userName}</b> â€” {sale.client} â€” R$ {Number(sale.total || 0).toFixed(2)}
                 </li>
               ))}
             </ul>
           </div>
 
           <div className="admin-home-card admin-home-chart-full">
-            <h3>Gráfico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
+            <h3>GrÃ¡fico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
             {/* Filtra venda TESTE do total geral */}
             <p className="admin-home-total">VENDAS TOTAL: <strong>R$ {formatReal(
               (adminSales || [])
@@ -1037,8 +1037,8 @@ export default function App() {
         <div className="modal-overlay">
           <div className="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
             <div className="modal-header">
-              <h3 id="confirm-title">CONFIRMAÇÃO</h3>
-              <button className="modal-close" onClick={closeConfirm} aria-label="Fechar">✕</button>
+              <h3 id="confirm-title">CONFIRMAÃ‡ÃƒO</h3>
+              <button className="modal-close" onClick={closeConfirm} aria-label="Fechar">âœ•</button>
             </div>
             <div className="modal-body">
               <p>{confirmState.message}</p>
@@ -1056,21 +1056,21 @@ export default function App() {
           <div className="footer-system">
             <strong>SV SISTEMA DE VENDAS 2026</strong>
           </div>
-          <div className="footer-divider">•</div>
+          <div className="footer-divider">â€¢</div>
           <div className="footer-security">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
             <span>Security and Privacy Protected</span>
           </div>
-          <div className="footer-divider">•</div>
+          <div className="footer-divider">â€¢</div>
           <div className="footer-author">
             Developed by <strong>Gustavo Curis de Francisco</strong>
           </div>
         </div>
       </footer>
 
-      {/* Modal de Vendas do Usuário */}
+      {/* Modal de Vendas do UsuÃ¡rio */}
       {viewUserSalesData && (
         <div className="login-manager-overlay">
           <div className={`user-sales-modal ${darkMode ? 'dark-mode' : ''}`}>
@@ -1086,7 +1086,7 @@ export default function App() {
                 }}
                 title="Fechar"
               >
-                ✕
+                âœ•
               </button>
             </div>
 
@@ -1116,14 +1116,14 @@ export default function App() {
 
               {selectedSalesYear && (
                 <div className="user-sales-select-group">
-                  <label htmlFor="month-select">Mês:</label>
+                  <label htmlFor="month-select">MÃªs:</label>
                   <select 
                     id="month-select"
                     className="user-sales-select"
                     value={selectedSalesMonth || ''}
                     onChange={(e) => setSelectedSalesMonth(e.target.value)}
                   >
-                    <option value="">Selecione um mês</option>
+                    <option value="">Selecione um mÃªs</option>
                     {Object.keys(viewUserSalesData.salesByYearMonth[selectedSalesYear] || {})
                       .sort((a, b) => Number(b) - Number(a))
                       .map((month) => {
@@ -1146,7 +1146,7 @@ export default function App() {
                 (() => {
                   const monthData = viewUserSalesData.salesByYearMonth[selectedSalesYear]?.[selectedSalesMonth]
                   if (!monthData) {
-                    return <p className="user-sales-empty">Nenhuma venda neste mês</p>
+                    return <p className="user-sales-empty">Nenhuma venda neste mÃªs</p>
                   }
                   return (
                     <div className="user-sales-month-single">
@@ -1186,7 +1186,7 @@ export default function App() {
                   )
                 })()
               ) : (
-                <p className="user-sales-empty">Selecione um ano e mês para visualizar</p>
+                <p className="user-sales-empty">Selecione um ano e mÃªs para visualizar</p>
               )}
             </div>
           </div>
@@ -1196,3 +1196,4 @@ export default function App() {
     </>
   );
 }
+
