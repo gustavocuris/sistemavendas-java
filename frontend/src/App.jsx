@@ -317,7 +317,7 @@ export default function App() {
   const loadAdminSales = useCallback(async (search = '') => {
     if (!isAdmin) return;
     const qs = search ? `?q=${encodeURIComponent(search)}` : '';
-    const res = await axios.get(`${API}/admin/sales${qs}`);
+    const res = await axios.get(`/api/admin/sales/search${qs}`);
     setAdminSales(Array.isArray(res.data) ? res.data : []);
   }, [isAdmin]);
 
@@ -1196,4 +1196,5 @@ export default function App() {
     </>
   );
 }
+
 
