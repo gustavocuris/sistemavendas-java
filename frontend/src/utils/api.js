@@ -1,1 +1,1 @@
-export { API_ORIGIN, API_BASE, apiUrl } from '../api/api'
+export { endpoint } from '../api/api'

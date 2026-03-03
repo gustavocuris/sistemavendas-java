@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from './api/api';
 import { normalizeMojibakeText } from './utils/text';
-import { apiUrl } from './utils/api';
+import { endpoint } from './utils/api';
 
 const TIRE_TYPES = [
   { value: 'new', label: 'Pneu Novo' },
@@ -40,8 +40,8 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
   const loadData = async () => {
     try {
       const [comprarRes, pagarRes] = await Promise.all([
-        api.get(apiUrl('/comprar-depois')),
-        api.get(apiUrl('/falta-pagar'))
+        api.get(endpoint('comprar-depois')),
+        api.get(endpoint('falta-pagar'))
       ]);
       setComprarDepois(comprarRes.data);
       setFaltaPagar(pagarRes.data);
@@ -99,8 +99,8 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
 
     try {
       const payload = { ...formComprar, unit_price: parsePrice(priceDisplayComprar), quantity: Number(formComprar.quantity) };
-      if (editingComprar) { await api.put(apiUrl(`/comprar-depois/${editingComprar}`), payload); setEditingComprar(null); }
-      else { await api.post(apiUrl('/comprar-depois'), payload); }
+      if (editingComprar) { await api.put(endpoint(`comprar-depois/${editingComprar}`), payload); setEditingComprar(null); }
+      else { await api.post(endpoint('comprar-depois'), payload); }
       setFormComprar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', desfecho: 'entrega', base_trade: false });
       setPriceDisplayComprar('0,00');
       await loadData();
@@ -115,12 +115,12 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
 
   const handleDeleteComprar = async (id) => {
     if (window.confirm('Deletar?')) {
-      try { await api.delete(apiUrl(`/comprar-depois/${id}`)); await loadData(); } catch (err) { }
+      try { await api.delete(endpoint(`comprar-depois/${id}`)); await loadData(); } catch (err) { }
     }
   };
 
   const handleMoveToFaltaPagar = async (item) => {
-    try { await api.post(apiUrl(`/comprar-depois/${item.id}/move-to-pagar`)); await loadData(); } catch (err) { alert('Erro'); }
+    try { await api.post(endpoint(`comprar-depois/${item.id}/move-to-pagar`)); await loadData(); } catch (err) { alert('Erro'); }
   };
 
   // FALTA PAGAR
@@ -135,8 +135,8 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
 
     try {
       const payload = { ...formPagar, unit_price: parsePrice(priceDisplayPagar), quantity: Number(formPagar.quantity) };
-      if (editingPagar) { await api.put(apiUrl(`/falta-pagar/${editingPagar}`), payload); setEditingPagar(null); }
-      else { await api.post(apiUrl('/falta-pagar'), payload); }
+      if (editingPagar) { await api.put(endpoint(`falta-pagar/${editingPagar}`), payload); setEditingPagar(null); }
+      else { await api.post(endpoint('falta-pagar'), payload); }
       setFormPagar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', date: '', desfecho: 'entrega', base_trade: false });
       setPriceDisplayPagar('0,00');
       await loadData();
@@ -151,7 +151,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
 
   const handleDeletePagar = async (id) => {
     if (window.confirm('Deletar?')) {
-      try { await api.delete(apiUrl(`/falta-pagar/${id}`)); await loadData(); } catch (err) { }
+      try { await api.delete(endpoint(`falta-pagar/${id}`)); await loadData(); } catch (err) { }
     }
   };
 
@@ -162,7 +162,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
       const saleMonth = item.date.substring(0, 7); // YYYY-MM from item.date
       
       // Convert the item to a sale
-      const response = await api.post(apiUrl(`/falta-pagar/${item.id}/convert-to-sale`)); 
+      const response = await api.post(endpoint(`falta-pagar/${item.id}/convert-to-sale`)); 
       
       // Reload falta-pagar data (to refresh the list and remove the converted item)
       await loadData(); 

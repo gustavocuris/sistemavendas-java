@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api/api'
-import { apiUrl } from '../utils/api'
+import { endpoint } from '../utils/api'
 
 export default function CommissionConfig({ isOpen, onClose }) {
   const [commissions, setCommissions] = useState({ new: 5, recap: 8, recapping: 10 })
@@ -14,7 +14,7 @@ export default function CommissionConfig({ isOpen, onClose }) {
 
   const loadCommissions = async () => {
     try {
-      const res = await api.get(apiUrl('/commissions'))
+      const res = await api.get(endpoint('commissions'))
       setCommissions(res.data)
     } catch (err) {
       console.error('Erro ao carregar comissões', err)
@@ -29,7 +29,7 @@ export default function CommissionConfig({ isOpen, onClose }) {
         recap: Number(commissions.recap),
         recapping: Number(commissions.recapping)
       }
-      await api.put(apiUrl('/commissions'), payload)
+      await api.put(endpoint('commissions'), payload)
       onClose()
     } catch (err) {
       console.error('Erro ao salvar comissões', err)

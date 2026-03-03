@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { apiUrl } from './utils/api';
+import api from './api/api';
+import { endpoint } from './utils/api';
 
 function DBViewer({ isOpen, onClose }) {
   const [dbData, setDbData] = useState(null);
@@ -28,12 +29,10 @@ function DBViewer({ isOpen, onClose }) {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(apiUrl('/database'));
-      if (!response.ok) throw new Error('Erro ao carregar banco de dados');
-      const data = await response.json();
-      setDbData(data);
+      const response = await api.get(endpoint('database'));
+      setDbData(response.data);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Erro ao carregar banco de dados');
     } finally {
       setLoading(false);
     }

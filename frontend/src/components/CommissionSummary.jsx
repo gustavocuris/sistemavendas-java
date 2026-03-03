@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import api from '../api/api'
-import { apiUrl } from '../utils/api'
+import { endpoint } from '../utils/api'
 
 const formatBRL = (value) => {
   return Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -82,7 +82,7 @@ export default function CommissionSummary({ sales, commissions, onCommissionChan
         recapping: updated.recapping,
         service: updated.service
       }
-      await api.put(apiUrl('/commissions'), payload)
+      await api.put(endpoint('commissions'), payload)
       setLocalCommissions(updated)
       if (onCommissionChange) {
         onCommissionChange(updated)

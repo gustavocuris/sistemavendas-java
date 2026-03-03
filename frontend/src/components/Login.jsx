@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api/api'
-import { apiUrl } from '../utils/api'
+import { endpoint } from '../utils/api'
 
 export default function Login({ onLogin, primaryColor, darkMode }) {
   const [username, setUsername] = useState('')
@@ -35,7 +35,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
     setIsLoading(true)
 
     try {
-      const response = await api.post(apiUrl('/login'), {
+      const response = await api.post(endpoint('login'), {
         username: username.trim(),
         password
       })
@@ -77,7 +77,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         return
       }
 
-      const response = await api.post(apiUrl('/forgot-password'), {
+      const response = await api.post(endpoint('forgot-password'), {
         email: forgotEmail
       })
 
@@ -113,7 +113,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
     setResetLoading(true)
 
     try {
-      const response = await api.post(apiUrl('/reset-password'), {
+      const response = await api.post(endpoint('reset-password'), {
         token: resetToken,
         newPassword: resetPassword
       })

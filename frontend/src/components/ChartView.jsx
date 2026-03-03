@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api/api'
-import { apiUrl } from '../utils/api'
+import { endpoint } from '../utils/api'
 // import {
 //   BarChart,
 //   Bar,
@@ -149,7 +149,7 @@ const ChartView = ({ year, onClose, refreshKey, primaryColor, darkMode }) => {
       for (let month = 1; month <= 12; month++) {
         const monthStr = `${year}-${String(month).padStart(2, '0')}`
         try {
-          const res = await api.get(apiUrl(`/sales?month=${monthStr}`))
+          const res = await api.get(endpoint(`sales?month=${monthStr}`))
           const sales = res.data || []
 
           let totalAmount = 0
