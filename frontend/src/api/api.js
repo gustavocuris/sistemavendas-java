@@ -24,9 +24,18 @@ api.interceptors.request.use((config) => {
   try {
     const raw = localStorage.getItem('currentUser')
     const user = raw ? JSON.parse(raw) : null
+    config.headers = config.headers || {}
+
     if (user?.id) {
-      config.headers = config.headers || {}
       config.headers['x-user-id'] = user.id
+    }
+
+    if (user?.role) {
+      config.headers['x-user-role'] = user.role
+    }
+
+    if (import.meta.env.DEV) {
+      console.debug('Sending x-user-id:', user?.id, 'to', config.url)
     }
   } catch {
     // no-op
@@ -40,9 +49,8 @@ export const runHealthCheck = async () => {
     return null
   }
 
-  const healthUrl = `${API_BASE}/health`
-  const response = await axios.get(healthUrl)
-  console.log('[HEALTH] GET', healthUrl, response.data)
+  const response = await api.get('/health')
+  console.log('[HEALTH] GET', `${API_BASE}/health`, response.data)
   return response.data
 }
 

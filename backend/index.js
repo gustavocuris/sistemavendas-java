@@ -84,8 +84,14 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
     ];
 
 app.use(cors({
-  origin: '*',
-  credentials: false
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(null, false);
+  },
+  credentials: false,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['x-user-id', 'content-type', 'authorization', 'x-user-role']
 }));
 
 app.use(express.json());
@@ -164,13 +170,6 @@ app.get('/api/admin/sales/latest', async (req, res) => {
 });
 // ...todas as outras rotas e endpoints existentes...
 
-
-app.use(cors({
-  origin: '*',
-  credentials: false
-}));
-
-app.use(express.json());
 
 function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex');

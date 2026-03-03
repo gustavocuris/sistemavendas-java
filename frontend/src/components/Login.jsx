@@ -42,8 +42,19 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
 
       if (response.status === 200) {
         setSuccess('Login realizado com sucesso! ✓')
-        // Chama onLogin imediatamente sem delay para mudar de tela
-        onLogin(response.data?.user || null)
+        const returnedUser = response.data?.user || null
+        const isAdminLogin = String(username || '').trim().toUpperCase() === 'ADM'
+        const normalizedUser = isAdminLogin
+          ? {
+              ...(returnedUser || {}),
+              id: 'adm',
+              role: 'admin',
+              username: returnedUser?.username || 'ADM',
+              displayName: returnedUser?.displayName || 'Administrador'
+            }
+          : returnedUser
+
+        onLogin(normalizedUser)
         setIsLoading(false)
       }
     } catch (err) {
