@@ -75,24 +75,27 @@ const app = express();
 const router = express.Router();
 
 // Configuração de CORS
-const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',').map(url => url.trim())
-  : [
-      'http://localhost:5173', 
-      'http://localhost:5174',
-      'https://sistemavendas-frontend-intercap.onrender.com'
-    ];
+const allowedOrigins = [
+  'https://svsistemadevendas.onrender.com',
+  ...(process.env.CUSTOM_FRONTEND_ORIGIN ? [process.env.CUSTOM_FRONTEND_ORIGIN.trim()] : []),
+  ...(process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map((url) => url.trim()).filter(Boolean)
+    : []),
+];
 
 app.use(cors({
   origin: (origin, callback) => {
+    // permite chamadas sem origin (ex: curl/postman)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(null, false);
+    return callback(new Error('CORS blocked: ' + origin));
   },
-  credentials: false,
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['x-user-id', 'content-type', 'authorization', 'x-user-role']
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id', 'x-user-role'],
 }));
+
+app.options('*', cors());
 
 app.use(express.json());
 
