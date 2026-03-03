@@ -339,7 +339,12 @@ async function resolveRequestContext(req) {
   const authData = await getAuthData();
   const users = authData.users || [];
 
-  const headerUserId = String(req.headers['x-user-id'] || '').trim();
+  const rawHeaderUserId = String(req.headers['x-user-id'] || '').trim();
+  const headerUserRole = normalizeRole(req.headers['x-user-role'] || '');
+  const headerUserId = rawHeaderUserId === '1' && headerUserRole === 'admin' ? DEFAULT_ADMIN.id : rawHeaderUserId;
+  if (rawHeaderUserId && rawHeaderUserId !== headerUserId) {
+    console.warn('LEGACY ADMIN ID NORMALIZED', { rawHeaderUserId, normalized: headerUserId });
+  }
   const requester = users.find((u) => u.id === headerUserId) || users.find((u) => u.id === DEFAULT_ADMIN.id) || users[0];
   const requesterRole = normalizeRole(requester?.role);
   const isAdmin = requesterRole === 'admin';
@@ -1218,7 +1223,9 @@ app.post('/api/falta-pagar/:id/convert-to-sale', async (req, res) => {
 // Get full database (debug/view)
 app.post('/api/sales', async (req, res) => {
   // Validação explícita do x-user-id
-  const headerUserId = String(req.headers["x-user-id"] || "").trim();
+  const rawHeaderUserId = String(req.headers["x-user-id"] || "").trim();
+  const headerUserRole = normalizeRole(req.headers['x-user-role'] || '');
+  const headerUserId = rawHeaderUserId === '1' && headerUserRole === 'admin' ? DEFAULT_ADMIN.id : rawHeaderUserId;
   if (!headerUserId) return res.status(401).json({ message: "x-user-id ausente" });
   const authData = await getAuthData();
   const exists = (authData.users || []).some(u => u.id === headerUserId);

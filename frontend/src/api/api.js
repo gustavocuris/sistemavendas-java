@@ -14,7 +14,13 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   try {
     const raw = localStorage.getItem('currentUser')
-    const user = raw ? JSON.parse(raw) : null
+    let user = raw ? JSON.parse(raw) : null
+
+    if (user?.id === '1' && String(user?.role || '').toLowerCase() === 'admin') {
+      user = { ...user, id: 'adm' }
+      localStorage.setItem('currentUser', JSON.stringify(user))
+    }
+
     config.headers = config.headers || {}
 
     if (user?.id) {

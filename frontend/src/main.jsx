@@ -16,7 +16,13 @@ function ErrorBoundaryWithUserLoad() {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem('currentUser');
-      return saved ? JSON.parse(saved) : null;
+      const user = saved ? JSON.parse(saved) : null;
+      if (user?.id === '1' && String(user?.role || '').toLowerCase() === 'admin') {
+        const normalized = { ...user, id: 'adm' };
+        localStorage.setItem('currentUser', JSON.stringify(normalized));
+        return normalized;
+      }
+      return user;
     } catch {
       return null;
     }
@@ -31,7 +37,14 @@ function ErrorBoundaryWithUserLoad() {
         // Re-read user from localStorage
         try {
           const saved = localStorage.getItem('currentUser');
-          setCurrentUser(saved ? JSON.parse(saved) : null);
+          const user = saved ? JSON.parse(saved) : null;
+          if (user?.id === '1' && String(user?.role || '').toLowerCase() === 'admin') {
+            const normalized = { ...user, id: 'adm' };
+            localStorage.setItem('currentUser', JSON.stringify(normalized));
+            setCurrentUser(normalized);
+          } else {
+            setCurrentUser(user);
+          }
         } catch {
           setCurrentUser(null);
         }
