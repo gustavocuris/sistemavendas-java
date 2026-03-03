@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api/api'
-import { API_BASE } from '../utils/api'
+import { apiUrl } from '../utils/api'
 
 export default function Login({ onLogin, primaryColor, darkMode }) {
   const [username, setUsername] = useState('')
@@ -28,8 +28,6 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
   const [resetError, setResetError] = useState('')
   const [resetSuccess, setResetSuccess] = useState('')
 
-  const API = API_BASE
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -37,7 +35,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
     setIsLoading(true)
 
     try {
-      const response = await api.post(`${API}/login`, {
+      const response = await api.post(apiUrl('/login'), {
         username: username.trim(),
         password
       })
@@ -68,7 +66,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         return
       }
 
-      const response = await api.post(`${API}/forgot-password`, {
+      const response = await api.post(apiUrl('/forgot-password'), {
         email: forgotEmail
       })
 
@@ -104,7 +102,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
     setResetLoading(true)
 
     try {
-      const response = await api.post(`${API}/reset-password`, {
+      const response = await api.post(apiUrl('/reset-password'), {
         token: resetToken,
         newPassword: resetPassword
       })

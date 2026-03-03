@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api/api'
-import { API_BASE } from '../utils/api'
+import { apiUrl } from '../utils/api'
 // import {
 //   BarChart,
 //   Bar,
@@ -12,8 +12,6 @@ import { API_BASE } from '../utils/api'
 //   ResponsiveContainer,
 //   Cell,
 // } from 'recharts'
-
-const API = API_BASE
 
 // Função para converter HEX para RGB
 const hexToRgb = (hex) => {
@@ -151,7 +149,7 @@ const ChartView = ({ year, onClose, refreshKey, primaryColor, darkMode }) => {
       for (let month = 1; month <= 12; month++) {
         const monthStr = `${year}-${String(month).padStart(2, '0')}`
         try {
-          const res = await api.get(`${API}/sales?month=${monthStr}`)
+          const res = await api.get(apiUrl(`/sales?month=${monthStr}`))
           const sales = res.data || []
 
           let totalAmount = 0

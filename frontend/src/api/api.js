@@ -1,30 +1,23 @@
 import axios from 'axios'
 
-const resolveApiOrigin = () => {
-  const envApi = String(import.meta.env.VITE_API_URL || '').trim()
-  const defaultOrigin = typeof window !== 'undefined' ? window.location.origin : ''
-  const resolved = envApi || defaultOrigin
+console.log('API BASE URL:', import.meta.env.VITE_API_URL)
 
-  return resolved
-    .replace(/\/+$/, '')
-    .replace(/\/api$/i, '')
-}
+const resolveApiBase = () => String(import.meta.env.VITE_API_URL || '').trim().replace(/\/+$/, '')
 
-export const API_ORIGIN = resolveApiOrigin()
-export const API_BASE = `${API_ORIGIN}/api`
+export const API_BASE = resolveApiBase()
+export const API_ORIGIN = API_BASE
 
 export const apiUrl = (path = '') => {
   const normalizedPath = String(path || '')
   if (!normalizedPath) return API_BASE
 
+  if (/^https?:\/\//i.test(normalizedPath)) return normalizedPath
   const withLeadingSlash = normalizedPath.startsWith('/') ? normalizedPath : `/${normalizedPath}`
-  if (withLeadingSlash.startsWith('/api/')) return `${API_ORIGIN}${withLeadingSlash}`
-  if (withLeadingSlash === '/api') return `${API_ORIGIN}/api`
   return `${API_BASE}${withLeadingSlash}`
 }
 
 const api = axios.create({
-  baseURL: API_ORIGIN
+  baseURL: API_BASE
 })
 
 api.interceptors.request.use((config) => {
@@ -40,5 +33,17 @@ api.interceptors.request.use((config) => {
   }
   return config
 })
+
+export const runHealthCheck = async () => {
+  if (!API_BASE) {
+    console.warn('[HEALTH] VITE_API_URL não configurada; health check ignorado.')
+    return null
+  }
+
+  const healthUrl = `${API_BASE}/health`
+  const response = await axios.get(healthUrl)
+  console.log('[HEALTH] GET', healthUrl, response.data)
+  return response.data
+}
 
 export default api
