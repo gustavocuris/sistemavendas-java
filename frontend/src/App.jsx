@@ -62,7 +62,7 @@ function BackupSpinner({ visible }) {
   );
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_BASE_URL = 'https://sistemavendas-backend-intercap.onrender.com';
 const API = `${API_BASE_URL}/api`;
 
 const PRESET_COLORS = [
@@ -1196,6 +1196,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
