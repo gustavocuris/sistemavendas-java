@@ -41,6 +41,29 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const config = error?.config || {}
+    const status = error?.response?.status
+    const originalUrl = String(config.url || '')
+
+    if (
+      status === 404 &&
+      !config._apiPrefixRetry &&
+      originalUrl &&
+      !originalUrl.startsWith('/api/')
+    ) {
+      config._apiPrefixRetry = true
+      config.url = originalUrl.startsWith('/') ? `/api${originalUrl}` : `/api/${originalUrl}`
+      console.warn('404 fallback retry URL:', `${config.baseURL || ''}${config.url}`)
+      return api.request(config)
+    }
+
+    return Promise.reject(error)
+  }
+)
+
 export const runHealthCheck = async () => {
   if (!import.meta.env.VITE_API_URL) {
     console.warn('[HEALTH] VITE_API_URL não configurada; health check ignorado.')
