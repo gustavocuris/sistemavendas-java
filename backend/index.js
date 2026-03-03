@@ -1222,16 +1222,11 @@ app.post('/api/falta-pagar/:id/convert-to-sale', async (req, res) => {
 
 // Get full database (debug/view)
 app.post('/api/sales', async (req, res) => {
-  // Validação explícita do x-user-id
-  const rawHeaderUserId = String(req.headers["x-user-id"] || "").trim();
-  const headerUserRole = normalizeRole(req.headers['x-user-role'] || '');
-  const headerUserId = rawHeaderUserId === '1' && headerUserRole === 'admin' ? DEFAULT_ADMIN.id : rawHeaderUserId;
-  if (!headerUserId) return res.status(401).json({ message: "x-user-id ausente" });
-  const authData = await getAuthData();
-  const exists = (authData.users || []).some(u => u.id === headerUserId);
-  if (!exists) return res.status(401).json({ message: "x-user-id inválido" });
-
   const ctx = await resolveRequestContext(req);
+
+  if (!ctx?.requester?.id) {
+    return res.status(401).json({ message: 'Usuário não autenticado' });
+  }
 
   console.log("[POST /api/sales] header x-user-id:", req.headers["x-user-id"]);
   console.log("[POST /api/sales] requester:", ctx.requester?.id, ctx.requester?.username, ctx.requester?.role);

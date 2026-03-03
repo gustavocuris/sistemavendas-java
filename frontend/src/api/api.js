@@ -16,7 +16,7 @@ api.interceptors.request.use((config) => {
     const raw = localStorage.getItem('currentUser')
     let user = raw ? JSON.parse(raw) : null
 
-    if (user?.id === '1' && String(user?.role || '').toLowerCase() === 'admin') {
+    if (String(user?.role || '').toLowerCase() === 'admin' && (!user?.id || user.id === '1' || user.id !== 'adm')) {
       user = { ...user, id: 'adm' }
       localStorage.setItem('currentUser', JSON.stringify(user))
     }

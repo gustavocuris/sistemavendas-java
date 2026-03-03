@@ -89,12 +89,6 @@
 }
 /* Estilos para tabela de últimas vendas na área admin */
 /* Unifica visual das tabelas admin e vendas */
-.list-admin-sales {
-  /* Herda todos os estilos de .list */
-}
-.list-admin-sales.dark-mode {
-  /* Herda todos os estilos de .list.dark-mode */
-}
 * {
   margin: 0;
   padding: 0;
