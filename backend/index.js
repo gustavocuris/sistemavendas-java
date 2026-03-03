@@ -90,6 +90,14 @@ app.use(cors({
 
 app.use(express.json());
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ ok: true, service: 'backend', timestamp: new Date().toISOString() });
+});
+
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ ok: true, service: 'backend', timestamp: new Date().toISOString() });
+});
+
 router.get('/health', (req, res) => {
   res.status(200).json({ ok: true, service: 'backend', timestamp: new Date().toISOString() });
 });
@@ -1455,7 +1463,8 @@ app.delete('/api/admin/users/:id', async (req, res) => {
   return res.status(204).end();
 });
 
-app.get('/api/admin/sales/search', async (req, res) => {
+const handleAdminSalesSearch = async (req, res) => {
+  console.log('ADMIN SEARCH HIT', req.originalUrl);
   const ctx = await resolveRequestContext(req);
   if (!requireAdmin(ctx, res)) return;
 
@@ -1491,7 +1500,10 @@ app.get('/api/admin/sales/search', async (req, res) => {
   });
 
   return res.json(result);
-});
+};
+
+app.get('/admin/sales/search', handleAdminSalesSearch);
+app.get('/api/admin/sales/search', handleAdminSalesSearch);
 
 app.get('/api/admin/user-sales/:userId', async (req, res) => {
   const ctx = await resolveRequestContext(req);
