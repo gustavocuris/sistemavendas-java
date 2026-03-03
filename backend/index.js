@@ -72,6 +72,7 @@ if (mongoUri) {
 // ================= FIM utilitários =================
 
 const app = express();
+const router = express.Router();
 
 // Configuração de CORS
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
@@ -88,6 +89,20 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+router.get('/health', (req, res) => {
+  res.status(200).json({ ok: true, service: 'backend', timestamp: new Date().toISOString() });
+});
+
+app.use('/', router);
+app.use('/api', router);
+
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  if (req.path === '/health') return next();
+  req.url = `/api${req.url.startsWith('/') ? req.url : `/${req.url}`}`;
+  return next();
+});
 
 // ================= ROTAS E ENDPOINTS =================
 
