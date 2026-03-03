@@ -6,9 +6,11 @@ const normalizedApiUrl = rawApiUrl
 
 const isAbsoluteHttpUrl = /^https?:\/\//i.test(normalizedApiUrl)
 const isLocalDev = typeof window !== 'undefined' && /localhost|127\.0\.0\.1/i.test(window.location.hostname)
+const currentOrigin = typeof window !== 'undefined' ? window.location.origin : ''
+const pointsToFrontendOrigin = Boolean(currentOrigin) && normalizedApiUrl.toLowerCase() === currentOrigin.toLowerCase()
 
 export const API_ORIGIN = isAbsoluteHttpUrl
-  ? normalizedApiUrl
+  ? (pointsToFrontendOrigin && !isLocalDev ? FALLBACK_API_ORIGIN : normalizedApiUrl)
   : (isLocalDev ? 'http://localhost:3001' : FALLBACK_API_ORIGIN)
 
 export const API_BASE = `${API_ORIGIN}/api`
