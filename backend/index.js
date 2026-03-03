@@ -26,8 +26,7 @@ let db;
 const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true' || process.env.RENDER_EXTERNAL_URL;
 
 if (!mongoUri && isProduction) {
-  console.error('[ERRO CRÍTICO] MONGODB_URI não definido em produção! Configure o MongoDB Atlas e defina a variável de ambiente MONGODB_URI no Render. O backend será finalizado para evitar perda de dados.');
-  process.exit(1);
+  console.warn('[AVISO] MONGODB_URI não definido em produção. Usando banco em arquivo (modo fallback).');
 }
 
 // CORREÇÃO: usar top-level await direto (Node 22+)
