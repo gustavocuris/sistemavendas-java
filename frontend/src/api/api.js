@@ -1,6 +1,9 @@
 import axios from 'axios'
 
+const DEPLOY_MARKER = 'deploy-2026-03-03-2'
+
 console.log('API BASE URL:', import.meta.env.VITE_API_URL)
+console.log('DEPLOY MARKER:', DEPLOY_MARKER)
 
 export function endpoint(path) {
   const value = String(path || '')
