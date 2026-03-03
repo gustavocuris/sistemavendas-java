@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const DEPLOY_MARKER = 'deploy-2026-03-03-2'
+const DEPLOY_MARKER = 'deploy-2026-03-03-4'
 
 console.log('API BASE URL:', import.meta.env.VITE_API_URL)
 console.log('DEPLOY MARKER:', DEPLOY_MARKER)
