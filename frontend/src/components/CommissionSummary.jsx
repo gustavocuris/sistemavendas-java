@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import axios from 'axios'
+import api from '../api/api'
 import { apiUrl } from '../utils/api'
 
 const formatBRL = (value) => {
@@ -82,7 +82,7 @@ export default function CommissionSummary({ sales, commissions, onCommissionChan
         recapping: updated.recapping,
         service: updated.service
       }
-      await axios.put(apiUrl('/commissions'), payload)
+      await api.put(apiUrl('/commissions'), payload)
       setLocalCommissions(updated)
       if (onCommissionChange) {
         onCommissionChange(updated)

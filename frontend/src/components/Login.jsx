@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import api from '../api/api'
 import { API_BASE } from '../utils/api'
 
 export default function Login({ onLogin, primaryColor, darkMode }) {
@@ -37,7 +37,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
     setIsLoading(true)
 
     try {
-      const response = await axios.post(`${API}/login`, {
+      const response = await api.post(`${API}/login`, {
         username: username.trim(),
         password
       })
@@ -68,7 +68,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
         return
       }
 
-      const response = await axios.post(`${API}/forgot-password`, {
+      const response = await api.post(`${API}/forgot-password`, {
         email: forgotEmail
       })
 
@@ -104,7 +104,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
     setResetLoading(true)
 
     try {
-      const response = await axios.post(`${API}/reset-password`, {
+      const response = await api.post(`${API}/reset-password`, {
         token: resetToken,
         newPassword: resetPassword
       })

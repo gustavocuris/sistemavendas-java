@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "clean": "rimraf dist build .vite node_modules/.cache",
+    "build": "npm run clean && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -15,6 +16,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.0",
+    "rimraf": "^6.0.1",
     "vite": "^5.4.0"
   }
 }

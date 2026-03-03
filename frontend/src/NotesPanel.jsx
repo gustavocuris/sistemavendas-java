@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api/api';
 import { normalizeMojibakeText } from './utils/text';
 import { API_BASE } from './utils/api';
 
@@ -42,8 +42,8 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
   const loadData = async () => {
     try {
       const [comprarRes, pagarRes] = await Promise.all([
-        axios.get(`${API}/comprar-depois`),
-        axios.get(`${API}/falta-pagar`)
+        api.get(`${API}/comprar-depois`),
+        api.get(`${API}/falta-pagar`)
       ]);
       setComprarDepois(comprarRes.data);
       setFaltaPagar(pagarRes.data);
@@ -101,8 +101,8 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
 
     try {
       const payload = { ...formComprar, unit_price: parsePrice(priceDisplayComprar), quantity: Number(formComprar.quantity) };
-      if (editingComprar) { await axios.put(`${API}/comprar-depois/${editingComprar}`, payload); setEditingComprar(null); }
-      else { await axios.post(`${API}/comprar-depois`, payload); }
+      if (editingComprar) { await api.put(`${API}/comprar-depois/${editingComprar}`, payload); setEditingComprar(null); }
+      else { await api.post(`${API}/comprar-depois`, payload); }
       setFormComprar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', desfecho: 'entrega', base_trade: false });
       setPriceDisplayComprar('0,00');
       await loadData();
@@ -117,12 +117,12 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
 
   const handleDeleteComprar = async (id) => {
     if (window.confirm('Deletar?')) {
-      try { await axios.delete(`${API}/comprar-depois/${id}`); await loadData(); } catch (err) { }
+      try { await api.delete(`${API}/comprar-depois/${id}`); await loadData(); } catch (err) { }
     }
   };
 
   const handleMoveToFaltaPagar = async (item) => {
-    try { await axios.post(`${API}/comprar-depois/${item.id}/move-to-pagar`); await loadData(); } catch (err) { alert('Erro'); }
+    try { await api.post(`${API}/comprar-depois/${item.id}/move-to-pagar`); await loadData(); } catch (err) { alert('Erro'); }
   };
 
   // FALTA PAGAR
@@ -137,8 +137,8 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
 
     try {
       const payload = { ...formPagar, unit_price: parsePrice(priceDisplayPagar), quantity: Number(formPagar.quantity) };
-      if (editingPagar) { await axios.put(`${API}/falta-pagar/${editingPagar}`, payload); setEditingPagar(null); }
-      else { await axios.post(`${API}/falta-pagar`, payload); }
+      if (editingPagar) { await api.put(`${API}/falta-pagar/${editingPagar}`, payload); setEditingPagar(null); }
+      else { await api.post(`${API}/falta-pagar`, payload); }
       setFormPagar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', date: '', desfecho: 'entrega', base_trade: false });
       setPriceDisplayPagar('0,00');
       await loadData();
@@ -153,7 +153,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
 
   const handleDeletePagar = async (id) => {
     if (window.confirm('Deletar?')) {
-      try { await axios.delete(`${API}/falta-pagar/${id}`); await loadData(); } catch (err) { }
+      try { await api.delete(`${API}/falta-pagar/${id}`); await loadData(); } catch (err) { }
     }
   };
 
@@ -164,7 +164,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
       const saleMonth = item.date.substring(0, 7); // YYYY-MM from item.date
       
       // Convert the item to a sale
-      const response = await axios.post(`${API}/falta-pagar/${item.id}/convert-to-sale`); 
+      const response = await api.post(`${API}/falta-pagar/${item.id}/convert-to-sale`); 
       
       // Reload falta-pagar data (to refresh the list and remove the converted item)
       await loadData(); 

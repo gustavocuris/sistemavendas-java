@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import api from '../api/api'
 import { apiUrl } from '../utils/api'
 
 export default function CommissionConfig({ isOpen, onClose }) {
@@ -14,7 +14,7 @@ export default function CommissionConfig({ isOpen, onClose }) {
 
   const loadCommissions = async () => {
     try {
-      const res = await axios.get(apiUrl('/commissions'))
+      const res = await api.get(apiUrl('/commissions'))
       setCommissions(res.data)
     } catch (err) {
       console.error('Erro ao carregar comissões', err)
@@ -29,7 +29,7 @@ export default function CommissionConfig({ isOpen, onClose }) {
         recap: Number(commissions.recap),
         recapping: Number(commissions.recapping)
       }
-      await axios.put(apiUrl('/commissions'), payload)
+      await api.put(apiUrl('/commissions'), payload)
       onClose()
     } catch (err) {
       console.error('Erro ao salvar comissões', err)

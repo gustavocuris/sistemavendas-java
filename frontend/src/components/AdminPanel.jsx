@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import axios from 'axios'
+import api from '../api/api'
 import { normalizeMojibakeText } from '../utils/text'
 import { API_BASE } from '../utils/api'
 // import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
@@ -66,7 +66,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
   const loadUserCommissions = async (userId) => {
     if (!userId) return
     try {
-      const response = await axios.get(`${API}/commissions?userId=${encodeURIComponent(userId)}`)
+      const response = await api.get(`${API}/commissions?userId=${encodeURIComponent(userId)}`)
       setCommissionsForm({
         new: Number(response.data?.new ?? 5),
         recap: Number(response.data?.recap ?? 8),
@@ -82,7 +82,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
     event.preventDefault()
     setLoading(true)
     try {
-      await axios.post(`${API}/admin/users`, createForm)
+      await api.post(`${API}/admin/users`, createForm)
       setCreateForm(emptyCreate)
       await onUsersRefresh()
       // alert removed
@@ -109,7 +109,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
         payload.password = editForm.password
       }
 
-      await axios.put(`${API}/admin/users/${editForm.id}`, payload)
+      await api.put(`${API}/admin/users/${editForm.id}`, payload)
       await onUsersRefresh()
       setEditForm((prev) => ({ ...prev, password: '' }))
       // alert removed
@@ -127,7 +127,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
 
     setLoading(true)
     try {
-      await axios.delete(`${API}/admin/users/${userId}`)
+      await api.delete(`${API}/admin/users/${userId}`)
       await onUsersRefresh()
       // alert removed
       if (onSalesChanged) await onSalesChanged();
@@ -144,7 +144,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
 
     setLoading(true)
     try {
-      await axios.put(`${API}/admin/users/${editForm.id}`, {
+      await api.put(`${API}/admin/users/${editForm.id}`, {
         commissions: {
           new: Number(commissionsForm.new),
           recap: Number(commissionsForm.recap),
@@ -170,7 +170,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
       if (searchFilters.userId) params.append('userId', searchFilters.userId)
       if (searchFilters.month) params.append('month', searchFilters.month)
 
-      const response = await axios.get(`${API}/admin/sales/search?${params.toString()}`)
+      const response = await api.get(`${API}/admin/sales/search?${params.toString()}`)
       setSearchResults(Array.isArray(response.data) ? response.data : [])
       if (onSalesChanged) await onSalesChanged();
     } catch (error) {
@@ -294,7 +294,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
       if (summaryFilters.monthTo) params.append('monthTo', summaryFilters.monthTo)
       if (summaryFilters.userId) params.append('userId', summaryFilters.userId)
 
-      const response = await axios.get(`${API}/admin/sales/summary?${params.toString()}`)
+      const response = await api.get(`${API}/admin/sales/summary?${params.toString()}`)
       setSummaryData(response.data || { grandTotal: 0, users: [] })
       if (onSalesChanged) await onSalesChanged();
     } catch (error) {
