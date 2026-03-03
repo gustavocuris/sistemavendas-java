@@ -976,6 +976,57 @@ app.get('/api/admin/sales/latest', async (req, res) => {
   });
 
   return res.json(allSales.slice(0, limit));
+});
+
+const handleGetComprarDepois = async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  const comprar = ctx.userData.comprarDepois || [];
+  const sorted = [...comprar].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  res.json(sorted);
+};
+
+const handlePostComprarDepois = async (req, res) => {
+  const { client, phone, product, tire_type, unit_price, quantity, desfecho, base_trade } = req.body || {};
+
+  if (!client || !product || !tire_type || unit_price == null) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const ctx = await resolveRequestContext(req);
+  if (!Array.isArray(ctx.userData.comprarDepois)) {
+    ctx.userData.comprarDepois = [];
+  }
+
+  const item = {
+    id: ctx.userData.comprarDepois.length + 1,
+    client,
+    phone: phone || '',
+    product,
+    tire_type,
+    base_trade: !!base_trade,
+    unit_price: Number(unit_price),
+    quantity: Number(quantity) || 1,
+    desfecho: desfecho || 'entrega',
+    created_at: new Date().toISOString()
+  };
+
+  ctx.userData.comprarDepois.push(item);
+  await db.write();
+  try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
+  res.status(201).json(item);
+};
+
+const handlePutComprarDepois = async (req, res) => {
+  const { id } = req.params;
+  const { client, phone, product, tire_type, unit_price, quantity, desfecho, base_trade } = req.body || {};
+
+  const ctx = await resolveRequestContext(req);
+  const comprar = ctx.userData.comprarDepois || [];
+  const itemIndex = comprar.findIndex(i => i.id == id);
+
+  if (itemIndex === -1) {
+    return res.status(404).json({ error: 'Item não encontrado' });
+  }
 
   comprar[itemIndex] = {
     ...comprar[itemIndex],
@@ -992,9 +1043,9 @@ app.get('/api/admin/sales/latest', async (req, res) => {
   await db.write();
   try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
   res.json(comprar[itemIndex]);
-});
+};
 
-app.delete('/api/comprar-depois/:id', async (req, res) => {
+const handleDeleteComprarDepois = async (req, res) => {
   const { id } = req.params;
 
   const ctx = await resolveRequestContext(req);
@@ -1007,7 +1058,6 @@ app.delete('/api/comprar-depois/:id', async (req, res) => {
 
   comprar.splice(itemIndex, 1);
 
-  // Renumber IDs
   comprar.forEach((i, index) => {
     i.id = index + 1;
   });
@@ -1015,10 +1065,9 @@ app.delete('/api/comprar-depois/:id', async (req, res) => {
   await db.write();
   try { triggerBackup(); } catch (e) { console.error('Erro ao acionar backup:', e); }
   res.status(204).end();
-});
+};
 
-// Move from comprar-depois to falta-pagar
-app.post('/api/comprar-depois/:id/move-to-pagar', async (req, res) => {
+const handleMoveComprarDepoisToPagar = async (req, res) => {
   const { id } = req.params;
   const { date } = req.body;
   const ctx = await resolveRequestContext(req);
@@ -1031,7 +1080,6 @@ app.post('/api/comprar-depois/:id/move-to-pagar', async (req, res) => {
 
   const item = comprar[itemIndex];
 
-  // Add to falta pagar
   if (!Array.isArray(ctx.userData.faltaPagar)) {
     ctx.userData.faltaPagar = [];
   }
@@ -1052,7 +1100,6 @@ app.post('/api/comprar-depois/:id/move-to-pagar', async (req, res) => {
 
   ctx.userData.faltaPagar.push(pagarItem);
 
-  // Remove from comprar
   comprar.splice(itemIndex, 1);
   comprar.forEach((i, index) => {
     i.id = index + 1;
@@ -1060,7 +1107,18 @@ app.post('/api/comprar-depois/:id/move-to-pagar', async (req, res) => {
 
   await db.write();
   res.status(201).json({ item: pagarItem, message: 'Movido para falta pagar' });
-});
+};
+
+app.get('/api/comprar-depois', handleGetComprarDepois);
+app.get('/comprar-depois', handleGetComprarDepois);
+app.post('/api/comprar-depois', handlePostComprarDepois);
+app.post('/comprar-depois', handlePostComprarDepois);
+app.put('/api/comprar-depois/:id', handlePutComprarDepois);
+app.put('/comprar-depois/:id', handlePutComprarDepois);
+app.delete('/api/comprar-depois/:id', handleDeleteComprarDepois);
+app.delete('/comprar-depois/:id', handleDeleteComprarDepois);
+app.post('/api/comprar-depois/:id/move-to-pagar', handleMoveComprarDepoisToPagar);
+app.post('/comprar-depois/:id/move-to-pagar', handleMoveComprarDepoisToPagar);
 
 // ===== FALTA PAGAR/ENTREGAR =====
 app.get('/api/falta-pagar', async (req, res) => {
