@@ -79,7 +79,8 @@ const TIRE_TYPE_LABELS = {
   'new': 'NOVO',
   'recap': 'RECAPADO',
   'recapping': 'RECAPAGEM',
-  'sv_borracharia': 'SV BORRACHARIA'
+  'sv_borracharia': 'SV BORRACHARIA',
+  'service': 'SV BORRACHARIA'
 }
 
 const getTireTypeLabel = (type) => {
@@ -951,7 +952,7 @@ export default function App() {
                         <td>{normalizeMojibakeText(sale.product) || '-'}</td>
                         <td>{sale.unit_price ? Number(sale.unit_price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
                         <td>{sale.quantity ? Number(sale.quantity).toLocaleString('pt-BR') : '-'}</td>
-                        <td>{sale.tire_type ? sale.tire_type.toUpperCase() : '-'}</td>
+                        <td>{getTireTypeLabel(sale.tire_type)}</td>
                         <td>{sale.desfecho ? normalizeMojibakeText(sale.desfecho).toUpperCase() : '-'}</td>
                         <td>{sale.total ? `R$ ${Number(sale.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '-'}</td>
                       </tr>
@@ -1224,6 +1225,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
