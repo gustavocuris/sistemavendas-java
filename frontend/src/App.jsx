@@ -957,12 +957,6 @@ export default function App() {
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot>
-                    <tr>
-                      <td colSpan={7} className="total-label">FATURAMENTO TOTAL :</td>
-                      <td colSpan={2} className="total-amount">R$ {adminLatestSales.reduce((s, i) => s + Number(i.total || 0), 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    </tr>
-                  </tfoot>
                 </table>
               </div>
             </div>
