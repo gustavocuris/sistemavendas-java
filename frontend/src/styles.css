@@ -4329,6 +4329,11 @@ body.dark-mode .admin-total-label {
   box-shadow: none !important;
 }
 
+.admin-home-sales-top .list th,
+.admin-home-sales-top .list td {
+  text-transform: uppercase;
+}
+
 .admin-home-chart-full {
   grid-column: 1 / -1;
 }
