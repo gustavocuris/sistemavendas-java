@@ -4325,6 +4325,8 @@ body.dark-mode .admin-total-label {
 
 .admin-home-sales-top {
   grid-column: 1 / -1;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .admin-home-chart-full {
