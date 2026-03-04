@@ -9,6 +9,7 @@ import NotesPanel from './NotesPanel';
 import Login from './components/Login';
 import AdminPanel from './components/AdminPanel';
 import LoginManager from './components/LoginManager';
+import { normalizeMojibakeText } from './utils/text';
 
 const SAFE_EMPTY_NEW_USER = { displayName: '', username: '', password: '' };
 
@@ -317,7 +318,7 @@ export default function App() {
   const loadAdminSales = useCallback(async (search = '') => {
     if (!isAdmin) return;
     const qs = search ? `?q=${encodeURIComponent(search)}` : '';
-    const res = await axios.get(`/api/admin/sales/search${qs}`);
+    const res = await axios.get(`${API}/admin/sales/search${qs}`);
     setAdminSales(Array.isArray(res.data) ? res.data : []);
   }, [isAdmin]);
 
@@ -865,7 +866,7 @@ export default function App() {
           )}
         </div>
 
-        <h1>{isAdmin ? 'ÃREA ADMINISTRADOR' : 'Tabela de Vendas • Build R2'}</h1>
+        <h1>{isAdmin ? 'AREA ADMINISTRADOR' : 'Tabela de Vendas'}</h1>
 
         {!isAdmin && (
           <div className="month-controls">
@@ -923,12 +924,12 @@ export default function App() {
         <div className="admin-home-layout">
           <div className="admin-home-card admin-home-sales-top">
             <div className="admin-home-row-head">
-              <h3>Ãšltimas vendas feitas</h3>
+              <h3>ULTIMAS VENDAS FEITAS</h3>
             </div>
             <ul style={{ listStyle: 'none', padding: 0 }}>
               {adminLatestSales.map((sale) => (
                 <li key={`${sale.userId}-${sale.month}-${sale.id}-${sale.createdAt || sale.date}`}>
-                  <b>{sale.userName}</b> â€” {sale.client} â€” R$ {Number(sale.total || 0).toFixed(2)}
+                  <b>{normalizeMojibakeText(sale.userName)}</b> - {normalizeMojibakeText(sale.client)} - R$ {Number(sale.total || 0).toFixed(2)}
                 </li>
               ))}
             </ul>
@@ -1196,6 +1197,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
