@@ -931,9 +931,9 @@ export default function App() {
                 <table>
                   <thead>
                     <tr>
+                      <th>Conta</th>
                       <th>Data</th>
                       <th>Cliente</th>
-                      <th>Telefone</th>
                       <th>PRODUTO/SERVIÇO</th>
                       <th>Unit.</th>
                       <th>Qtd</th>
@@ -945,9 +945,9 @@ export default function App() {
                   <tbody>
                     {adminLatestSales.map((sale) => (
                       <tr key={`${sale.userId}-${sale.month}-${sale.id}-${sale.createdAt || sale.date}`}>
+                        <td>{normalizeMojibakeText(sale.userName || adminUsers.find((u) => u.id === sale.userId)?.displayName || adminUsers.find((u) => u.id === sale.userId)?.username || sale.userId || '-')}</td>
                         <td>{sale.date ? (typeof sale.date === 'string' && sale.date.includes('-') ? sale.date.split('-').reverse().join('/') : sale.date) : '-'}</td>
                         <td>{normalizeMojibakeText(sale.client) || '-'}</td>
-                        <td>{sale.phone || '-'}</td>
                         <td>{normalizeMojibakeText(sale.product) || '-'}</td>
                         <td>{sale.unit_price ? Number(sale.unit_price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
                         <td>{sale.quantity ? Number(sale.quantity).toLocaleString('pt-BR') : '-'}</td>
