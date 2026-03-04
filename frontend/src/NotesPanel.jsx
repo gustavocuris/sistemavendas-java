@@ -5,7 +5,7 @@ import { endpoint } from './utils/api';
 
 const TIRE_TYPES = [
   { value: 'new', label: 'Pneu Novo' },
-  { value: 'recap', label: 'Recapado' },
+  { value: 'recap', label: 'Pneu Recapado' },
   { value: 'recapping', label: 'Recapagem' },
   { value: 'service', label: 'SV Borracharia' }
 ];
@@ -190,7 +190,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
     const type = item?.tire_type || 'new';
     const badges = {
       'new': { label: 'Pneu Novo', color: '#10b981' },
-      'recap': { label: 'Recapado', color: '#3b82f6' },
+      'recap': { label: 'Pneu Recapado', color: '#3b82f6' },
       'recapping': { label: 'Recapagem', color: '#f59e0b' },
       'service': { label: 'SV Borracharia', color: '#8b5cf6' }
     };

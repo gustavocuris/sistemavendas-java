@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { normalizeMojibakeText } from '../utils/text'
 
-const tireTypeLabel = { new: 'Novo', recap: 'Recapado', recapping: 'Recapagem', service: 'Sv Borracharia' }
+const tireTypeLabel = { new: 'Novo', recap: 'Pneu Recapado', recapping: 'Recapagem', service: 'Sv Borracharia' }
 const desfechoLabel = { entrega: 'Entrega ao Cliente', piratininga: 'Coleta Piratininga', belavista: 'Coleta Bela Vista' }
 
 const getTireTypeNode = (sale) => {
