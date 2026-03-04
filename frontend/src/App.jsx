@@ -77,7 +77,7 @@ const PRESET_COLORS = [
 
 const TIRE_TYPE_LABELS = {
   'new': 'NOVO',
-  'recap': 'RECAPADO',
+  'recap': 'PNEU RECAPADO',
   'recapping': 'RECAPAGEM',
   'sv_borracharia': 'SV BORRACHARIA',
   'service': 'SV BORRACHARIA'
@@ -1225,6 +1225,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
