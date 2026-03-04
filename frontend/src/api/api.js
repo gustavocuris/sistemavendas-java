@@ -1,10 +1,9 @@
 import axios from 'axios'
 
-const DEPLOY_MARKER = 'deploy-2026-03-03-5-TITULO-TESTE-AGORA'
+const DEPLOY_MARKER = 'deploy-2026-03-04-prod'
 
 console.log('API BASE URL:', import.meta.env.VITE_API_URL)
 console.log('DEPLOY MARKER:', DEPLOY_MARKER)
-console.log('🔥 TITULO TESTE FORCING BUNDLE UPDATE 🔥')
 
 export function endpoint(path) {
   const value = String(path || '')
