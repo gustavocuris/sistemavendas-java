@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const DEPLOY_MARKER = 'deploy-2026-03-04-prod-v4-area-admin-v2'
+const DEPLOY_MARKER = 'deploy-2026-03-04-prod-v5-admin-table-final'
 
 console.log('API BASE URL:', import.meta.env.VITE_API_URL)
 console.log('DEPLOY MARKER:', DEPLOY_MARKER)
