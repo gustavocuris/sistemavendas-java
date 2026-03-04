@@ -923,16 +923,49 @@ export default function App() {
       {isAdmin ? (
         <div className="admin-home-layout">
           <div className="admin-home-card admin-home-sales-top">
-            <div className="admin-home-row-head">
-              <h3>ULTIMAS VENDAS FEITAS</h3>
+            <div className="list">
+              <div className="list-header-with-sort">
+                <h2>ÚLTIMAS VENDAS FEITAS</h2>
+              </div>
+              <div className="list-wrapper">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Cliente</th>
+                      <th>Telefone</th>
+                      <th>PRODUTO/SERVIÇO</th>
+                      <th>Unit.</th>
+                      <th>Qtd</th>
+                      <th>Tipo de Venda</th>
+                      <th>Desfecho</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {adminLatestSales.map((sale) => (
+                      <tr key={`${sale.userId}-${sale.month}-${sale.id}-${sale.createdAt || sale.date}`}>
+                        <td>{sale.date ? (typeof sale.date === 'string' && sale.date.includes('-') ? sale.date.split('-').reverse().join('/') : sale.date) : '-'}</td>
+                        <td>{normalizeMojibakeText(sale.client) || '-'}</td>
+                        <td>{sale.phone || '-'}</td>
+                        <td>{normalizeMojibakeText(sale.product) || '-'}</td>
+                        <td>{sale.unit_price ? Number(sale.unit_price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
+                        <td>{sale.quantity ? Number(sale.quantity).toLocaleString('pt-BR') : '-'}</td>
+                        <td>{sale.tire_type ? sale.tire_type.toUpperCase() : '-'}</td>
+                        <td>{sale.desfecho ? normalizeMojibakeText(sale.desfecho).toUpperCase() : '-'}</td>
+                        <td>{sale.total ? `R$ ${Number(sale.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '-'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colSpan={7} className="total-label">FATURAMENTO TOTAL :</td>
+                      <td colSpan={2} className="total-amount">R$ {adminLatestSales.reduce((s, i) => s + Number(i.total || 0), 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
             </div>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              {adminLatestSales.map((sale) => (
-                <li key={`${sale.userId}-${sale.month}-${sale.id}-${sale.createdAt || sale.date}`}>
-                  <b>{normalizeMojibakeText(sale.userName)}</b> - {normalizeMojibakeText(sale.client)} - R$ {Number(sale.total || 0).toFixed(2)}
-                </li>
-              ))}
-            </ul>
           </div>
 
           <div className="admin-home-card admin-home-chart-full">
