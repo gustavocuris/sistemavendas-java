@@ -866,7 +866,7 @@ export default function App() {
           )}
         </div>
 
-        <h1>{isAdmin ? 'AREA ADMINISTRADOR' : 'Tabela de Vendas'}</h1>
+        <h1>{isAdmin ? '\u00C1REA ADMINISTRADOR' : 'Tabela de Vendas'}</h1>
 
         {!isAdmin && (
           <div className="month-controls">
@@ -1197,6 +1197,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
