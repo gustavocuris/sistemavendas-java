@@ -2140,7 +2140,7 @@ body.dark-mode .admin-viewing-label {
 
 body.dark-mode:not([data-theme="all-black"]) h1,
 body.dark-mode:not([data-theme="all-black"]) .admin-home-sales-top .list h2 {
-  color: var(--primary-dark);
+  color: var(--primary-color);
 }
 
 .dark-mode .btn-sort {
