@@ -964,7 +964,7 @@ export default function App() {
           </div>
 
           <div className="admin-home-card admin-home-chart-full">
-            <h3>GrÃ¡fico anual de vendas mensais totais ({adminAnnual.year || new Date().getFullYear()})</h3>
+            <h3>GRAFICO ANUAL DE VENDAS MENSAIS TOTAIS ({adminAnnual.year || new Date().getFullYear()})</h3>
             {/* Filtra venda TESTE do total geral */}
             <p className="admin-home-total">VENDAS TOTAL: <strong>R$ {formatReal(
               (adminSales || [])
@@ -1225,6 +1225,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
