@@ -716,21 +716,15 @@ export default function App() {
 
   // Filtra venda TESTE do grÃ¡fico
   const adminChartData = useMemo(() => {
-    const year = adminAnnual.year || new Date().getFullYear();
-    const activeUserIds = new Set((adminUsers || []).filter((u) => u.active !== false).map((u) => u.id));
-    // Use exatamente os registros da tabela de Visualizar Vendas (adminSales filtrado)
-    const filteredSales = (adminSales || []).filter(
-      (sale) => activeUserIds.has(sale.userId)
-    );
-    const monthlyTotals = {};
-    filteredSales.forEach((sale) => {
-      const saleDate = new Date(sale.date || sale.created_at);
-      const saleYear = saleDate.getFullYear();
-      if (saleYear !== year) return;
-      const saleMonth = String(saleDate.getMonth() + 1).padStart(2, '0');
-      const monthKey = `${year}-${saleMonth}`;
-      monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(sale.total || 0);
-    });
+    const year = Number(adminAnnual?.year || new Date().getFullYear());
+    const annualMonths = Array.isArray(adminAnnual?.months) ? adminAnnual.months : [];
+    const monthlyTotals = annualMonths.reduce((acc, item) => {
+      const monthKey = String(item?.month || '');
+      if (!monthKey) return acc;
+      acc[monthKey] = (acc[monthKey] || 0) + Number(item?.total || 0);
+      return acc;
+    }, {});
+
     return monthNames.map((label, index) => {
       const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`;
       return {
@@ -739,7 +733,7 @@ export default function App() {
         total: monthlyTotals[monthKey] || 0
       };
     });
-  }, [adminSales, adminUsers, adminAnnual, monthNames]);
+  }, [adminAnnual, monthNames]);
 
   const adminChartColors = useMemo(() => {
     const base = primaryColor || PRESET_COLORS[0].hex
@@ -966,10 +960,8 @@ export default function App() {
 
           <div className="admin-home-card admin-home-chart-full">
             <h3>{`GR\u00C1FICO ANUAL DE VENDAS MENSAIS TOTAIS (${adminAnnual.year || new Date().getFullYear()})`}</h3>
-            {/* Filtra venda TESTE do total geral */}
             <p className="admin-home-total">VENDAS TOTAL: <strong>R$ {formatReal(adminChartTotal)}</strong></p>
             <div className="admin-home-chart-wrap full-width">
-              {/*
               <ResponsiveContainer width="100%" height={360}>
                 <BarChart
                   data={adminChartData}
@@ -988,7 +980,6 @@ export default function App() {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
-              */}
             </div>
           </div>
 
@@ -1217,15 +1208,4 @@ export default function App() {
     </>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
 
