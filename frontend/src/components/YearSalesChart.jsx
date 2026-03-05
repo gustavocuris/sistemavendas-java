@@ -349,8 +349,8 @@ function YearSalesChart({ allUsersData, darkMode = false, year, users, monthlyTo
               return [toNumber(value), 'Vendas']
             }}
             contentStyle={{
-              backgroundColor: darkMode ? '#000000' : '#ffffff',
-              border: darkMode ? '1px solid #333333' : '1px solid #e2e8f0',
+              backgroundColor: darkMode ? '#111111' : '#ffffff',
+              border: darkMode ? '1px solid #2a2a2a' : '1px solid #e2e8f0',
               color: darkMode ? '#ffffff' : '#111827'
             }}
             labelStyle={{ color: darkMode ? '#ffffff' : '#111827' }}
