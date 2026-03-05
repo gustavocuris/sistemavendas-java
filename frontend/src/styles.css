@@ -4363,6 +4363,10 @@ body.dark-mode .admin-home-sales-top .list th {
 }
 
 body.dark-mode:not([data-theme="all-black"]) .admin-home-sales-top .list th {
+  background: var(--primary-color);
+}
+
+body.dark-mode:not([data-theme="all-black"]) .admin-home-sales-top .list th {
   border-top: none;
   border-bottom: none;
 }
