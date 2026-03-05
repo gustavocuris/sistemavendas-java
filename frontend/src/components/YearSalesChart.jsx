@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useMemo } from 'react'
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts'
 import { getAllVisibleSales, getVisibleSalesForUser } from '../utils/visibleSales'
 
 const MONTH_LABELS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
@@ -9,6 +9,66 @@ const createEmptyTotals = () => MONTH_LABELS.map((month) => ({ month, total: 0, 
 const toNumber = (value) => {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? parsed : 0
+}
+
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value))
+
+const normalizeHex = (hex) => {
+  if (typeof hex !== 'string') return null
+  const cleaned = hex.trim().replace('#', '')
+  if (/^[0-9a-fA-F]{3}$/.test(cleaned)) {
+    const expanded = cleaned.split('').map((char) => `${char}${char}`).join('')
+    return `#${expanded.toLowerCase()}`
+  }
+  if (/^[0-9a-fA-F]{6}$/.test(cleaned)) return `#${cleaned.toLowerCase()}`
+  return null
+}
+
+const hexToRgb = (hex) => {
+  const normalized = normalizeHex(hex)
+  if (!normalized) return null
+  const raw = normalized.slice(1)
+  return {
+    r: parseInt(raw.slice(0, 2), 16),
+    g: parseInt(raw.slice(2, 4), 16),
+    b: parseInt(raw.slice(4, 6), 16)
+  }
+}
+
+const rgbToHex = ({ r, g, b }) => {
+  const toHex = (channel) => clamp(Math.round(channel), 0, 255).toString(16).padStart(2, '0')
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`
+}
+
+const mixHex = (baseHex, targetHex, amount) => {
+  const base = hexToRgb(baseHex)
+  const target = hexToRgb(targetHex)
+  if (!base || !target) return baseHex
+  const t = clamp(amount, 0, 1)
+  return rgbToHex({
+    r: base.r + (target.r - base.r) * t,
+    g: base.g + (target.g - base.g) * t,
+    b: base.b + (target.b - base.b) * t
+  })
+}
+
+const resolveBaseColor = (primaryColor, darkMode) => {
+  const normalized = normalizeHex(primaryColor)
+  if (normalized) return normalized
+  return darkMode ? '#4ade80' : '#1e7145'
+}
+
+const buildBarColors = (baseColor, count, darkMode) => {
+  if (!Number.isFinite(count) || count <= 0) return [baseColor]
+  if (count === 1) return [baseColor]
+
+  return Array.from({ length: count }, (_, index) => {
+    const position = index / (count - 1)
+    const delta = (position - 0.5) * 0.28
+    if (delta >= 0) return mixHex(baseColor, '#ffffff', delta)
+    const darkTarget = darkMode ? '#0b1220' : '#000000'
+    return mixHex(baseColor, darkTarget, Math.abs(delta))
+  })
 }
 
 const yearMonthFromAny = (rawMonth, rawDate) => {
@@ -152,7 +212,7 @@ export function getYearTotals(allUsersData, targetYear, users) {
   }
 }
 
-function YearSalesChart({ allUsersData, darkMode = false, year, users, monthlyTotals }) {
+function YearSalesChart({ allUsersData, darkMode = false, year, users, monthlyTotals, primaryColor }) {
   const safeYear = Number.isFinite(Number(year)) ? Number(year) : new Date().getFullYear()
   const totals = useMemo(() => {
     if (Array.isArray(monthlyTotals) && monthlyTotals.length > 0) {
@@ -160,6 +220,11 @@ function YearSalesChart({ allUsersData, darkMode = false, year, users, monthlyTo
     }
     return getYearTotals(allUsersData, safeYear, users)
   }, [monthlyTotals, allUsersData, safeYear, users])
+
+  const barColors = useMemo(() => {
+    const baseColor = resolveBaseColor(primaryColor, darkMode)
+    return buildBarColors(baseColor, Array.isArray(totals) ? totals.length : 0, darkMode)
+  }, [primaryColor, darkMode, totals])
 
   useEffect(() => {
     logChartDebugDiffs(allUsersData, users, safeYear, totals)
@@ -191,7 +256,11 @@ function YearSalesChart({ allUsersData, darkMode = false, year, users, monthlyTo
               return [toNumber(value), 'Vendas']
             }}
           />
-          <Bar dataKey="total" name="total" fill={darkMode ? '#4ade80' : '#1e7145'} radius={[6, 6, 0, 0]} />
+          <Bar dataKey="total" name="total" fill={barColors[0]} radius={[6, 6, 0, 0]}>
+            {totals.map((entry, index) => (
+              <Cell key={`bar-${entry?.month || index}`} fill={barColors[index % barColors.length]} />
+            ))}
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>
