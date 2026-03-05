@@ -4341,14 +4341,12 @@ body.dark-mode .admin-total-label {
 .admin-home-sales-top .list::after {
   content: '';
   display: block;
-  height: 12px;
-  background: #ffffff;
-  border-top: 1px solid rgba(var(--primary-color-rgb), 0.2);
+  height: 16px;
+  background: rgba(var(--primary-color-rgb), 0.15);
 }
 
 body.dark-mode .admin-home-sales-top .list::after {
-  background: #1a1a1a;
-  border-top-color: rgba(var(--primary-light-rgb), 0.2);
+  background: rgba(var(--primary-color-rgb), 0.3);
 }
 
 .admin-home-chart-full {
