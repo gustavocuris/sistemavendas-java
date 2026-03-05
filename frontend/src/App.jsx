@@ -750,6 +750,11 @@ export default function App() {
     return monthNames.map((_, index) => blendWithWhite(base, 0.05 + (index / 11) * 0.55))
   }, [primaryColor, monthNames])
 
+  const adminChartTotal = useMemo(
+    () => (adminChartData || []).reduce((sum, month) => sum + Number(month.total || 0), 0),
+    [adminChartData]
+  )
+
   // ProteÃ§Ã£o: garantir arrays/objetos vÃ¡lidos
   const safeAdminSales = Array.isArray(adminSales) ? adminSales : [];
   const safeAdminUsers = Array.isArray(adminUsers) ? adminUsers : [];
@@ -966,16 +971,7 @@ export default function App() {
           <div className="admin-home-card admin-home-chart-full">
             <h3>{`GR\u00C1FICO ANUAL DE VENDAS MENSAIS TOTAIS (${adminAnnual.year || new Date().getFullYear()})`}</h3>
             {/* Filtra venda TESTE do total geral */}
-            <p className="admin-home-total">VENDAS TOTAL: <strong>R$ {formatReal(
-              (adminSales || [])
-                .filter(sale =>
-                  String(sale.client || '').toUpperCase() !== 'TESTE' &&
-                  String(sale.product || '').toUpperCase() !== 'AAAAA' &&
-                  String(sale.userId || '') !== 'user-1771531117808' &&
-                  (adminUsers || []).some(u => u.id === sale.userId && u.active !== false && u.role !== 'admin')
-                )
-                .reduce((sum, sale) => sum + Number(sale.total || 0), 0)
-            )}</strong></p>
+            <p className="admin-home-total">VENDAS TOTAL: <strong>R$ {formatReal(adminChartTotal)}</strong></p>
             <div className="admin-home-chart-wrap full-width">
               {/*
               <ResponsiveContainer width="100%" height={360}>
