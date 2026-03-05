@@ -152,9 +152,14 @@ export function getYearTotals(allUsersData, targetYear, users) {
   }
 }
 
-function YearSalesChart({ allUsersData, darkMode = false, year, users }) {
+function YearSalesChart({ allUsersData, darkMode = false, year, users, monthlyTotals }) {
   const safeYear = Number.isFinite(Number(year)) ? Number(year) : new Date().getFullYear()
-  const totals = useMemo(() => getYearTotals(allUsersData, safeYear, users), [allUsersData, safeYear, users])
+  const totals = useMemo(() => {
+    if (Array.isArray(monthlyTotals) && monthlyTotals.length > 0) {
+      return monthlyTotals
+    }
+    return getYearTotals(allUsersData, safeYear, users)
+  }, [monthlyTotals, allUsersData, safeYear, users])
 
   useEffect(() => {
     logChartDebugDiffs(allUsersData, users, safeYear, totals)

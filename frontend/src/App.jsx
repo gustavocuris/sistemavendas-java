@@ -9,9 +9,9 @@ import NotesPanel from './NotesPanel';
 import Login from './components/Login';
 import AdminPanel from './components/AdminPanel';
 import LoginManager from './components/LoginManager';
-import { YearSalesChartWithBoundary, getYearTotals } from './components/YearSalesChart';
+import { YearSalesChartWithBoundary } from './components/YearSalesChart';
 import { normalizeMojibakeText } from './utils/text';
-import { getAllVisibleSales } from './utils/visibleSales';
+import { getMonthlyTotalsFromActiveAccounts } from './utils/adminMonthlyTotals';
 
 const SAFE_EMPTY_NEW_USER = { displayName: '', username: '', password: '' };
 
@@ -120,6 +120,7 @@ export default function App() {
   const [adminLoading, setAdminLoading] = useState(false);
   const [viewUserSalesId, setViewUserSalesId] = useState(null);
   const [viewUserSalesData, setViewUserSalesData] = useState(null);
+  const [adminViewSalesByUser, setAdminViewSalesByUser] = useState({});
   const [selectedSalesYear, setSelectedSalesYear] = useState(null);
   const [selectedSalesMonth, setSelectedSalesMonth] = useState(null);
   const [sales, setSales] = useState([]);
@@ -411,6 +412,56 @@ export default function App() {
     }
   }
 
+
+  const buildSalesByYearMonthFromSales = (allSales) => {
+    const safeSales = Array.isArray(allSales) ? allSales : []
+    const salesByYearMonth = {}
+
+    safeSales.forEach((sale) => {
+      const saleDate = new Date(sale.date || sale.created_at)
+      if (Number.isNaN(saleDate.getTime())) return
+
+      const year = String(saleDate.getFullYear())
+      const month = String(saleDate.getMonth() + 1).padStart(2, '0')
+      const monthName = saleDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
+
+      if (!salesByYearMonth[year]) {
+        salesByYearMonth[year] = {}
+      }
+      if (!salesByYearMonth[year][month]) {
+        salesByYearMonth[year][month] = {
+          monthName,
+          sales: [],
+          total: 0,
+          count: 0
+        }
+      }
+
+      salesByYearMonth[year][month].sales.push(sale)
+      salesByYearMonth[year][month].total += Number(sale.total || 0)
+      salesByYearMonth[year][month].count += 1
+    })
+
+    return salesByYearMonth
+  }
+
+  const loadAdminViewTotalsForUser = useCallback(async (userId) => {
+    try {
+      const res = await axios.get(`${API}/admin/user-sales/${userId}`)
+      const allSales = Array.isArray(res.data) ? res.data : []
+      const salesByYearMonth = buildSalesByYearMonthFromSales(allSales)
+
+      setAdminViewSalesByUser((prev) => ({
+        ...prev,
+        [userId]: salesByYearMonth
+      }))
+
+      return { allSales, salesByYearMonth }
+    } catch (err) {
+      console.error('Erro ao carregar totais da visão admin por usuário:', err)
+      return { allSales: [], salesByYearMonth: {} }
+    }
+  }, [])
   const loadUserSalesAndYears = async (userId, userName) => {
     setAdminLoading(true)
     try {
@@ -459,6 +510,22 @@ export default function App() {
     }
   }
 
+
+  useEffect(() => {
+    if (!isAuthenticated || !isAdmin) return
+
+    const activeUsers = (adminUsers || []).filter((user) => user?.active !== false && user?.role !== 'admin')
+    if (activeUsers.length === 0) {
+      setAdminViewSalesByUser({})
+      return
+    }
+
+    const loadAllActive = async () => {
+      await Promise.allSettled(activeUsers.map((user) => loadAdminViewTotalsForUser(user.id)))
+    }
+
+    loadAllActive()
+  }, [isAuthenticated, isAdmin, adminUsers, loadAdminViewTotalsForUser])
   const handleLogin = (user) => {
     setIsAuthenticated(true)
     localStorage.setItem('authenticated', 'true')
@@ -716,15 +783,34 @@ export default function App() {
 
   const handleCommissionChange = (updatedCommissions) => setCommissions(updatedCommissions)
 
-  const adminVisibleSales = useMemo(
-    () => getAllVisibleSales({ users: adminUsers, sales: adminSales }),
-    [adminUsers, adminSales]
+  const activeAccountsAdminView = useMemo(
+    () => (adminUsers || [])
+      .filter((user) => user?.active !== false && user?.role !== 'admin')
+      .map((user) => ({
+        ...user,
+        salesByYearMonth: adminViewSalesByUser[user.id] || {}
+      })),
+    [adminUsers, adminViewSalesByUser]
   )
 
-  // Filtra venda TESTE do grÃ¡fico
+  const monthlyTotalsFromAdminView = useMemo(
+    () => getMonthlyTotalsFromActiveAccounts({
+      users: activeAccountsAdminView,
+      year: adminAnnual?.year || new Date().getFullYear()
+    }),
+    [activeAccountsAdminView, adminAnnual?.year]
+  )
+
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      console.log('TOTALS FROM ADMIN VIEW', monthlyTotalsFromAdminView)
+    }
+  }, [monthlyTotalsFromAdminView])
+
+  // Gráfico anual (jan-dez) usando os mesmos totais da tela "Visualizar Vendas"
   const adminChartData = useMemo(() => {
     const year = Number(adminAnnual?.year || new Date().getFullYear())
-    const yearTotals = getYearTotals(adminVisibleSales, year)
+    const yearTotals = Array.isArray(monthlyTotalsFromAdminView) ? monthlyTotalsFromAdminView : []
 
     return yearTotals.map((item, index) => {
       const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`
@@ -735,7 +821,7 @@ export default function App() {
         count: Number(item.count || 0)
       }
     })
-  }, [adminVisibleSales, adminAnnual?.year]);
+  }, [monthlyTotalsFromAdminView, adminAnnual?.year]);
 
   const adminChartColors = useMemo(() => {
     const base = primaryColor || PRESET_COLORS[0].hex
@@ -989,7 +1075,7 @@ export default function App() {
           </div>
           <div className="admin-home-card admin-home-chart-full" style={{ background: darkMode ? '#111' : '#fff', color: darkMode ? '#fff' : '#222', borderRadius: 16 }}>
             <h3 style={{ textTransform: 'uppercase', fontWeight: 900 }}>{`VISÃO ANUAL (JAN A DEZ) - TODAS AS CONTAS (${adminAnnual.year || new Date().getFullYear()})`}</h3>
-            <YearSalesChartWithBoundary allUsersData={safeAdminSales} users={safeAdminUsers} darkMode={darkMode} year={adminAnnual.year || new Date().getFullYear()} />
+            <YearSalesChartWithBoundary monthlyTotals={monthlyTotalsFromAdminView} darkMode={darkMode} year={adminAnnual.year || new Date().getFullYear()} />
           </div>
 
         </div>
@@ -1216,6 +1302,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
