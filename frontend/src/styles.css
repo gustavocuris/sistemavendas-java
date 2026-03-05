@@ -2163,6 +2163,10 @@ body.dark-mode .admin-viewing-label {
   font-weight: 700;
 }
 
+body.dark-mode:not([data-theme="all-black"]) .list td {
+  border-bottom-color: rgba(var(--primary-light-rgb), 0.12);
+}
+
 .dark-mode .list tbody tr {
   background: #1a1a1a;
   transition: all 0.2s ease;
@@ -2176,6 +2180,10 @@ body.dark-mode .admin-viewing-label {
 
 .dark-mode .list tbody tr:nth-child(even) {
   background: rgba(var(--primary-color-rgb), 0.3);
+}
+
+body.dark-mode:not([data-theme="all-black"]) .list tbody tr:nth-child(even) {
+  background: rgba(var(--primary-color-rgb), 0.18);
 }
 
 .dark-mode .list tfoot {
@@ -4347,6 +4355,11 @@ body.dark-mode .admin-home-sales-top .list th {
   color: #ffffff;
   border-top-color: var(--primary-dark);
   border-bottom-color: var(--primary-dark);
+}
+
+body.dark-mode:not([data-theme="all-black"]) .admin-home-sales-top .list th {
+  border-top-color: rgba(var(--primary-light-rgb), 0.32);
+  border-bottom-color: rgba(var(--primary-light-rgb), 0.32);
 }
 
 .admin-home-sales-top .list h2 {
