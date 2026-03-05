@@ -156,7 +156,7 @@ export default function App() {
 
   // Admin polling functions as useCallback
   const loadAdminLatestSales = useCallback(async () => {
-    const url = `${API}/admin/sales/latest?limit=5`;
+    const url = `${API}/admin/sales/latest?limit=6`;
     const res = await axios.get(url);
     setAdminLatestSales(Array.isArray(res.data) ? res.data : []);
   }, []);
