@@ -9,7 +9,7 @@ import NotesPanel from './NotesPanel';
 import Login from './components/Login';
 import AdminPanel from './components/AdminPanel';
 import LoginManager from './components/LoginManager';
-import { YearSalesChartWithBoundary } from './components/YearSalesChart';
+import { YearSalesChartWithBoundary, getYearTotals } from './components/YearSalesChart';
 import { normalizeMojibakeText } from './utils/text';
 
 const SAFE_EMPTY_NEW_USER = { displayName: '', username: '', password: '' };
@@ -717,30 +717,19 @@ export default function App() {
 
   // Filtra venda TESTE do grÃ¡fico
   const adminChartData = useMemo(() => {
-    const year = adminAnnual.year || new Date().getFullYear();
-    const activeUserIds = new Set((adminUsers || []).filter((u) => u.active !== false).map((u) => u.id));
-    // Use exatamente os registros da tabela de Visualizar Vendas (adminSales filtrado)
-    const filteredSales = (adminSales || []).filter(
-      (sale) => activeUserIds.has(sale.userId)
-    );
-    const monthlyTotals = {};
-    filteredSales.forEach((sale) => {
-      const saleDate = new Date(sale.date || sale.created_at);
-      const saleYear = saleDate.getFullYear();
-      if (saleYear !== year) return;
-      const saleMonth = String(saleDate.getMonth() + 1).padStart(2, '0');
-      const monthKey = `${year}-${saleMonth}`;
-      monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(sale.total || 0);
-    });
-    return monthNames.map((label, index) => {
-      const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`;
+    const year = Number(adminAnnual?.year || new Date().getFullYear())
+    const yearTotals = getYearTotals(Array.isArray(adminSales) ? adminSales : [], year)
+
+    return yearTotals.map((item, index) => {
+      const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`
       return {
-        name: label.substring(0, 3),
+        name: item.month,
         month: monthKey,
-        total: monthlyTotals[monthKey] || 0
-      };
-    });
-  }, [adminSales, adminUsers, adminAnnual, monthNames]);
+        total: Number(item.total || 0),
+        count: Number(item.count || 0)
+      }
+    })
+  }, [adminSales, adminAnnual?.year]);
 
   const adminChartColors = useMemo(() => {
     const base = primaryColor || PRESET_COLORS[0].hex
@@ -1221,6 +1210,8 @@ export default function App() {
     </>
   );
 }
+
+
 
 
 
