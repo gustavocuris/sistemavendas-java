@@ -717,14 +717,10 @@ export default function App() {
   // Filtra venda TESTE do grÃ¡fico
   const adminChartData = useMemo(() => {
     const year = adminAnnual.year || new Date().getFullYear();
-    const activeUserIds = new Set((adminUsers || []).filter(u => u.active !== false && u.role !== 'admin').map(u => u.id));
+    const activeUserIds = new Set((adminUsers || []).filter((u) => u.active !== false).map((u) => u.id));
     // Use exatamente os registros da tabela de Visualizar Vendas (adminSales filtrado)
     const filteredSales = (adminSales || []).filter(
-      (sale) =>
-        String(sale.client || '').toUpperCase() !== 'TESTE' &&
-        String(sale.product || '').toUpperCase() !== 'AAAAA' &&
-        String(sale.userId || '') !== 'user-1771531117808' &&
-        activeUserIds.has(sale.userId)
+      (sale) => activeUserIds.has(sale.userId)
     );
     const monthlyTotals = {};
     filteredSales.forEach((sale) => {
@@ -1221,6 +1217,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
