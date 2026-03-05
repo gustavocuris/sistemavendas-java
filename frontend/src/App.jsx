@@ -1046,7 +1046,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="admin-home-card admin-home-chart-full" style={{ background: darkMode ? '#111' : '#fff', color: darkMode ? '#fff' : '#222', borderRadius: 16, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="admin-home-card admin-home-chart-full" style={{ background: darkMode ? '#111' : '#fff', color: darkMode ? '#fff' : '#222', border: darkMode ? '1px solid #232323' : 'none', borderRadius: 16, display: 'flex', flexDirection: 'column', gap: 6 }}>
             <h3 style={{ textTransform: 'uppercase', fontWeight: 900, margin: 0 }}>{`GR\u00C1FICO ANUAL DE VENDAS MENSAIS TOTAIS (${adminAnnual.year || new Date().getFullYear()})`}</h3>
             <p className="admin-home-total" style={{ textTransform: 'uppercase', fontWeight: 700, margin: 0 }}>VENDAS TOTAL: <strong>R$ {adminChartTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></p>
             <div className="admin-home-chart-wrap full-width" style={{ height: 360, width: '100%', margin: 0 }}>
