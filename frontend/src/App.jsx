@@ -9,6 +9,7 @@ import NotesPanel from './NotesPanel';
 import Login from './components/Login';
 import AdminPanel from './components/AdminPanel';
 import LoginManager from './components/LoginManager';
+import { YearSalesChartWithBoundary } from './components/YearSalesChart';
 import { normalizeMojibakeText } from './utils/text';
 
 const SAFE_EMPTY_NEW_USER = { displayName: '', username: '', password: '' };
@@ -991,10 +992,13 @@ export default function App() {
               */}
             </div>
           </div>
-
+          <div className="admin-home-card admin-home-chart-full" style={{ background: darkMode ? '#111' : '#fff', color: darkMode ? '#fff' : '#222', borderRadius: 16 }}>
+            <h3 style={{ textTransform: 'uppercase', fontWeight: 900 }}>{`VISÃO ANUAL (JAN A DEZ) - TODAS AS CONTAS (${adminAnnual.year || new Date().getFullYear()})`}</h3>
+            <YearSalesChartWithBoundary allUsersData={safeAdminSales} darkMode={darkMode} />
+          </div>
 
         </div>
-      ) : (
+      ) :(
         <>
           <div className="grid">
             <SaleForm
@@ -1217,6 +1221,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
