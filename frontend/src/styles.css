@@ -4338,6 +4338,13 @@ body.dark-mode .admin-total-label {
   font-size: 1.25em;
 }
 
+.admin-home-sales-top .list::after {
+  content: '';
+  display: block;
+  height: 6px;
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+}
+
 .admin-home-chart-full {
   grid-column: 1 / -1;
 }
