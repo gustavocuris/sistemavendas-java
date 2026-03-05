@@ -72,7 +72,7 @@ const buildBarColors = (baseColor, count, darkMode) => {
 
   return Array.from({ length: count }, (_, index) => {
     const position = index / (count - 1)
-    const delta = (position - 0.5) * 0.28
+    const delta = (position - 0.5) * 0.12
     if (delta >= 0) return mixHex(baseColor, '#ffffff', delta)
     const darkTarget = darkMode ? '#0b1220' : '#000000'
     return mixHex(baseColor, darkTarget, Math.abs(delta))
