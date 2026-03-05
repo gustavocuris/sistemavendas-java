@@ -994,7 +994,7 @@ export default function App() {
           </div>
           <div className="admin-home-card admin-home-chart-full" style={{ background: darkMode ? '#111' : '#fff', color: darkMode ? '#fff' : '#222', borderRadius: 16 }}>
             <h3 style={{ textTransform: 'uppercase', fontWeight: 900 }}>{`VISÃO ANUAL (JAN A DEZ) - TODAS AS CONTAS (${adminAnnual.year || new Date().getFullYear()})`}</h3>
-            <YearSalesChartWithBoundary allUsersData={safeAdminSales} darkMode={darkMode} />
+            <YearSalesChartWithBoundary allUsersData={safeAdminSales} darkMode={darkMode} year={adminAnnual.year || new Date().getFullYear()} />
           </div>
 
         </div>
@@ -1221,6 +1221,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 

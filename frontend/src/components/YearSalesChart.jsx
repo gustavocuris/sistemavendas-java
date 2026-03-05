@@ -10,6 +10,28 @@ const toNumber = (value) => {
   return Number.isFinite(parsed) ? parsed : 0
 }
 
+const yearMonthFromAny = (rawMonth, rawDate) => {
+  const monthText = String(rawMonth || '').trim()
+  if (monthText) {
+    const fromDash = monthText.match(/^(\d{4})-(\d{2})$/)
+    if (fromDash) {
+      const year = Number(fromDash[1])
+      const month = Number(fromDash[2])
+      if (Number.isFinite(year) && month >= 1 && month <= 12) {
+        return { year, monthIndex: month - 1 }
+      }
+    }
+  }
+
+  const dateValue = rawDate || null
+  const parsedDate = dateValue ? new Date(dateValue) : null
+  if (parsedDate instanceof Date && !Number.isNaN(parsedDate.getTime())) {
+    return { year: parsedDate.getFullYear(), monthIndex: parsedDate.getMonth() }
+  }
+
+  return { year: null, monthIndex: -1 }
+}
+
 const monthIndexFromAny = (rawMonth, rawDate) => {
   const monthText = String(rawMonth || '').trim()
   if (monthText) {
@@ -35,14 +57,15 @@ const monthIndexFromAny = (rawMonth, rawDate) => {
   return -1
 }
 
-const accumulateSale = (totals, saleLike) => {
-  const monthIndex = monthIndexFromAny(saleLike?.month, saleLike?.date || saleLike?.created_at)
+const accumulateSale = (totals, saleLike, targetYear) => {
+  const { year, monthIndex } = yearMonthFromAny(saleLike?.month, saleLike?.date || saleLike?.created_at)
+  if (Number.isFinite(targetYear) && year !== targetYear) return
   if (monthIndex < 0 || monthIndex > 11) return
   totals[monthIndex].total += toNumber(saleLike?.total)
   totals[monthIndex].count += 1
 }
 
-export function getYearTotals(allUsersData) {
+export function getYearTotals(allUsersData, targetYear) {
   const totals = createEmptyTotals()
 
   try {
@@ -53,20 +76,21 @@ export function getYearTotals(allUsersData) {
         if (!item) return
 
         if (Array.isArray(item?.sales)) {
-          item.sales.forEach((sale) => accumulateSale(totals, sale))
+          item.sales.forEach((sale) => accumulateSale(totals, sale, targetYear))
           return
         }
 
         if (item?.months && typeof item.months === 'object' && !Array.isArray(item.months)) {
           Object.entries(item.months).forEach(([monthKey, monthData]) => {
             const sales = Array.isArray(monthData?.sales) ? monthData.sales : []
-            sales.forEach((sale) => accumulateSale(totals, { ...sale, month: monthKey }))
+            sales.forEach((sale) => accumulateSale(totals, { ...sale, month: monthKey }, targetYear))
           })
           return
         }
 
         if (item?.month && Object.prototype.hasOwnProperty.call(item, 'total')) {
-          const monthIndex = monthIndexFromAny(item.month)
+          const { year, monthIndex } = yearMonthFromAny(item.month, null)
+          if (Number.isFinite(targetYear) && year !== targetYear) return
           if (monthIndex < 0 || monthIndex > 11) return
           totals[monthIndex].total += toNumber(item.total)
           totals[monthIndex].count += toNumber(item.count)
@@ -74,7 +98,7 @@ export function getYearTotals(allUsersData) {
         }
 
         if (Object.prototype.hasOwnProperty.call(item, 'total')) {
-          accumulateSale(totals, item)
+          accumulateSale(totals, item, targetYear)
         }
       })
 
@@ -88,7 +112,7 @@ export function getYearTotals(allUsersData) {
 
         Object.entries(months).forEach(([monthKey, monthData]) => {
           const sales = Array.isArray(monthData?.sales) ? monthData.sales : []
-          sales.forEach((sale) => accumulateSale(totals, { ...sale, month: monthKey }))
+          sales.forEach((sale) => accumulateSale(totals, { ...sale, month: monthKey }, targetYear))
         })
       })
     }
@@ -100,8 +124,9 @@ export function getYearTotals(allUsersData) {
   return totals
 }
 
-function YearSalesChart({ allUsersData, darkMode = false }) {
-  const totals = useMemo(() => getYearTotals(allUsersData), [allUsersData])
+function YearSalesChart({ allUsersData, darkMode = false, year }) {
+  const safeYear = Number.isFinite(Number(year)) ? Number(year) : new Date().getFullYear()
+  const totals = useMemo(() => getYearTotals(allUsersData, safeYear), [allUsersData, safeYear])
 
   const hasData = Array.isArray(totals)
     && totals.length === 12
