@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useMemo } from 'react'
+import React, { Component, useEffect, useMemo, useState } from 'react'
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts'
 import { getAllVisibleSales, getVisibleSalesForUser } from '../utils/visibleSales'
 
@@ -222,6 +222,26 @@ export function getYearTotals(allUsersData, targetYear, users) {
 
 function YearSalesChart({ allUsersData, darkMode = false, year, users, monthlyTotals, primaryColor }) {
   const safeYear = Number.isFinite(Number(year)) ? Number(year) : new Date().getFullYear()
+  const [activePrimaryColor, setActivePrimaryColor] = useState(() => resolveBaseColor(primaryColor, darkMode))
+
+  useEffect(() => {
+    setActivePrimaryColor(resolveBaseColor(primaryColor, darkMode))
+  }, [primaryColor, darkMode])
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof MutationObserver === 'undefined') return undefined
+
+    const refreshColor = () => {
+      setActivePrimaryColor(resolveBaseColor(primaryColor, darkMode))
+    }
+
+    const observer = new MutationObserver(refreshColor)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] })
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class', 'data-theme'] })
+
+    return () => observer.disconnect()
+  }, [primaryColor, darkMode])
+
   const totals = useMemo(() => {
     if (Array.isArray(monthlyTotals) && monthlyTotals.length > 0) {
       return monthlyTotals
@@ -230,9 +250,9 @@ function YearSalesChart({ allUsersData, darkMode = false, year, users, monthlyTo
   }, [monthlyTotals, allUsersData, safeYear, users])
 
   const barColors = useMemo(() => {
-    const baseColor = resolveBaseColor(primaryColor, darkMode)
+    const baseColor = resolveBaseColor(activePrimaryColor, darkMode)
     return buildBarColors(baseColor, Array.isArray(totals) ? totals.length : 0, darkMode)
-  }, [primaryColor, darkMode, totals])
+  }, [activePrimaryColor, darkMode, totals])
 
   useEffect(() => {
     logChartDebugDiffs(allUsersData, users, safeYear, totals)
