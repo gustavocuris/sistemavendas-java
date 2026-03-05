@@ -1,5 +1,6 @@
-import React, { Component, useMemo } from 'react'
+import React, { Component, useEffect, useMemo } from 'react'
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
+import { getVisibleSales } from '../utils/visibleSales'
 
 const MONTH_LABELS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
@@ -32,31 +33,6 @@ const yearMonthFromAny = (rawMonth, rawDate) => {
   return { year: null, monthIndex: -1 }
 }
 
-const monthIndexFromAny = (rawMonth, rawDate) => {
-  const monthText = String(rawMonth || '').trim()
-  if (monthText) {
-    const fromDash = monthText.match(/^\d{4}-(\d{2})$/)
-    if (fromDash) {
-      const monthNumber = Number(fromDash[1])
-      if (monthNumber >= 1 && monthNumber <= 12) return monthNumber - 1
-    }
-
-    const onlyMonth = monthText.match(/^(\d{2})$/)
-    if (onlyMonth) {
-      const monthNumber = Number(onlyMonth[1])
-      if (monthNumber >= 1 && monthNumber <= 12) return monthNumber - 1
-    }
-  }
-
-  const dateValue = rawDate || null
-  const parsedDate = dateValue ? new Date(dateValue) : null
-  if (parsedDate instanceof Date && !Number.isNaN(parsedDate.getTime())) {
-    return parsedDate.getMonth()
-  }
-
-  return -1
-}
-
 const accumulateSale = (totals, saleLike, targetYear) => {
   const { year, monthIndex } = yearMonthFromAny(saleLike?.month, saleLike?.date || saleLike?.created_at)
   if (Number.isFinite(targetYear) && year !== targetYear) return
@@ -65,68 +41,94 @@ const accumulateSale = (totals, saleLike, targetYear) => {
   totals[monthIndex].count += 1
 }
 
-export function getYearTotals(allUsersData, targetYear) {
+const buildMonthTotalsFromSales = (sales, targetYear) => {
   const totals = createEmptyTotals()
+  const safeSales = Array.isArray(sales) ? sales : []
+  safeSales.forEach((sale) => accumulateSale(totals, sale, targetYear))
+  return totals
+}
+
+const collectVisibleSales = (allUsersData) => {
+  if (!allUsersData) return []
+
+  if (Array.isArray(allUsersData)) {
+    if (allUsersData.length === 0) return []
+
+    const firstItem = allUsersData[0]
+    const looksLikeSalesArray = typeof firstItem === 'object' && firstItem !== null
+      && (Object.prototype.hasOwnProperty.call(firstItem, 'total')
+        || Object.prototype.hasOwnProperty.call(firstItem, 'date')
+        || Object.prototype.hasOwnProperty.call(firstItem, 'created_at')
+        || Object.prototype.hasOwnProperty.call(firstItem, 'month'))
+
+    if (looksLikeSalesArray) return getVisibleSales(allUsersData)
+
+    return allUsersData.flatMap((userData) => getVisibleSales(userData))
+  }
+
+  if (typeof allUsersData === 'object' && allUsersData.months && typeof allUsersData.months === 'object') {
+    return getVisibleSales(allUsersData)
+  }
+
+  if (typeof allUsersData === 'object') {
+    return Object.values(allUsersData).flatMap((userData) => getVisibleSales(userData))
+  }
+
+  return []
+}
+
+const monthDiffRows = (tableTotals, chartTotals) => {
+  return MONTH_LABELS.map((label, index) => {
+    const totalTabela = toNumber(tableTotals[index]?.total)
+    const totalGrafico = toNumber(chartTotals[index]?.total)
+    return {
+      month: label,
+      totalTabela,
+      totalGrafico,
+      diferenca: Number((totalTabela - totalGrafico).toFixed(2))
+    }
+  })
+}
+
+const logChartDebugDiffs = (allUsersData, targetYear, chartTotals) => {
+  if (!import.meta.env.DEV) return
 
   try {
-    if (!allUsersData) return totals
+    const visibleAllSales = collectVisibleSales(allUsersData)
+    const tableTotalsAll = buildMonthTotalsFromSales(visibleAllSales, targetYear)
+    const diffAll = monthDiffRows(tableTotalsAll, chartTotals)
+    console.table(diffAll.map((row) => ({ escopo: 'todos', ...row })))
 
-    if (Array.isArray(allUsersData)) {
-      allUsersData.forEach((item) => {
-        if (!item) return
+    const firstUserId = String(visibleAllSales.find((sale) => sale?.userId)?.userId || '')
+    if (!firstUserId) return
 
-        if (Array.isArray(item?.sales)) {
-          item.sales.forEach((sale) => accumulateSale(totals, sale, targetYear))
-          return
-        }
+    const oneUserSales = visibleAllSales.filter((sale) => String(sale?.userId || '') === firstUserId)
+    const tableTotalsOne = buildMonthTotalsFromSales(oneUserSales, targetYear)
+    const chartTotalsOne = buildMonthTotalsFromSales(oneUserSales, targetYear)
+    const diffOne = monthDiffRows(tableTotalsOne, chartTotalsOne)
+    console.table(diffOne.map((row) => ({ escopo: `usuario:${firstUserId}`, ...row })))
+  } catch (error) {
+    console.error('Erro no debug de conferência do gráfico:', error)
+  }
+}
 
-        if (item?.months && typeof item.months === 'object' && !Array.isArray(item.months)) {
-          Object.entries(item.months).forEach(([monthKey, monthData]) => {
-            const sales = Array.isArray(monthData?.sales) ? monthData.sales : []
-            sales.forEach((sale) => accumulateSale(totals, { ...sale, month: monthKey }, targetYear))
-          })
-          return
-        }
-
-        if (item?.month && Object.prototype.hasOwnProperty.call(item, 'total')) {
-          const { year, monthIndex } = yearMonthFromAny(item.month, null)
-          if (Number.isFinite(targetYear) && year !== targetYear) return
-          if (monthIndex < 0 || monthIndex > 11) return
-          totals[monthIndex].total += toNumber(item.total)
-          totals[monthIndex].count += toNumber(item.count)
-          return
-        }
-
-        if (Object.prototype.hasOwnProperty.call(item, 'total')) {
-          accumulateSale(totals, item, targetYear)
-        }
-      })
-
-      return totals
-    }
-
-    if (allUsersData && typeof allUsersData === 'object') {
-      Object.values(allUsersData).forEach((userData) => {
-        const months = userData?.months
-        if (!months || typeof months !== 'object') return
-
-        Object.entries(months).forEach(([monthKey, monthData]) => {
-          const sales = Array.isArray(monthData?.sales) ? monthData.sales : []
-          sales.forEach((sale) => accumulateSale(totals, { ...sale, month: monthKey }, targetYear))
-        })
-      })
-    }
+export function getYearTotals(allUsersData, targetYear) {
+  try {
+    const visibleSales = collectVisibleSales(allUsersData)
+    return buildMonthTotalsFromSales(visibleSales, targetYear)
   } catch (error) {
     console.error('Erro ao calcular totais anuais:', error)
     return createEmptyTotals()
   }
-
-  return totals
 }
 
 function YearSalesChart({ allUsersData, darkMode = false, year }) {
   const safeYear = Number.isFinite(Number(year)) ? Number(year) : new Date().getFullYear()
   const totals = useMemo(() => getYearTotals(allUsersData, safeYear), [allUsersData, safeYear])
+
+  useEffect(() => {
+    logChartDebugDiffs(allUsersData, safeYear, totals)
+  }, [allUsersData, safeYear, totals])
 
   const hasData = Array.isArray(totals)
     && totals.length === 12
