@@ -949,7 +949,7 @@ export default function App() {
                         <td>{normalizeMojibakeText(sale.userName || adminUsers.find((u) => u.id === sale.userId)?.displayName || adminUsers.find((u) => u.id === sale.userId)?.username || sale.userId || '-')}</td>
                         <td>{sale.date ? (typeof sale.date === 'string' && sale.date.includes('-') ? sale.date.split('-').reverse().join('/') : sale.date) : '-'}</td>
                         <td>{normalizeMojibakeText(sale.client) || '-'}</td>
-                        <td>{normalizeMojibakeText(sale.product) || '-'}</td>
+                        <td>{formatAdminProductService(sale)}</td>
                         <td>{sale.unit_price ? Number(sale.unit_price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
                         <td>{sale.quantity ? Number(sale.quantity).toLocaleString('pt-BR') : '-'}</td>
                         <td>{getTireTypeLabel(sale.tire_type)}</td>
