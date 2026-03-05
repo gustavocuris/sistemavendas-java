@@ -348,6 +348,13 @@ function YearSalesChart({ allUsersData, darkMode = false, year, users, monthlyTo
               if (name === 'total') return [`R$ ${toNumber(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 'Total']
               return [toNumber(value), 'Vendas']
             }}
+            contentStyle={{
+              backgroundColor: darkMode ? '#000000' : '#ffffff',
+              border: darkMode ? '1px solid #333333' : '1px solid #e2e8f0',
+              color: darkMode ? '#ffffff' : '#111827'
+            }}
+            labelStyle={{ color: darkMode ? '#ffffff' : '#111827' }}
+            itemStyle={{ color: darkMode ? '#ffffff' : '#111827' }}
             cursor={{ fill: darkMode ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)' }}
           />
           <Bar dataKey="total" name="total" fill={barColors[0]} radius={[6, 6, 0, 0]}>
