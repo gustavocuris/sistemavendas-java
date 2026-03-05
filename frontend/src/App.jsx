@@ -1050,7 +1050,7 @@ export default function App() {
             <h3 style={{ textTransform: 'uppercase', fontWeight: 900, margin: 0 }}>{`GR\u00C1FICO ANUAL DE VENDAS MENSAIS TOTAIS (${adminAnnual.year || new Date().getFullYear()})`}</h3>
             <p className="admin-home-total" style={{ textTransform: 'uppercase', fontWeight: 700, margin: 0 }}>VENDAS TOTAL: <strong>R$ {adminChartTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></p>
             <div className="admin-home-chart-wrap full-width" style={{ height: 360, width: '100%', margin: 0 }}>
-              <YearSalesChartWithBoundary monthlyTotals={monthlyTotalsFromAdminView} darkMode={darkMode} year={adminAnnual.year || new Date().getFullYear()} />
+              <YearSalesChartWithBoundary key={'admin-annual-' + primaryColor + '-' + (darkMode ? 'dark' : 'light') + '-' + (adminAnnual.year || new Date().getFullYear())} monthlyTotals={monthlyTotalsFromAdminView} darkMode={darkMode} primaryColor={primaryColor} year={adminAnnual.year || new Date().getFullYear()} />
             </div>
           </div>
 
