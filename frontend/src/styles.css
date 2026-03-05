@@ -4335,15 +4335,25 @@ body.dark-mode .admin-total-label {
 }
 
 .admin-home-sales-top .list th {
-  background: var(--primary-color);
-  color: #ffffff;
+  background: #ffffff;
+  color: var(--primary-color);
   border-bottom-color: var(--primary-dark);
+  border-right: 1px solid rgba(var(--primary-color-rgb), 0.35);
+}
+
+.admin-home-sales-top .list th:last-child {
+  border-right: none;
 }
 
 body.dark-mode .admin-home-sales-top .list th {
-  background: var(--primary-dark);
+  background: #111111;
   color: #ffffff;
   border-bottom-color: var(--primary-light);
+  border-right: 1px solid rgba(var(--primary-light-rgb), 0.35);
+}
+
+body.dark-mode .admin-home-sales-top .list th:last-child {
+  border-right: none;
 }
 
 .admin-home-sales-top .list h2 {
