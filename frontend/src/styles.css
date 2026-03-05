@@ -4334,6 +4334,18 @@ body.dark-mode .admin-total-label {
   text-transform: uppercase;
 }
 
+.admin-home-sales-top .list th {
+  background: var(--primary-color);
+  color: #ffffff;
+  border-bottom-color: var(--primary-dark);
+}
+
+body.dark-mode .admin-home-sales-top .list th {
+  background: var(--primary-dark);
+  color: #ffffff;
+  border-bottom-color: var(--primary-light);
+}
+
 .admin-home-sales-top .list h2 {
   font-size: 1.25em;
 }
