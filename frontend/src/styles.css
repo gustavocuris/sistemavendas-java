@@ -4334,6 +4334,10 @@ body.dark-mode .admin-total-label {
   text-transform: uppercase;
 }
 
+.admin-home-sales-top .list h2 {
+  font-size: 1.25em;
+}
+
 .admin-home-chart-full {
   grid-column: 1 / -1;
 }
