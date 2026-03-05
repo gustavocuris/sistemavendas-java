@@ -4363,7 +4363,7 @@ body.dark-mode .admin-home-sales-top .list th {
 }
 
 body.dark-mode:not([data-theme="all-black"]) .admin-home-sales-top .list th {
-  background: var(--primary-color) !important;
+  background: var(--primary-dark) !important;
   border-top: none !important;
   border-bottom: none !important;
 }
