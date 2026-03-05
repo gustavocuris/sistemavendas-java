@@ -685,7 +685,10 @@ export default function App() {
     }
   }, [isAuthenticated])
 
-  const applyColor = (colorHex) => setPrimaryColor(colorHex)
+  const applyColor = (colorHex) => {
+    applyColorTheme(colorHex)
+    setPrimaryColor(colorHex)
+  }
   const handleColorSelect = (colorHex) => applyColor(colorHex)
 
   if (!isAuthenticated) {

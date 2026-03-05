@@ -59,10 +59,10 @@ const readCssPrimaryColor = () => {
 }
 
 const resolveBaseColor = (primaryColor, darkMode) => {
-  const cssPrimary = readCssPrimaryColor()
-  if (cssPrimary) return cssPrimary
   const normalized = normalizeHex(primaryColor)
   if (normalized) return normalized
+  const cssPrimary = readCssPrimaryColor()
+  if (cssPrimary) return cssPrimary
   return darkMode ? '#4ade80' : '#1e7145'
 }
 
