@@ -128,8 +128,13 @@ const buildBarColors = (baseColor, count, darkMode) => {
   if (!baseRgb) return Array.from({ length: count }, () => baseColor)
 
   const { h, s, l } = rgbToHsl(baseRgb)
-  const minL = clamp((darkMode ? l - 0.12 : l + 0.06), 0.12, 0.92)
-  const maxL = clamp((darkMode ? l + 0.12 : l + 0.34), 0.30, 0.97)
+  const isRedOrPink = h <= 20 || h >= 315
+  const minL = clamp((darkMode
+    ? (isRedOrPink ? l - 0.24 : l - 0.12)
+    : l + 0.06), 0.12, 0.92)
+  const maxL = clamp((darkMode
+    ? (isRedOrPink ? l - 0.06 : l + 0.12)
+    : l + 0.34), 0.30, 0.97)
   const safeMaxL = Math.max(minL + 0.01, maxL)
 
   return Array.from({ length: count }, (_, index) => {

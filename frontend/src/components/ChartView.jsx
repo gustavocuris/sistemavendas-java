@@ -85,15 +85,17 @@ const hslToRgb = (h, s, l) => {
 }
 
 // Função melhorada para gerar tons de uma cor
-const generateColorTones = (baseColor, count = 12) => {
+const generateColorTones = (baseColor, count = 12, isDarkMode = false) => {
   const rgb = hexToRgb(baseColor)
   const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b)
   const colors = []
+  const isRedOrPink = hsl.h <= 0.055 || hsl.h >= 0.875
   
   // Gera tons com variação suave de luminosidade
   for (let i = 0; i < count; i++) {
-    // Varia a luminosidade em faixa curta para tons próximos
-    const lightness = 0.64 + (i / (count - 1)) * 0.22
+    const lightness = isDarkMode
+      ? (isRedOrPink ? 0.22 + (i / (count - 1)) * 0.18 : 0.32 + (i / (count - 1)) * 0.20)
+      : 0.64 + (i / (count - 1)) * 0.22
     const newRgb = hslToRgb(hsl.h, hsl.s, lightness)
     colors.push(rgbToHex(newRgb.r, newRgb.g, newRgb.b))
   }
@@ -236,7 +238,7 @@ const ChartView = ({ year, onClose, refreshKey, primaryColor, darkMode }) => {
   const maxAmount = Math.max(...chartData.map((d) => d.amount), 1)
   
   // Gera tons dinâmicos da cor principal escolhida
-  const colors = generateColorTones(primaryColor || '#1e7145', 12)
+  const colors = generateColorTones(primaryColor || '#1e7145', 12, isDarkMode)
   
   const gridStroke = isDarkMode ? '#444444' : '#e0e0e0'
   const axisColor = isDarkMode ? '#e0e0e0' : '#2d3748'
