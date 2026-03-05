@@ -11,6 +11,7 @@ import AdminPanel from './components/AdminPanel';
 import LoginManager from './components/LoginManager';
 import { YearSalesChartWithBoundary, getYearTotals } from './components/YearSalesChart';
 import { normalizeMojibakeText } from './utils/text';
+import { getAllVisibleSales } from './utils/visibleSales';
 
 const SAFE_EMPTY_NEW_USER = { displayName: '', username: '', password: '' };
 
@@ -715,10 +716,15 @@ export default function App() {
 
   const handleCommissionChange = (updatedCommissions) => setCommissions(updatedCommissions)
 
+  const adminVisibleSales = useMemo(
+    () => getAllVisibleSales({ users: adminUsers, sales: adminSales }),
+    [adminUsers, adminSales]
+  )
+
   // Filtra venda TESTE do grÃ¡fico
   const adminChartData = useMemo(() => {
     const year = Number(adminAnnual?.year || new Date().getFullYear())
-    const yearTotals = getYearTotals(Array.isArray(adminSales) ? adminSales : [], year)
+    const yearTotals = getYearTotals(adminVisibleSales, year)
 
     return yearTotals.map((item, index) => {
       const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`
@@ -729,7 +735,7 @@ export default function App() {
         count: Number(item.count || 0)
       }
     })
-  }, [adminSales, adminAnnual?.year]);
+  }, [adminVisibleSales, adminAnnual?.year]);
 
   const adminChartColors = useMemo(() => {
     const base = primaryColor || PRESET_COLORS[0].hex
@@ -983,7 +989,7 @@ export default function App() {
           </div>
           <div className="admin-home-card admin-home-chart-full" style={{ background: darkMode ? '#111' : '#fff', color: darkMode ? '#fff' : '#222', borderRadius: 16 }}>
             <h3 style={{ textTransform: 'uppercase', fontWeight: 900 }}>{`VISÃO ANUAL (JAN A DEZ) - TODAS AS CONTAS (${adminAnnual.year || new Date().getFullYear()})`}</h3>
-            <YearSalesChartWithBoundary allUsersData={safeAdminSales} darkMode={darkMode} year={adminAnnual.year || new Date().getFullYear()} />
+            <YearSalesChartWithBoundary allUsersData={safeAdminSales} users={safeAdminUsers} darkMode={darkMode} year={adminAnnual.year || new Date().getFullYear()} />
           </div>
 
         </div>
@@ -1210,6 +1216,8 @@ export default function App() {
     </>
   );
 }
+
+
 
 
 

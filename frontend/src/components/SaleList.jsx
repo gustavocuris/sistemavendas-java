@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { normalizeMojibakeText } from '../utils/text'
-import { getVisibleSales } from '../utils/visibleSales'
+import { getVisibleSalesForUser } from '../utils/visibleSales'
 
 const tireTypeLabel = { new: 'Novo', recap: 'Pneu Recapado', recapping: 'Recapagem', service: 'Sv Borracharia' }
 const desfechoLabel = { entrega: 'Entrega ao Cliente', piratininga: 'Coleta Piratininga', belavista: 'Coleta Bela Vista' }
@@ -47,7 +47,7 @@ const formatDateFull = (value) => {
 export default function SaleList({ sales, onEdit, onDelete, onCopy }){
   const [isAscending, setIsAscending] = useState(false)
 
-  const visibleSales = getVisibleSales(sales)
+  const visibleSales = getVisibleSalesForUser(sales)
   
   const sortedSales = [...visibleSales].sort((a, b) => {
     // Converte YYYY-MM-DD para timestamp para comparação

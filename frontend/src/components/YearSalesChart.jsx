@@ -1,6 +1,6 @@
 import React, { Component, useEffect, useMemo } from 'react'
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
-import { getVisibleSales } from '../utils/visibleSales'
+import { getAllVisibleSales, getVisibleSalesForUser } from '../utils/visibleSales'
 
 const MONTH_LABELS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
@@ -48,33 +48,18 @@ const buildMonthTotalsFromSales = (sales, targetYear) => {
   return totals
 }
 
-const collectVisibleSales = (allUsersData) => {
+const collectVisibleSales = (allUsersData, users) => {
   if (!allUsersData) return []
 
+  if (users && Array.isArray(users)) {
+    return getAllVisibleSales({ users, sales: allUsersData })
+  }
+
   if (Array.isArray(allUsersData)) {
-    if (allUsersData.length === 0) return []
-
-    const firstItem = allUsersData[0]
-    const looksLikeSalesArray = typeof firstItem === 'object' && firstItem !== null
-      && (Object.prototype.hasOwnProperty.call(firstItem, 'total')
-        || Object.prototype.hasOwnProperty.call(firstItem, 'date')
-        || Object.prototype.hasOwnProperty.call(firstItem, 'created_at')
-        || Object.prototype.hasOwnProperty.call(firstItem, 'month'))
-
-    if (looksLikeSalesArray) return getVisibleSales(allUsersData)
-
-    return allUsersData.flatMap((userData) => getVisibleSales(userData))
+    return getVisibleSalesForUser(allUsersData)
   }
 
-  if (typeof allUsersData === 'object' && allUsersData.months && typeof allUsersData.months === 'object') {
-    return getVisibleSales(allUsersData)
-  }
-
-  if (typeof allUsersData === 'object') {
-    return Object.values(allUsersData).flatMap((userData) => getVisibleSales(userData))
-  }
-
-  return []
+  return getAllVisibleSales(allUsersData)
 }
 
 const monthDiffRows = (tableTotals, chartTotals) => {
@@ -90,14 +75,44 @@ const monthDiffRows = (tableTotals, chartTotals) => {
   })
 }
 
-const logChartDebugDiffs = (allUsersData, targetYear, chartTotals) => {
+const buildMonthIdsFromSales = (sales, targetYear) => {
+  const idsByMonth = MONTH_LABELS.map(() => new Set())
+  const safeSales = Array.isArray(sales) ? sales : []
+
+  safeSales.forEach((sale) => {
+    const { year, monthIndex } = yearMonthFromAny(sale?.month, sale?.date || sale?.created_at)
+    if (Number.isFinite(targetYear) && year !== targetYear) return
+    if (monthIndex < 0 || monthIndex > 11) return
+
+    const saleId = String(sale?.id || '')
+    if (saleId) idsByMonth[monthIndex].add(saleId)
+  })
+
+  return idsByMonth
+}
+
+const logChartDebugDiffs = (allUsersData, users, targetYear, chartTotals) => {
   if (!import.meta.env.DEV) return
 
   try {
-    const visibleAllSales = collectVisibleSales(allUsersData)
+    const visibleAllSales = collectVisibleSales(allUsersData, users)
     const tableTotalsAll = buildMonthTotalsFromSales(visibleAllSales, targetYear)
     const diffAll = monthDiffRows(tableTotalsAll, chartTotals)
     console.table(diffAll.map((row) => ({ escopo: 'todos', ...row })))
+
+    const tableIdsByMonth = buildMonthIdsFromSales(visibleAllSales, targetYear)
+    const chartIdsByMonth = buildMonthIdsFromSales(visibleAllSales, targetYear)
+    diffAll.forEach((row, index) => {
+      if (row.diferenca === 0) return
+      const idsGraficoNaoTabela = [...chartIdsByMonth[index]].filter((id) => !tableIdsByMonth[index].has(id))
+      console.warn('[CHART_DIFF_ALL]', {
+        month: row.month,
+        totalTabela: row.totalTabela,
+        totalGrafico: row.totalGrafico,
+        diferenca: row.diferenca,
+        idsGraficoNaoTabela
+      })
+    })
 
     const firstUserId = String(visibleAllSales.find((sale) => sale?.userId)?.userId || '')
     if (!firstUserId) return
@@ -107,14 +122,29 @@ const logChartDebugDiffs = (allUsersData, targetYear, chartTotals) => {
     const chartTotalsOne = buildMonthTotalsFromSales(oneUserSales, targetYear)
     const diffOne = monthDiffRows(tableTotalsOne, chartTotalsOne)
     console.table(diffOne.map((row) => ({ escopo: `usuario:${firstUserId}`, ...row })))
+
+    const tableIdsByMonthOne = buildMonthIdsFromSales(oneUserSales, targetYear)
+    const chartIdsByMonthOne = buildMonthIdsFromSales(oneUserSales, targetYear)
+    diffOne.forEach((row, index) => {
+      if (row.diferenca === 0) return
+      const idsGraficoNaoTabela = [...chartIdsByMonthOne[index]].filter((id) => !tableIdsByMonthOne[index].has(id))
+      console.warn('[CHART_DIFF_USER]', {
+        userId: firstUserId,
+        month: row.month,
+        totalTabela: row.totalTabela,
+        totalGrafico: row.totalGrafico,
+        diferenca: row.diferenca,
+        idsGraficoNaoTabela
+      })
+    })
   } catch (error) {
     console.error('Erro no debug de conferência do gráfico:', error)
   }
 }
 
-export function getYearTotals(allUsersData, targetYear) {
+export function getYearTotals(allUsersData, targetYear, users) {
   try {
-    const visibleSales = collectVisibleSales(allUsersData)
+    const visibleSales = collectVisibleSales(allUsersData, users)
     return buildMonthTotalsFromSales(visibleSales, targetYear)
   } catch (error) {
     console.error('Erro ao calcular totais anuais:', error)
@@ -122,13 +152,13 @@ export function getYearTotals(allUsersData, targetYear) {
   }
 }
 
-function YearSalesChart({ allUsersData, darkMode = false, year }) {
+function YearSalesChart({ allUsersData, darkMode = false, year, users }) {
   const safeYear = Number.isFinite(Number(year)) ? Number(year) : new Date().getFullYear()
-  const totals = useMemo(() => getYearTotals(allUsersData, safeYear), [allUsersData, safeYear])
+  const totals = useMemo(() => getYearTotals(allUsersData, safeYear, users), [allUsersData, safeYear, users])
 
   useEffect(() => {
-    logChartDebugDiffs(allUsersData, safeYear, totals)
-  }, [allUsersData, safeYear, totals])
+    logChartDebugDiffs(allUsersData, users, safeYear, totals)
+  }, [allUsersData, users, safeYear, totals])
 
   const hasData = Array.isArray(totals)
     && totals.length === 12
