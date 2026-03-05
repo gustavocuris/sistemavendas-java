@@ -52,7 +52,15 @@ const mixHex = (baseHex, targetHex, amount) => {
   })
 }
 
+const readCssPrimaryColor = () => {
+  if (typeof window === 'undefined' || !window.getComputedStyle) return null
+  const cssValue = window.getComputedStyle(document.documentElement).getPropertyValue('--primary-color')
+  return normalizeHex(cssValue)
+}
+
 const resolveBaseColor = (primaryColor, darkMode) => {
+  const cssPrimary = readCssPrimaryColor()
+  if (cssPrimary) return cssPrimary
   const normalized = normalizeHex(primaryColor)
   if (normalized) return normalized
   return darkMode ? '#4ade80' : '#1e7145'
