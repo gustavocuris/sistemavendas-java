@@ -4343,7 +4343,7 @@ body.dark-mode .admin-total-label {
 }
 
 body.dark-mode .admin-home-sales-top .list th {
-  background: var(--primary-color);
+  background: var(--primary-dark);
   color: #ffffff;
   border-top-color: var(--primary-dark);
   border-bottom-color: var(--primary-dark);
