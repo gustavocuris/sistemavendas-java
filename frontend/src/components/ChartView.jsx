@@ -93,7 +93,7 @@ const generateColorTones = (baseColor, count = 12) => {
   // Gera tons com variação suave de luminosidade
   for (let i = 0; i < count; i++) {
     // Varia a luminosidade em faixa curta para tons próximos
-    const lightness = 0.46 + (i / (count - 1)) * 0.16
+    const lightness = 0.56 + (i / (count - 1)) * 0.20
     const newRgb = hslToRgb(hsl.h, hsl.s, lightness)
     colors.push(rgbToHex(newRgb.r, newRgb.g, newRgb.b))
   }
