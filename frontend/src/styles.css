@@ -4342,7 +4342,11 @@ body.dark-mode .admin-total-label {
   content: '';
   display: block;
   height: 6px;
-  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  background: #ffffff;
+}
+
+body.dark-mode .admin-home-sales-top .list::after {
+  background: #000000;
 }
 
 .admin-home-chart-full {
