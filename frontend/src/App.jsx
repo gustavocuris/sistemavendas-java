@@ -716,15 +716,21 @@ export default function App() {
 
   // Filtra venda TESTE do grÃ¡fico
   const adminChartData = useMemo(() => {
-    const year = Number(adminAnnual?.year || new Date().getFullYear());
-    const annualMonths = Array.isArray(adminAnnual?.months) ? adminAnnual.months : [];
-    const monthlyTotals = annualMonths.reduce((acc, item) => {
-      const monthKey = String(item?.month || '');
-      if (!monthKey) return acc;
-      acc[monthKey] = (acc[monthKey] || 0) + Number(item?.total || 0);
-      return acc;
-    }, {});
-
+    const year = adminAnnual.year || new Date().getFullYear();
+    const activeUserIds = new Set((adminUsers || []).filter((u) => u.active !== false).map((u) => u.id));
+    // Use exatamente os registros da tabela de Visualizar Vendas (adminSales filtrado)
+    const filteredSales = (adminSales || []).filter(
+      (sale) => activeUserIds.has(sale.userId)
+    );
+    const monthlyTotals = {};
+    filteredSales.forEach((sale) => {
+      const saleDate = new Date(sale.date || sale.created_at);
+      const saleYear = saleDate.getFullYear();
+      if (saleYear !== year) return;
+      const saleMonth = String(saleDate.getMonth() + 1).padStart(2, '0');
+      const monthKey = `${year}-${saleMonth}`;
+      monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(sale.total || 0);
+    });
     return monthNames.map((label, index) => {
       const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`;
       return {
@@ -733,7 +739,7 @@ export default function App() {
         total: monthlyTotals[monthKey] || 0
       };
     });
-  }, [adminAnnual, monthNames]);
+  }, [adminSales, adminUsers, adminAnnual, monthNames]);
 
   const adminChartColors = useMemo(() => {
     const base = primaryColor || PRESET_COLORS[0].hex
@@ -744,8 +750,6 @@ export default function App() {
     () => (adminChartData || []).reduce((sum, month) => sum + Number(month.total || 0), 0),
     [adminChartData]
   )
-
-  const formatCurrency = (value) => `R$ ${formatReal(Number(value || 0))}`
 
   // ProteÃ§Ã£o: garantir arrays/objetos vÃ¡lidos
   const safeAdminSales = Array.isArray(adminSales) ? adminSales : [];
@@ -962,8 +966,10 @@ export default function App() {
 
           <div className="admin-home-card admin-home-chart-full">
             <h3>{`GR\u00C1FICO ANUAL DE VENDAS MENSAIS TOTAIS (${adminAnnual.year || new Date().getFullYear()})`}</h3>
+            {/* Filtra venda TESTE do total geral */}
             <p className="admin-home-total">VENDAS TOTAL: <strong>R$ {formatReal(adminChartTotal)}</strong></p>
             <div className="admin-home-chart-wrap full-width">
+              {/*
               <ResponsiveContainer width="100%" height={360}>
                 <BarChart
                   data={adminChartData}
@@ -971,37 +977,18 @@ export default function App() {
                   barCategoryGap="2%"
                   barGap={0}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.12)'} vertical={false} />
-                  <XAxis
-                    dataKey="name"
-                    tick={{ fill: darkMode ? '#f3f4f6' : '#1f2937', fontSize: 12, fontWeight: 700 }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    tick={{ fill: darkMode ? '#d1d5db' : '#374151', fontSize: 11 }}
-                    axisLine={false}
-                    tickLine={false}
-                    tickFormatter={(value) => formatCurrency(value)}
-                    width={95}
-                  />
-                  <Tooltip
-                    formatter={(value) => formatCurrency(value)}
-                    labelFormatter={(label, payload) => payload?.[0]?.payload?.month || label}
-                    contentStyle={{
-                      borderRadius: 10,
-                      border: darkMode ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(0,0,0,0.12)',
-                      background: darkMode ? '#0f172a' : '#ffffff',
-                      color: darkMode ? '#f9fafb' : '#111827'
-                    }}
-                  />
-                  <Bar dataKey="total" radius={[8, 8, 0, 0]} barSize={45}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip formatter={(value) => `R$ ${formatReal(value)}`} labelFormatter={(label, payload) => payload?.[0]?.payload?.month || label} />
+                  <Bar dataKey="total" radius={[0, 0, 0, 0]} barSize={55}>
                     {adminChartData.map((entry, index) => (
                       <Cell key={`month-${entry.month}`} fill={adminChartColors[index % adminChartColors.length]} />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+              */}
             </div>
           </div>
 
@@ -1230,4 +1217,15 @@ export default function App() {
     </>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
 
