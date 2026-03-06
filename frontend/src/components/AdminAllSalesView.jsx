@@ -14,7 +14,7 @@ function formatDate(value) {
   if (typeof value === 'string') {
     const normalized = value.trim()
 
-    const isoMatch = normalized.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T)/)
+    const isoMatch = normalized.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T|\s)/)
     if (isoMatch) {
       return `${isoMatch[3]}/${isoMatch[2]}/${isoMatch[1]}`
     }
@@ -31,7 +31,7 @@ function formatDate(value) {
 }
 
 function resolveSeller(user, sale) {
-  return normalizeMojibakeText(sale?.userName || user?.displayName || user?.username || sale?.seller || '-')
+  return normalizeMojibakeText(user?.displayName || user?.username || sale?.userName || sale?.seller || '-')
 }
 
 function resolveAccountLabel(user) {
@@ -62,6 +62,7 @@ function resolveTotal(sale) {
 function buildAllVisibleSales(activeAccounts) {
   const users = Array.isArray(activeAccounts) ? activeAccounts : []
   const merged = []
+  const uniqueSales = new Set()
 
   users.forEach((user) => {
     if (!user || user.active === false || String(user.role || '').toLowerCase() === 'admin') return
@@ -79,12 +80,21 @@ function buildAllVisibleSales(activeAccounts) {
         sales.forEach((sale) => {
           if (!isSaleVisible(sale)) return
 
+          const accountKey = String(user?.id || user?.username || user?.displayName || '')
+          const dateValue = sale?.date || sale?.created_at || sale?.createdAt || ''
+          const uniqueKey = sale?.id
+            ? `${accountKey}::${String(sale.id)}`
+            : `${accountKey}::${String(dateValue)}::${String(sale?.client || '')}::${String(sale?.product || '')}::${String(sale?.quantity || '')}::${String(sale?.unit_price || sale?.unitPrice || '')}::${String(sale?.total || '')}`
+
+          if (uniqueSales.has(uniqueKey)) return
+          uniqueSales.add(uniqueKey)
+
           merged.push({
             ...sale,
             __sellerName: resolveSeller(user, sale),
-            __accountKey: String(user?.id || user?.username || user?.displayName || ''),
+            __accountKey: accountKey,
             __totalValue: resolveTotal(sale),
-            __dateValue: sale?.date || sale?.created_at || sale?.createdAt
+            __dateValue: dateValue
           })
         })
       })

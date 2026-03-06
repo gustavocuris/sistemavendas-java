@@ -2,7 +2,7 @@ function getSaleDate(value) {
   if (typeof value === 'string') {
     const normalized = value.trim()
 
-    const isoMatch = normalized.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T)/)
+    const isoMatch = normalized.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T|\s)/)
     if (isoMatch) {
       const year = Number(isoMatch[1])
       const month = Number(isoMatch[2])
