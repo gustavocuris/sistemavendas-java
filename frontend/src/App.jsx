@@ -1012,7 +1012,7 @@ export default function App() {
           <div className="admin-home-card admin-home-sales-top">
             <div className="list">
               <div className="list-header-with-sort">
-                <h2>ÚLTIMAS VENDAS FEITAS</h2>
+                <h2>{'\u00daLTIMAS VENDAS FEITAS'}</h2>
               </div>
               <div className="list-wrapper">
                 <table>
@@ -1021,7 +1021,7 @@ export default function App() {
                       <th>Conta</th>
                       <th>Data</th>
                       <th>Cliente</th>
-                      <th>PRODUTO/SERVIÇO</th>
+                      <th>{'VENDAS E SERVI\u00c7OS'}</th>
                       <th>Unit.</th>
                       <th>Qtd</th>
                       <th>Tipo de Venda</th>
