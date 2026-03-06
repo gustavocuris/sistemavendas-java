@@ -9,6 +9,7 @@ import NotesPanel from './NotesPanel';
 import Login from './components/Login';
 import AdminPanel from './components/AdminPanel';
 import LoginManager from './components/LoginManager';
+import AdminAllSalesView from './components/AdminAllSalesView';
 import { YearSalesChartWithBoundary } from './components/YearSalesChart';
 import { normalizeMojibakeText } from './utils/text';
 import { getMonthlyTotalsFromActiveAccounts } from './utils/adminMonthlyTotals';
@@ -108,6 +109,7 @@ export default function App() {
   const [selectedUserId, setSelectedUserId] = useState('');
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [showLoginManager, setShowLoginManager] = useState(false);
+  const [showAllSalesView, setShowAllSalesView] = useState(false);
   const [adminSearch, setAdminSearch] = useState('');
   const [adminSales, setAdminSales] = useState([]);
   const [adminSummary, setAdminSummary] = useState({ grandTotal: 0, users: [] });
@@ -1012,6 +1014,9 @@ export default function App() {
             <div className="list">
               <div className="list-header-with-sort">
                 <h2>{'\u00daLTIMAS VENDAS FEITAS'}</h2>
+                <button className="admin-view-all-btn" type="button" onClick={() => setShowAllSalesView(true)}>
+                  VER TUDO
+                </button>
               </div>
               <div className="list-wrapper">
                 <table>
@@ -1117,6 +1122,14 @@ export default function App() {
         />
       )}
 
+      {showAllSalesView && isAdmin && (
+        <AdminAllSalesView
+          isOpen={showAllSalesView}
+          onClose={() => setShowAllSalesView(false)}
+          activeAccounts={activeAccountsAdminView}
+          darkMode={darkMode}
+        />
+      )}
       {confirmState.open && (
         <div className="modal-overlay">
           <div className="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
@@ -1280,6 +1293,9 @@ export default function App() {
     </>
   );
 }
+
+
+
 
 
 
