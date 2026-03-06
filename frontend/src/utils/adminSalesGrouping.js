@@ -102,7 +102,7 @@ export function getAllSalesFromAllActiveAccounts(allAccounts) {
           const normalizedMonthKey = monthKey
 
           const uniqueKey = sale?.id != null
-            ? `${accountId}::${String(sale.id)}`
+            ? `${accountId}::${String(sourceYear)}-${String(monthKey)}::${String(sale.id)}`
             : `${accountId}::${String(yearKey)}-${String(monthKey)}::${String(sale?.client || '')}::${String(sale?.product || '')}::${String(sale?.quantity || '')}::${String(sale?.unit_price || sale?.unitPrice || '')}::${String(sale?.total || '')}`
 
           if (uniqueSales.has(uniqueKey)) return
