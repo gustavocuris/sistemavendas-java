@@ -108,6 +108,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
   const [selectedYear, setSelectedYear] = useState('')
   const [selectedMonth, setSelectedMonth] = useState('')
   const [selectedAccount, setSelectedAccount] = useState('all')
+  const [searchTerm, setSearchTerm] = useState('')
 
   const allSales = useMemo(() => buildAllVisibleSales(activeAccounts), [activeAccounts])
 
@@ -123,9 +124,43 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
   }, [activeAccounts])
 
   const filteredSales = useMemo(() => {
-    if (selectedAccount === 'all') return allSales
-    return allSales.filter((sale) => String(sale.__accountKey || '') === String(selectedAccount))
-  }, [allSales, selectedAccount])
+    const baseSales = selectedAccount === 'all'
+      ? allSales
+      : allSales.filter((sale) => String(sale.__accountKey || '') === String(selectedAccount))
+
+    const term = normalizeMojibakeText(searchTerm || '').toLowerCase().trim()
+    if (!term) return baseSales
+
+    return baseSales.filter((sale) => {
+      const searchableParts = [
+        sale?.client,
+        sale?.phone,
+        sale?.telefone,
+        sale?.whatsapp,
+        sale?.cell,
+        sale?.celular,
+        sale?.product,
+        sale?.tread_type,
+        sale?.treadType,
+        sale?.desfecho,
+        sale?.observation,
+        sale?.obs,
+        sale?.notes,
+        sale?.userName,
+        sale?.seller,
+        sale?.__sellerName,
+        sale?.__accountKey,
+        sale?.date,
+        sale?.created_at,
+        sale?.createdAt,
+        sale?.plate,
+        sale?.placa
+      ]
+
+      const haystack = normalizeMojibakeText(searchableParts.filter(Boolean).join(' ')).toLowerCase()
+      return haystack.includes(term)
+    })
+  }, [allSales, selectedAccount, searchTerm])
 
   const groupedData = useMemo(() => groupSalesByYearMonth(filteredSales), [filteredSales])
 
@@ -193,6 +228,10 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
     setSelectedAccount(event.target.value)
   }
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value)
+  }
+
   return (
     <div className="admin-all-sales-overlay">
       <div className={`admin-all-sales-modal ${darkMode ? 'dark-mode' : ''}`}>
@@ -233,6 +272,17 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                       <option key={account.value} value={account.value}>{account.label}</option>
                     ))}
                   </select>
+                </label>
+
+                <label className="admin-all-sales-filter-group admin-all-sales-search-group">
+                  <span>Buscar Venda</span>
+                  <input
+                    type="text"
+                    className="admin-all-sales-search-input"
+                    placeholder="NOME, TELEFONE, PRODUTO..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                  />
                 </label>
               </div>
 
