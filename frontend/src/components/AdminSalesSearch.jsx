@@ -134,6 +134,7 @@ export default function AdminSalesSearch({ activeAccounts }) {
   const [sellerId, setSellerId] = useState('all');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
   const [results, setResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -208,6 +209,7 @@ export default function AdminSalesSearch({ activeAccounts }) {
     setSellerId('all');
     setStartDate('');
     setEndDate('');
+    setShowFilters(false);
     setResults([]);
     setHasSearched(false);
   };
@@ -220,7 +222,7 @@ export default function AdminSalesSearch({ activeAccounts }) {
 
   return (
     <div className="admin-global-search">
-      <form className="admin-global-search-form" onSubmit={handleSearchSubmit}>
+      <div className="admin-global-search-form">
         <div className="admin-global-search-input-wrap">
           <span className="admin-global-search-icon" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -233,23 +235,39 @@ export default function AdminSalesSearch({ activeAccounts }) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={handleEnterSearch}
-            placeholder="Buscar cliente, produto, desfecho..."
+            placeholder="busca de cliente"
           />
         </div>
 
-        <select value={sellerId} onChange={(event) => setSellerId(event.target.value)} onKeyDown={handleEnterSearch}>
-          <option value="all">Todos</option>
-          {sellerOptions.map((seller) => (
-            <option key={seller.id} value={seller.id}>{seller.label}</option>
-          ))}
-        </select>
+        <button
+          type="button"
+          className={`admin-global-filter-btn${showFilters ? ' active' : ''}`}
+          onClick={() => setShowFilters((prev) => !prev)}
+          title="Abrir filtros"
+          aria-label="Abrir filtros"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polygon points="22 3 2 3 10 12 10 19 14 21 14 12 22 3" />
+          </svg>
+        </button>
+      </div>
 
-        <input type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} onKeyDown={handleEnterSearch} />
-        <input type="date" value={endDate} onChange={(event) => setEndDate(event.target.value)} onKeyDown={handleEnterSearch} />
+      {showFilters && (
+        <form className="admin-global-search-filters" onSubmit={handleSearchSubmit}>
+          <select value={sellerId} onChange={(event) => setSellerId(event.target.value)} onKeyDown={handleEnterSearch}>
+            <option value="all">Todos</option>
+            {sellerOptions.map((seller) => (
+              <option key={seller.id} value={seller.id}>{seller.label}</option>
+            ))}
+          </select>
 
-        <button type="submit" className="admin-global-search-primary">Pesquisar</button>
-        <button type="button" className="admin-global-search-secondary" onClick={handleClear}>Limpar</button>
-      </form>
+          <input type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} onKeyDown={handleEnterSearch} />
+          <input type="date" value={endDate} onChange={(event) => setEndDate(event.target.value)} onKeyDown={handleEnterSearch} />
+
+          <button type="submit" className="admin-global-search-primary">Pesquisar</button>
+          <button type="button" className="admin-global-search-secondary" onClick={handleClear}>Limpar</button>
+        </form>
+      )}
 
       {hasSearched && (
         <div className="admin-global-search-results">
