@@ -6139,43 +6139,44 @@ body.dark-mode .btn-eye-large:hover {
 .admin-all-sales-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 860px;
+  min-width: 980px;
   table-layout: fixed;
 }
 
 .admin-all-sales-col-date {
-  width: 112px;
+  width: 120px;
 }
 
 .admin-all-sales-col-seller {
-  width: 170px;
+  width: 180px;
 }
 
 .admin-all-sales-col-client {
-  width: 220px;
+  width: 200px;
 }
 
 .admin-all-sales-col-product {
-  width: auto;
+  width: 240px;
 }
 
 .admin-all-sales-col-outcome {
-  width: 148px;
+  width: 150px;
 }
 
 .admin-all-sales-col-value {
-  width: 130px;
+  width: 120px;
 }
 
 .admin-all-sales-table th,
 .admin-all-sales-table td {
-  padding: 10px 12px;
+  padding: 10px 10px;
   border-bottom: 1px solid #edf2f7;
   text-align: left;
   font-size: 0.88em;
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
+  text-transform: uppercase;
 }
 
 .admin-all-sales-table th:nth-child(1),
@@ -6194,6 +6195,11 @@ body.dark-mode .btn-eye-large:hover {
   white-space: normal;
   word-break: break-word;
   line-height: 1.35;
+}
+
+.admin-all-sales-month-head h4,
+.admin-all-sales-month-head span {
+  text-transform: uppercase;
 }
 
 .admin-all-sales-table th:nth-child(5),
