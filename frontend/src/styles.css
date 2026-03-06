@@ -149,21 +149,14 @@ h1 {
   margin-bottom: 0;
 }
 
-.admin-main-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  width: max-content;
-}
-
 .admin-header-search {
   position: absolute;
-  top: 0;
+  top: 50%;
+  transform: translateY(-50%);
   right: 0;
   display: flex;
   align-items: center;
-  width: 220px;
+  width: 300px;
   z-index: 4;
 }
 
@@ -200,14 +193,14 @@ h1 {
 }
 
 .admin-header-search .admin-global-search-input-wrap input {
-  min-height: 34px;
-  font-size: 0.82em;
+  min-height: 36px;
+  font-size: 0.86em;
   padding-left: 34px;
 }
 
 .admin-header-search .admin-global-filter-btn {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
 }
 
 .admin-global-search-form {
@@ -5561,30 +5554,7 @@ body.dark-mode .btn-eye-large:hover {
 
 @media (max-width: 1100px) {
   .admin-header-search {
-    width: 200px;
-  }
-
-  .header-title-group.is-admin {
-    width: min(100%, calc(100% - 160px));
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .header-title-group.is-admin h1 {
-    text-align: center;
-  }
-
-  .admin-global-search {
-    min-width: 100%;
-  }
-
-  .admin-global-search-form {
-    flex-wrap: wrap;
-  }
-
-  .admin-global-search-input-wrap {
-    min-width: 220px;
-    flex-basis: 100%;
+    width: 280px;
   }
 
   .admin-grid {
@@ -5611,14 +5581,9 @@ body.dark-mode .btn-eye-large:hover {
 }
 
 @media (max-width: 900px) {
-  .admin-main-title {
-    position: static;
-    transform: none;
-    width: auto;
-  }
-
   .admin-header-search {
     position: static;
+    transform: none;
     width: min(260px, 100%);
     margin: 8px auto 0;
   }
