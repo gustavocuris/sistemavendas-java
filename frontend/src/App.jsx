@@ -854,7 +854,7 @@ export default function App() {
       {(!safeAdminSales || !safeAdminUsers || !safeAdminAnnual) && (
         <div style={{color: 'red', padding: 20, fontWeight: 'bold'}}>Erro crÃ­tico: Dados essenciais nÃ£o carregados. Tente recarregar a pÃ¡gina ou contate o suporte.</div>
       )}
-      <div className="header-top">
+      <div className={`header-top${isAdmin ? ' admin-header-top' : ''}`}>
         <div className="theme-controls">
           <button className="btn-theme" onClick={() => setDarkMode(!darkMode)} title="Alternar tema">
             {darkMode ? (
@@ -1287,6 +1287,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 

@@ -145,6 +145,10 @@ h1 {
   position: relative;
 }
 
+.admin-header-top {
+  padding-top: 16px;
+}
+
 .header-top h1 {
   margin-bottom: 0;
 }
