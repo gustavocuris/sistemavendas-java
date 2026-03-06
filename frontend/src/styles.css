@@ -170,8 +170,9 @@ h1 {
   right: 20px;
   display: flex;
   align-items: center;
-  width: 220px;
-  max-width: 220px;
+  justify-content: flex-end;
+  width: 280px;
+  max-width: 280px;
   z-index: 4;
 }
 
@@ -208,18 +209,21 @@ h1 {
 }
 
 .admin-header-search .admin-global-search-input-wrap input {
-  min-height: 32px;
+  min-height: 36px;
+  height: 36px;
   font-size: 0.8em;
   padding-left: 34px;
 }
 
 .admin-header-search .admin-global-filter-btn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
 }
 
 .admin-header-search .admin-global-search-form {
   gap: 6px;
+  align-items: center;
 }
 
 .admin-global-search-form {
@@ -5573,8 +5577,8 @@ body.dark-mode .btn-eye-large:hover {
 
 @media (max-width: 1100px) {
   .admin-header-search {
-    width: 220px;
-    max-width: 220px;
+    width: 260px;
+    max-width: 260px;
     right: 12px;
   }
 
