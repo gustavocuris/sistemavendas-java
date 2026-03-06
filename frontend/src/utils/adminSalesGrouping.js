@@ -7,9 +7,49 @@ function toMiddayDate(date) {
 }
 
 function parseMonthKey(monthKey) {
-  const parsed = Number(String(monthKey || '').trim())
-  if (!Number.isFinite(parsed) || parsed < 1 || parsed > 12) return null
-  return parsed
+  const raw = String(monthKey || '').trim().toLowerCase()
+  if (!raw) return null
+
+  const numeric = Number(raw)
+  if (Number.isFinite(numeric) && numeric >= 1 && numeric <= 12) {
+    return numeric
+  }
+
+  const monthMap = {
+    jan: 1,
+    janeiro: 1,
+    fev: 2,
+    fevereiro: 2,
+    mar: 3,
+    marco: 3,
+    março: 3,
+    apr: 4,
+    abr: 4,
+    abril: 4,
+    may: 5,
+    mai: 5,
+    maio: 5,
+    jun: 6,
+    junho: 6,
+    jul: 7,
+    julho: 7,
+    aug: 8,
+    ago: 8,
+    agosto: 8,
+    sep: 9,
+    set: 9,
+    setembro: 9,
+    oct: 10,
+    out: 10,
+    outubro: 10,
+    nov: 11,
+    novembro: 11,
+    dec: 12,
+    dez: 12,
+    dezembro: 12
+  }
+
+  return monthMap[raw] || null
 }
 
 function resolveStoreName(account, sale) {
@@ -85,25 +125,37 @@ export function getAllSalesFromAllActiveAccounts(allAccounts) {
       if (!monthsMap || typeof monthsMap !== 'object') return
 
       Object.entries(monthsMap).forEach(([monthKeyRaw, monthData]) => {
-        const monthKey = String(monthKeyRaw || '').padStart(2, '0')
+        const sourceMonthKey = String(monthKeyRaw || '').trim()
         const sales = Array.isArray(monthData?.sales) ? monthData.sales : []
         const sourceYear = Number(String(yearKey || '').trim())
-        const sourceMonthIndex = parseMonthKey(monthKey)
+        const sourceMonthIndex = parseMonthKey(sourceMonthKey)
         if (!Number.isFinite(sourceYear) || sourceYear <= 0 || !sourceMonthIndex) return
 
         sales.forEach((sale) => {
           if (!isSaleVisible(sale)) return
 
-          const normalizedDate = normalizeSaleDate(sale, monthKey, yearKey)
+          const normalizedDate = normalizeSaleDate(sale, sourceMonthIndex, sourceYear)
           if (!normalizedDate) return
 
-          const year = normalizedDate.getFullYear()
-          const monthIndex = normalizedDate.getMonth() + 1
-          const normalizedMonthKey = String(monthIndex).padStart(2, '0')
+          const normalizedYear = normalizedDate.getFullYear()
+          const normalizedMonth = normalizedDate.getMonth() + 1
+          const monthKeyNormalized = String(sourceMonthIndex).padStart(2, '0')
+
+          if (import.meta.env.DEV && (normalizedYear !== sourceYear || normalizedMonth !== sourceMonthIndex)) {
+            console.warn('MONTH MISMATCH', {
+              saleId: sale?.id,
+              rawDate: sale?.date || sale?.created_at || sale?.createdAt,
+              normalizedDate,
+              normalizedMonth,
+              sourceYear,
+              sourceMonthKey,
+              sourceMonthIndex
+            })
+          }
 
           const uniqueKey = sale?.id != null
-            ? `${accountId}::${String(sourceYear)}-${String(monthKey)}::${String(sale.id)}`
-            : `${accountId}::${String(yearKey)}-${String(monthKey)}::${String(sale?.client || '')}::${String(sale?.product || '')}::${String(sale?.quantity || '')}::${String(sale?.unit_price || sale?.unitPrice || '')}::${String(sale?.total || '')}`
+            ? `${accountId}::${String(sourceYear)}-${monthKeyNormalized}::${String(sale.id)}`
+            : `${accountId}::${String(sourceYear)}-${monthKeyNormalized}::${String(sale?.client || '')}::${String(sale?.product || '')}::${String(sale?.quantity || '')}::${String(sale?.unit_price || sale?.unitPrice || '')}::${String(sale?.total || '')}`
 
           if (uniqueSales.has(uniqueKey)) return
           uniqueSales.add(uniqueKey)
@@ -114,15 +166,18 @@ export function getAllSalesFromAllActiveAccounts(allAccounts) {
             accountName: sellerName,
             sellerName,
             storeName: resolveStoreName(account, sale),
-            year,
-            monthKey: normalizedMonthKey,
-            monthIndex,
+            sourceYear,
+            sourceMonthKey,
+            sourceMonthIndex,
+            year: sourceYear,
+            monthKey: monthKeyNormalized,
+            monthIndex: sourceMonthIndex,
             normalizedDate,
             __accountKey: accountId,
             __sellerName: sellerName,
             __storeName: resolveStoreName(account, sale),
             __sourceYear: String(sourceYear),
-            __sourceMonth: String(monthKey),
+            __sourceMonth: monthKeyNormalized,
             __dateValue: normalizedDate
           })
         })
@@ -145,22 +200,19 @@ function resolveSaleTotal(sale) {
   return Number.isFinite(calculated) ? calculated : 0
 }
 
-export function groupSalesByYearMonth(allSales) {
+export function groupSalesBySourceYearMonth(allSales) {
   const sales = Array.isArray(allSales) ? allSales : []
   const grouped = {}
 
   sales.forEach((sale) => {
-    const sourceYear = Number(sale?.year || sale?.__sourceYear)
-    const sourceMonth = parseMonthKey(sale?.monthIndex || sale?.monthKey || sale?.__sourceMonth)
+    const sourceYear = Number(sale?.sourceYear || sale?.year || sale?.__sourceYear)
+    const sourceMonth = parseMonthKey(sale?.sourceMonthIndex || sale?.monthIndex || sale?.sourceMonthKey || sale?.monthKey || sale?.__sourceMonth)
     const date = normalizeSaleDate(sale, sourceMonth, sourceYear)
-    if (!date) return
+    if (!date || !sourceYear || !sourceMonth) return
 
-    const resolvedYear = date.getFullYear()
-    const resolvedMonth = date.getMonth() + 1
-
-    const year = String(resolvedYear)
-    const monthKey = String(resolvedMonth).padStart(2, '0')
-    const monthName = new Date(resolvedYear, resolvedMonth - 1, 1, 12, 0, 0).toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
+    const year = String(sourceYear)
+    const monthKey = String(sourceMonth).padStart(2, '0')
+    const monthName = new Date(sourceYear, sourceMonth - 1, 1, 12, 0, 0).toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
     const total = resolveSaleTotal(sale)
 
     if (!grouped[year]) {
@@ -205,3 +257,5 @@ export function groupSalesByYearMonth(allSales) {
         }))
     }))
 }
+
+export const groupSalesByYearMonth = groupSalesBySourceYearMonth

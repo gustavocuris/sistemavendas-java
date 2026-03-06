@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { normalizeMojibakeText } from '../utils/text'
 import { isSaleVisible } from '../utils/visibleSales'
-import { getAllSalesFromAllActiveAccounts, groupSalesByYearMonth } from '../utils/adminSalesGrouping'
+import { getAllSalesFromAllActiveAccounts, groupSalesBySourceYearMonth } from '../utils/adminSalesGrouping'
 
 function formatMoney(value) {
   return Number(value || 0).toLocaleString('pt-BR', {
@@ -136,16 +136,16 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
     })
   }, [allSales, isAllAccountsSelected, selectedAccount, searchTerm])
 
-  const groupedData = useMemo(() => groupSalesByYearMonth(filteredSales), [filteredSales])
+  const groupedData = useMemo(() => groupSalesBySourceYearMonth(filteredSales), [filteredSales])
 
   useEffect(() => {
     if (!import.meta.env.DEV) return
 
-    const marchSales = allSales.filter((sale) => Number(sale?.year) === 2026 && (String(sale?.monthKey) === '03' || Number(sale?.monthIndex) === 3))
-    const march2026Filtered = filteredSales.filter((sale) => Number(sale?.year) === 2026 && Number(sale?.monthIndex) === 2)
+    const marchSales = allSales.filter((sale) => Number(sale?.sourceYear) === 2026 && Number(sale?.sourceMonthIndex) === 3)
+    const march2026Filtered = filteredSales.filter((sale) => Number(sale?.sourceYear) === 2026 && Number(sale?.sourceMonthIndex) === 3)
     const march2026ByAccount = Object.entries(
       filteredSales
-        .filter((sale) => Number(sale?.year) === 2026 && Number(sale?.monthIndex) === 2)
+        .filter((sale) => Number(sale?.sourceYear) === 2026 && Number(sale?.sourceMonthIndex) === 3)
         .reduce((acc, sale) => {
           const key = sale?.accountName || sale?.storeName || sale?.accountId || 'SEM_CONTA'
           acc[key] = (acc[key] || 0) + 1
@@ -181,6 +181,8 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
     console.log('ALL CONSOLIDATED SALES COUNT', allSales.length)
     console.log('MARCH 2026 SALES', marchSales)
     console.log('MARCH BY ACCOUNT', marchByAccount)
+    console.log('APRIL 2026 SALES', allSales.filter((sale) => Number(sale?.sourceYear) === 2026 && Number(sale?.sourceMonthIndex) === 4))
+    console.log('MONTH TOTALS BY SOURCE', groupedData)
 
     console.log('ADMIN ALL SALES DEBUG', {
       selectedYear,
@@ -189,7 +191,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
       filteredSalesFound: filteredSales.length,
       marchSales
     })
-  }, [activeAccounts, allSales, filteredSales, selectedAccount, selectedYear, selectedMonth])
+  }, [activeAccounts, allSales, filteredSales, groupedData, selectedAccount, selectedYear, selectedMonth])
 
   const availableYears = useMemo(() => groupedData.map((yearGroup) => String(yearGroup.year)), [groupedData])
 
