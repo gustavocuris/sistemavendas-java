@@ -955,7 +955,7 @@ export default function App() {
         </div>
 
         <div className={`header-title-group${isAdmin ? ' is-admin' : ''}`}>
-          <h1>{isAdmin ? '\u00C1REA ADMINISTRADOR' : 'Tabela de Vendas'}</h1>
+          <h1 className={isAdmin ? 'admin-main-title' : ''}>{isAdmin ? '\u00C1REA ADMINISTRADOR' : 'Tabela de Vendas'}</h1>
           {isAdmin && <AdminSalesSearch activeAccounts={activeAccountsAdminView} />}
         </div>
 
@@ -1285,6 +1285,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
