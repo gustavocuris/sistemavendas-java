@@ -34,6 +34,10 @@ function resolveSeller(user, sale) {
   return normalizeMojibakeText(sale?.userName || user?.displayName || user?.username || sale?.seller || '-')
 }
 
+function resolveAccountLabel(user) {
+  return normalizeMojibakeText(user?.displayName || user?.username || '-')
+}
+
 function resolveProductMeasure(sale) {
   const product = normalizeMojibakeText(sale?.product || '-')
   const tread = normalizeMojibakeText(sale?.tread_type || sale?.treadType || '').toUpperCase().trim()
@@ -78,6 +82,7 @@ function buildAllVisibleSales(activeAccounts) {
           merged.push({
             ...sale,
             __sellerName: resolveSeller(user, sale),
+            __accountKey: String(user?.id || user?.username || user?.displayName || ''),
             __totalValue: resolveTotal(sale),
             __dateValue: sale?.date || sale?.created_at || sale?.createdAt
           })
@@ -92,10 +97,27 @@ function buildAllVisibleSales(activeAccounts) {
 export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, darkMode }) {
   const [selectedYear, setSelectedYear] = useState('')
   const [selectedMonth, setSelectedMonth] = useState('')
+  const [selectedAccount, setSelectedAccount] = useState('all')
 
   const allSales = useMemo(() => buildAllVisibleSales(activeAccounts), [activeAccounts])
 
-  const groupedData = useMemo(() => groupSalesByYearMonth(allSales), [allSales])
+  const accountOptions = useMemo(() => {
+    const users = Array.isArray(activeAccounts) ? activeAccounts : []
+    return users
+      .filter((user) => user && user.active !== false && String(user.role || '').toLowerCase() !== 'admin')
+      .map((user) => ({
+        value: String(user.id || user.username || user.displayName || ''),
+        label: resolveAccountLabel(user)
+      }))
+      .filter((item) => item.value)
+  }, [activeAccounts])
+
+  const filteredSales = useMemo(() => {
+    if (selectedAccount === 'all') return allSales
+    return allSales.filter((sale) => String(sale.__accountKey || '') === String(selectedAccount))
+  }, [allSales, selectedAccount])
+
+  const groupedData = useMemo(() => groupSalesByYearMonth(filteredSales), [filteredSales])
 
   const availableYears = useMemo(() => groupedData.map((yearGroup) => String(yearGroup.year)), [groupedData])
 
@@ -139,6 +161,14 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
     }
   }, [monthsForSelectedYear, selectedMonth])
 
+  useEffect(() => {
+    if (selectedAccount === 'all') return
+    const exists = accountOptions.some((item) => String(item.value) === String(selectedAccount))
+    if (!exists) {
+      setSelectedAccount('all')
+    }
+  }, [accountOptions, selectedAccount])
+
   if (!isOpen) return null
 
   const handleYearChange = (event) => {
@@ -147,6 +177,10 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
 
   const handleMonthChange = (event) => {
     setSelectedMonth(event.target.value)
+  }
+
+  const handleAccountChange = (event) => {
+    setSelectedAccount(event.target.value)
   }
 
   return (
@@ -177,6 +211,16 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                   <select value={selectedMonth} onChange={handleMonthChange}>
                     {monthsForSelectedYear.map((month) => (
                       <option key={month.key} value={month.key}>{month.monthName}</option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="admin-all-sales-filter-group">
+                  <span>Conta/Vendedor</span>
+                  <select value={selectedAccount} onChange={handleAccountChange}>
+                    <option value="all">TODAS</option>
+                    {accountOptions.map((account) => (
+                      <option key={account.value} value={account.value}>{account.label}</option>
                     ))}
                   </select>
                 </label>
