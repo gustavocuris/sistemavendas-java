@@ -50,6 +50,14 @@ function resolveDesfecho(sale) {
   return value ? value.toUpperCase() : '-'
 }
 
+function resolvePhone(sale) {
+  const phone = normalizeMojibakeText(
+    sale?.phone || sale?.telefone || sale?.whatsapp || sale?.cell || sale?.celular || ''
+  ).trim()
+
+  return phone || '-'
+}
+
 function resolveTotal(sale) {
   const explicit = Number(sale?.total || 0)
   if (explicit > 0) return explicit
@@ -307,6 +315,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                         <col className="admin-all-sales-col-date" />
                         <col className="admin-all-sales-col-seller" />
                         <col className="admin-all-sales-col-client" />
+                        <col className="admin-all-sales-col-phone" />
                         <col className="admin-all-sales-col-product" />
                         <col className="admin-all-sales-col-outcome" />
                         <col className="admin-all-sales-col-value" />
@@ -316,6 +325,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                           <th>Data</th>
                           <th>Vendedor</th>
                           <th>Cliente</th>
+                          <th>Telefone</th>
                           <th>Produto/Medida</th>
                           <th>Desfecho</th>
                           <th>Valor</th>
@@ -327,6 +337,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                             <td>{formatDate(sale.__dateValue)}</td>
                             <td>{sale.__sellerName || '-'}</td>
                             <td>{normalizeMojibakeText(sale?.client) || '-'}</td>
+                            <td>{resolvePhone(sale)}</td>
                             <td>{resolveProductMeasure(sale)}</td>
                             <td>{resolveDesfecho(sale)}</td>
                             <td>R$ {formatMoney(sale.__totalValue)}</td>

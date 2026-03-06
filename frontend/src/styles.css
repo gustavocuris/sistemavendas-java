@@ -6166,7 +6166,7 @@ body.dark-mode .btn-eye-large:hover {
 .admin-all-sales-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 980px;
+  min-width: 1120px;
   table-layout: fixed;
 }
 
@@ -6182,8 +6182,12 @@ body.dark-mode .btn-eye-large:hover {
   width: 200px;
 }
 
+.admin-all-sales-col-phone {
+  width: 150px;
+}
+
 .admin-all-sales-col-product {
-  width: 240px;
+  width: 220px;
 }
 
 .admin-all-sales-col-outcome {
@@ -6208,17 +6212,19 @@ body.dark-mode .btn-eye-large:hover {
 
 .admin-all-sales-table th:nth-child(1),
 .admin-all-sales-table th:nth-child(2),
-.admin-all-sales-table th:nth-child(5),
+.admin-all-sales-table th:nth-child(4),
 .admin-all-sales-table th:nth-child(6),
+.admin-all-sales-table th:nth-child(7),
 .admin-all-sales-table td:nth-child(1),
 .admin-all-sales-table td:nth-child(2),
-.admin-all-sales-table td:nth-child(5),
-.admin-all-sales-table td:nth-child(6) {
+.admin-all-sales-table td:nth-child(4),
+.admin-all-sales-table td:nth-child(6),
+.admin-all-sales-table td:nth-child(7) {
   white-space: nowrap;
 }
 
 .admin-all-sales-table td:nth-child(3),
-.admin-all-sales-table td:nth-child(4) {
+.admin-all-sales-table td:nth-child(5) {
   white-space: normal;
   word-break: break-word;
   line-height: 1.35;
@@ -6229,13 +6235,13 @@ body.dark-mode .btn-eye-large:hover {
   text-transform: uppercase;
 }
 
-.admin-all-sales-table th:nth-child(5),
-.admin-all-sales-table td:nth-child(5) {
+.admin-all-sales-table th:nth-child(6),
+.admin-all-sales-table td:nth-child(6) {
   text-align: center;
 }
 
-.admin-all-sales-table th:nth-child(6),
-.admin-all-sales-table td:nth-child(6) {
+.admin-all-sales-table th:nth-child(7),
+.admin-all-sales-table td:nth-child(7) {
   text-align: right;
 }
 
