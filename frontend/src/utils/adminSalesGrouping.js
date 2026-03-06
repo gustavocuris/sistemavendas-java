@@ -1,4 +1,24 @@
 function getSaleDate(value) {
+  if (typeof value === 'string') {
+    const normalized = value.trim()
+
+    const isoMatch = normalized.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T)/)
+    if (isoMatch) {
+      const year = Number(isoMatch[1])
+      const month = Number(isoMatch[2])
+      const day = Number(isoMatch[3])
+      return new Date(year, month - 1, day, 12, 0, 0)
+    }
+
+    const brMatch = normalized.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+    if (brMatch) {
+      const day = Number(brMatch[1])
+      const month = Number(brMatch[2])
+      const year = Number(brMatch[3])
+      return new Date(year, month - 1, day, 12, 0, 0)
+    }
+  }
+
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return null
   return date

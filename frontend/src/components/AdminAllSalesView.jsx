@@ -11,6 +11,20 @@ function formatMoney(value) {
 }
 
 function formatDate(value) {
+  if (typeof value === 'string') {
+    const normalized = value.trim()
+
+    const isoMatch = normalized.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T)/)
+    if (isoMatch) {
+      return `${isoMatch[3]}/${isoMatch[2]}/${isoMatch[1]}`
+    }
+
+    const brMatch = normalized.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+    if (brMatch) {
+      return normalized
+    }
+  }
+
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return '-'
   return date.toLocaleDateString('pt-BR')
