@@ -130,6 +130,8 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
   }, [allSales, selectedAccount])
 
   const filteredSales = useMemo(() => {
+    if (selectedAccount === 'all') return allSales
+
     const term = normalizeMojibakeText(searchTerm || '').toLowerCase().trim()
     if (!term) return accountFilteredSales
 
@@ -162,7 +164,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
       const haystack = normalizeMojibakeText(searchableParts.filter(Boolean).join(' ')).toLowerCase()
       return haystack.includes(term)
     })
-  }, [accountFilteredSales, searchTerm])
+  }, [allSales, accountFilteredSales, searchTerm, selectedAccount])
 
   const groupedData = useMemo(() => groupSalesByYearMonth(filteredSales), [filteredSales])
 
