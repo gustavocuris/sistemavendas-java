@@ -72,7 +72,7 @@ function buildAllVisibleSales(activeAccounts, fallbackSales = []) {
   const uniqueSales = new Set()
 
   const activeUserMeta = users
-    .filter((user) => user && user.active !== false && String(user.role || '').toLowerCase() !== 'admin')
+    .filter((user) => user && String(user.role || '').toLowerCase() !== 'admin')
     .map((user) => ({
       accountKey: String(user?.id || user?.username || user?.displayName || ''),
       id: String(user?.id || ''),
@@ -82,7 +82,7 @@ function buildAllVisibleSales(activeAccounts, fallbackSales = []) {
     }))
 
   users.forEach((user) => {
-    if (!user || user.active === false || String(user.role || '').toLowerCase() === 'admin') return
+    if (!user || String(user.role || '').toLowerCase() === 'admin') return
 
     const yearsMap = user?.salesByYearMonth && typeof user.salesByYearMonth === 'object'
       ? user.salesByYearMonth
@@ -170,7 +170,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
   const accountOptions = useMemo(() => {
     const users = Array.isArray(activeAccounts) ? activeAccounts : []
     return users
-      .filter((user) => user && user.active !== false && String(user.role || '').toLowerCase() !== 'admin')
+      .filter((user) => user && String(user.role || '').toLowerCase() !== 'admin')
       .map((user) => ({
         value: String(user.id || user.username || user.displayName || ''),
         label: resolveAccountLabel(user)
