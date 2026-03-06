@@ -111,6 +111,7 @@ export function getAllSalesFromAllActiveAccounts(allAccounts) {
           merged.push({
             ...sale,
             accountId,
+            accountName: sellerName,
             sellerName,
             storeName: resolveStoreName(account, sale),
             year,

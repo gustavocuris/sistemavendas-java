@@ -84,6 +84,8 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
     }))
   }, [activeAccounts])
 
+  const isAllAccountsSelected = selectedAccount === 'all' || selectedAccount === 'TODAS'
+
   const accountOptions = useMemo(() => {
     const users = Array.isArray(activeAccounts) ? activeAccounts : []
     return users
@@ -96,7 +98,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
   }, [activeAccounts])
 
   const filteredSales = useMemo(() => {
-    const baseSales = selectedAccount === 'all'
+    const baseSales = isAllAccountsSelected
       ? allSales
       : allSales.filter((sale) => String(sale.__accountKey || '') === String(selectedAccount))
 
@@ -132,7 +134,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
       const haystack = normalizeMojibakeText(searchableParts.filter(Boolean).join(' ')).toLowerCase()
       return haystack.includes(term)
     })
-  }, [allSales, selectedAccount, searchTerm])
+  }, [allSales, isAllAccountsSelected, selectedAccount, searchTerm])
 
   const groupedData = useMemo(() => groupSalesByYearMonth(filteredSales), [filteredSales])
 
@@ -140,6 +142,16 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
     if (!import.meta.env.DEV) return
 
     const marchSales = allSales.filter((sale) => Number(sale?.year) === 2026 && (String(sale?.monthKey) === '03' || Number(sale?.monthIndex) === 3))
+    const march2026Filtered = filteredSales.filter((sale) => Number(sale?.year) === 2026 && Number(sale?.monthIndex) === 2)
+    const march2026ByAccount = Object.entries(
+      filteredSales
+        .filter((sale) => Number(sale?.year) === 2026 && Number(sale?.monthIndex) === 2)
+        .reduce((acc, sale) => {
+          const key = sale?.accountName || sale?.storeName || sale?.accountId || 'SEM_CONTA'
+          acc[key] = (acc[key] || 0) + 1
+          return acc
+        }, {})
+    )
 
     const activeAccountsList = (Array.isArray(activeAccounts) ? activeAccounts : [])
       .filter((account) => account && account.active !== false && String(account.role || '').toLowerCase() !== 'admin')
@@ -160,6 +172,11 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
       }
     })
 
+    console.log('SELECTED ACCOUNT', selectedAccount)
+    console.log('ALL SALES COUNT', allSales.length)
+    console.log('FILTERED SALES COUNT', filteredSales.length)
+    console.log('MARCH 2026 FILTERED', march2026Filtered)
+    console.log('MARCH 2026 BY ACCOUNT', march2026ByAccount)
     console.log('ACTIVE ACCOUNTS COUNT', activeAccountsList.length)
     console.log('ALL CONSOLIDATED SALES COUNT', allSales.length)
     console.log('MARCH 2026 SALES', marchSales)
@@ -172,7 +189,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
       filteredSalesFound: filteredSales.length,
       marchSales
     })
-  }, [activeAccounts, allSales, filteredSales, selectedYear, selectedMonth])
+  }, [activeAccounts, allSales, filteredSales, selectedAccount, selectedYear, selectedMonth])
 
   const availableYears = useMemo(() => groupedData.map((yearGroup) => String(yearGroup.year)), [groupedData])
 
@@ -217,12 +234,12 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
   }, [monthsForSelectedYear, selectedMonth])
 
   useEffect(() => {
-    if (selectedAccount === 'all') return
+    if (isAllAccountsSelected) return
     const exists = accountOptions.some((item) => String(item.value) === String(selectedAccount))
     if (!exists) {
       setSelectedAccount('all')
     }
-  }, [accountOptions, selectedAccount])
+  }, [accountOptions, isAllAccountsSelected, selectedAccount])
 
   if (!isOpen) return null
 
