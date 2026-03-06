@@ -27,6 +27,11 @@ function resolveProductMeasure(sale) {
   return `${product} (${tread})`
 }
 
+function resolveDesfecho(sale) {
+  const value = normalizeMojibakeText(sale?.desfecho || sale?.outcome || '')
+  return value ? value.toUpperCase() : '-'
+}
+
 function resolveTotal(sale) {
   const explicit = Number(sale?.total || 0)
   if (explicit > 0) return explicit
@@ -188,6 +193,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                         <col className="admin-all-sales-col-seller" />
                         <col className="admin-all-sales-col-client" />
                         <col className="admin-all-sales-col-product" />
+                        <col className="admin-all-sales-col-outcome" />
                         <col className="admin-all-sales-col-value" />
                       </colgroup>
                       <thead>
@@ -196,6 +202,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                           <th>Vendedor</th>
                           <th>Cliente</th>
                           <th>Produto/Medida</th>
+                          <th>Desfecho</th>
                           <th>Valor</th>
                         </tr>
                       </thead>
@@ -206,6 +213,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                             <td>{sale.__sellerName || '-'}</td>
                             <td>{normalizeMojibakeText(sale?.client) || '-'}</td>
                             <td>{resolveProductMeasure(sale)}</td>
+                            <td>{resolveDesfecho(sale)}</td>
                             <td>R$ {formatMoney(sale.__totalValue)}</td>
                           </tr>
                         ))}

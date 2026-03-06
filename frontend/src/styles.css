@@ -6159,8 +6159,12 @@ body.dark-mode .btn-eye-large:hover {
   width: auto;
 }
 
+.admin-all-sales-col-outcome {
+  width: 148px;
+}
+
 .admin-all-sales-col-value {
-  width: 138px;
+  width: 130px;
 }
 
 .admin-all-sales-table th,
@@ -6168,7 +6172,7 @@ body.dark-mode .btn-eye-large:hover {
   padding: 10px 12px;
   border-bottom: 1px solid #edf2f7;
   text-align: left;
-  font-size: 0.82em;
+  font-size: 0.88em;
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
@@ -6177,9 +6181,11 @@ body.dark-mode .btn-eye-large:hover {
 .admin-all-sales-table th:nth-child(1),
 .admin-all-sales-table th:nth-child(2),
 .admin-all-sales-table th:nth-child(5),
+.admin-all-sales-table th:nth-child(6),
 .admin-all-sales-table td:nth-child(1),
 .admin-all-sales-table td:nth-child(2),
-.admin-all-sales-table td:nth-child(5) {
+.admin-all-sales-table td:nth-child(5),
+.admin-all-sales-table td:nth-child(6) {
   white-space: nowrap;
 }
 
@@ -6192,6 +6198,11 @@ body.dark-mode .btn-eye-large:hover {
 
 .admin-all-sales-table th:nth-child(5),
 .admin-all-sales-table td:nth-child(5) {
+  text-align: center;
+}
+
+.admin-all-sales-table th:nth-child(6),
+.admin-all-sales-table td:nth-child(6) {
   text-align: right;
 }
 
