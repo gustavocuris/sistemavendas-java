@@ -123,15 +123,17 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
       .filter((item) => item.value)
   }, [activeAccounts])
 
-  const filteredSales = useMemo(() => {
-    const baseSales = selectedAccount === 'all'
+  const accountFilteredSales = useMemo(() => {
+    return selectedAccount === 'all'
       ? allSales
       : allSales.filter((sale) => String(sale.__accountKey || '') === String(selectedAccount))
+  }, [allSales, selectedAccount])
 
+  const filteredSales = useMemo(() => {
     const term = normalizeMojibakeText(searchTerm || '').toLowerCase().trim()
-    if (!term) return baseSales
+    if (!term) return accountFilteredSales
 
-    return baseSales.filter((sale) => {
+    return accountFilteredSales.filter((sale) => {
       const searchableParts = [
         sale?.client,
         sale?.phone,
@@ -160,7 +162,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
       const haystack = normalizeMojibakeText(searchableParts.filter(Boolean).join(' ')).toLowerCase()
       return haystack.includes(term)
     })
-  }, [allSales, selectedAccount, searchTerm])
+  }, [accountFilteredSales, searchTerm])
 
   const groupedData = useMemo(() => groupSalesByYearMonth(filteredSales), [filteredSales])
 
@@ -225,7 +227,11 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
   }
 
   const handleAccountChange = (event) => {
-    setSelectedAccount(event.target.value)
+    const nextValue = event.target.value
+    setSelectedAccount(nextValue)
+    if (nextValue === 'all') {
+      setSearchTerm('')
+    }
   }
 
   const handleSearchChange = (event) => {
