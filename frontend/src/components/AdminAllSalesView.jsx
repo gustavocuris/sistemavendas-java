@@ -66,10 +66,20 @@ function resolveTotal(sale) {
   return Number.isFinite(calculated) ? calculated : 0
 }
 
-function buildAllVisibleSales(activeAccounts) {
+function buildAllVisibleSales(activeAccounts, fallbackSales = []) {
   const users = Array.isArray(activeAccounts) ? activeAccounts : []
   const merged = []
   const uniqueSales = new Set()
+
+  const activeUserMeta = users
+    .filter((user) => user && user.active !== false && String(user.role || '').toLowerCase() !== 'admin')
+    .map((user) => ({
+      accountKey: String(user?.id || user?.username || user?.displayName || ''),
+      id: String(user?.id || ''),
+      username: normalizeMojibakeText(user?.username || '').toLowerCase().trim(),
+      displayName: normalizeMojibakeText(user?.displayName || '').toLowerCase().trim(),
+      raw: user
+    }))
 
   users.forEach((user) => {
     if (!user || user.active === false || String(user.role || '').toLowerCase() === 'admin') return
@@ -111,16 +121,51 @@ function buildAllVisibleSales(activeAccounts) {
     })
   })
 
+  const fallbackList = Array.isArray(fallbackSales) ? fallbackSales : []
+  fallbackList.forEach((sale) => {
+    if (!isSaleVisible(sale)) return
+
+    const saleUserId = String(sale?.userId || '')
+    const saleUserName = normalizeMojibakeText(sale?.userName || sale?.seller || '').toLowerCase().trim()
+    const matchedUser = activeUserMeta.find((user) => {
+      if (saleUserId && user.id && saleUserId === user.id) return true
+      return Boolean(saleUserName && (saleUserName === user.username || saleUserName === user.displayName))
+    })
+
+    if (!matchedUser) return
+
+    const dateValue = sale?.date || sale?.created_at || sale?.createdAt || ''
+    const uniqueKey = sale?.id
+      ? `${matchedUser.accountKey}::${String(sale.id)}`
+      : `${matchedUser.accountKey}::${String(dateValue)}::${String(sale?.client || '')}::${String(sale?.product || '')}::${String(sale?.quantity || '')}::${String(sale?.unit_price || sale?.unitPrice || '')}::${String(sale?.total || '')}`
+
+    if (uniqueSales.has(uniqueKey)) return
+    uniqueSales.add(uniqueKey)
+
+    merged.push({
+      ...sale,
+      __sellerName: resolveSeller(matchedUser.raw, sale),
+      __accountKey: matchedUser.accountKey,
+      __totalValue: resolveTotal(sale),
+      __dateValue: dateValue,
+      __sourceYear: '',
+      __sourceMonth: ''
+    })
+  })
+
   return merged
 }
 
-export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, darkMode }) {
+export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, darkMode, fallbackSales = [] }) {
   const [selectedYear, setSelectedYear] = useState('')
   const [selectedMonth, setSelectedMonth] = useState('')
   const [selectedAccount, setSelectedAccount] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
 
-  const allSales = useMemo(() => buildAllVisibleSales(activeAccounts), [activeAccounts])
+  const allSales = useMemo(
+    () => buildAllVisibleSales(activeAccounts, fallbackSales),
+    [activeAccounts, fallbackSales]
+  )
 
   const accountOptions = useMemo(() => {
     const users = Array.isArray(activeAccounts) ? activeAccounts : []
