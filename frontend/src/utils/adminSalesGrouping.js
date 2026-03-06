@@ -155,9 +155,13 @@ export function groupSalesByYearMonth(allSales) {
     const date = normalizeSaleDate(sale, sourceMonth, sourceYear)
     if (!date) return
 
-    const year = String(date.getFullYear())
-    const monthKey = String(date.getMonth() + 1).padStart(2, '0')
-    const monthName = date.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
+    const hasSourceBucket = Number.isFinite(sourceYear) && sourceYear > 0 && Number.isFinite(sourceMonth) && sourceMonth >= 1 && sourceMonth <= 12
+    const resolvedYear = hasSourceBucket ? sourceYear : date.getFullYear()
+    const resolvedMonth = hasSourceBucket ? sourceMonth : (date.getMonth() + 1)
+
+    const year = String(resolvedYear)
+    const monthKey = String(resolvedMonth).padStart(2, '0')
+    const monthName = new Date(resolvedYear, resolvedMonth - 1, 1, 12, 0, 0).toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
     const total = resolveSaleTotal(sale)
 
     if (!grouped[year]) {
