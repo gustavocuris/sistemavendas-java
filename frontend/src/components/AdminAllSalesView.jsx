@@ -31,11 +31,6 @@ function resolveProductMeasure(sale) {
   return `${product} (${tread})`
 }
 
-function resolveObservation(sale) {
-  const value = normalizeMojibakeText(sale?.observation || sale?.notes || sale?.obs || '')
-  return value || '-'
-}
-
 function resolveTotal(sale) {
   const explicit = Number(sale?.total || 0)
   if (explicit > 0) return explicit
@@ -201,7 +196,6 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                           <th>Cliente</th>
                           <th>Produto/Medida</th>
                           <th>Valor</th>
-                          <th>Observação</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -213,7 +207,6 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                             <td>{normalizeMojibakeText(sale?.client) || '-'}</td>
                             <td>{resolveProductMeasure(sale)}</td>
                             <td>R$ {formatMoney(sale.__totalValue)}</td>
-                            <td>{resolveObservation(sale)}</td>
                           </tr>
                         ))}
                       </tbody>
