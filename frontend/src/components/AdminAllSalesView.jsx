@@ -79,22 +79,20 @@ function buildAllVisibleSales(activeAccounts) {
       ? user.salesByYearMonth
       : {}
 
-    Object.entries(yearsMap).forEach(([yearKey, monthsMap]) => {
+    Object.values(yearsMap).forEach((monthsMap) => {
       if (!monthsMap || typeof monthsMap !== 'object') return
 
-      Object.entries(monthsMap).forEach(([monthKey, monthData]) => {
+      Object.values(monthsMap).forEach((monthData) => {
         const sales = Array.isArray(monthData?.sales) ? monthData.sales : []
 
         sales.forEach((sale) => {
           if (!isSaleVisible(sale)) return
 
           const accountKey = String(user?.id || user?.username || user?.displayName || '')
-          const sourceYear = String(yearKey || '').trim()
-          const sourceMonth = String(monthKey || '').trim().padStart(2, '0')
           const dateValue = sale?.date || sale?.created_at || sale?.createdAt || ''
           const uniqueKey = sale?.id
             ? `${accountKey}::${String(sale.id)}`
-            : `${accountKey}::${sourceYear}-${sourceMonth}::${String(dateValue)}::${String(sale?.client || '')}::${String(sale?.product || '')}::${String(sale?.quantity || '')}::${String(sale?.unit_price || sale?.unitPrice || '')}::${String(sale?.total || '')}`
+            : `${accountKey}::${String(dateValue)}::${String(sale?.client || '')}::${String(sale?.product || '')}::${String(sale?.quantity || '')}::${String(sale?.unit_price || sale?.unitPrice || '')}::${String(sale?.total || '')}`
 
           if (uniqueSales.has(uniqueKey)) return
           uniqueSales.add(uniqueKey)
@@ -104,9 +102,7 @@ function buildAllVisibleSales(activeAccounts) {
             __sellerName: resolveSeller(user, sale),
             __accountKey: accountKey,
             __totalValue: resolveTotal(sale),
-            __dateValue: dateValue,
-            __sourceYear: sourceYear,
-            __sourceMonth: sourceMonth
+            __dateValue: dateValue
           })
         })
       })
