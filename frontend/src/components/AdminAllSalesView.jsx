@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { normalizeMojibakeText } from '../utils/text'
 import { isSaleVisible } from '../utils/visibleSales'
 import { groupSalesByYearMonth } from '../utils/adminSalesGrouping'
@@ -81,11 +81,17 @@ function buildAllVisibleSales(activeAccounts) {
 }
 
 export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, darkMode }) {
+  const [selectedMonthKey, setSelectedMonthKey] = useState('')
+
   const allSales = useMemo(() => buildAllVisibleSales(activeAccounts), [activeAccounts])
 
   const groupedData = useMemo(() => groupSalesByYearMonth(allSales), [allSales])
 
   if (!isOpen) return null
+
+  const handleMonthClick = (monthKey) => {
+    setSelectedMonthKey((current) => (current === monthKey ? '' : monthKey))
+  }
 
   return (
     <div className="admin-all-sales-overlay">
@@ -108,45 +114,56 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                   </span>
                 </div>
 
-                {yearGroup.months.map((monthGroup) => (
-                  <article key={`${yearGroup.year}-${monthGroup.key}`} className="admin-all-sales-month-block">
-                    <div className="admin-all-sales-month-head">
-                      <h4>{monthGroup.monthName}</h4>
-                      <span>
-                        {monthGroup.count} venda(s) • Total R$ {formatMoney(monthGroup.total)}
-                      </span>
-                    </div>
+                {yearGroup.months.map((monthGroup) => {
+                  const monthKey = `${yearGroup.year}-${monthGroup.key}`
+                  const isOpenMonth = selectedMonthKey === monthKey
 
-                    <div className="admin-all-sales-table-wrap">
-                      <table className="admin-all-sales-table">
-                        <thead>
-                          <tr>
-                            <th>Data</th>
-                            <th>Vendedor</th>
-                            <th>Loja/Conta</th>
-                            <th>Cliente</th>
-                            <th>Produto/Medida</th>
-                            <th>Valor</th>
-                            <th>Observação</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {monthGroup.sales.map((sale, index) => (
-                            <tr key={`${yearGroup.year}-${monthGroup.key}-${sale?.id || index}`}>
-                              <td>{formatDate(sale.__dateValue)}</td>
-                              <td>{sale.__sellerName || '-'}</td>
-                              <td>{sale.__accountName || '-'}</td>
-                              <td>{normalizeMojibakeText(sale?.client) || '-'}</td>
-                              <td>{resolveProductMeasure(sale)}</td>
-                              <td>R$ {formatMoney(sale.__totalValue)}</td>
-                              <td>{resolveObservation(sale)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </article>
-                ))}
+                  return (
+                    <article key={monthKey} className="admin-all-sales-month-block">
+                      <button
+                        type="button"
+                        className={`admin-all-sales-month-head ${isOpenMonth ? 'is-open' : ''}`}
+                        onClick={() => handleMonthClick(monthKey)}
+                      >
+                        <h4>{monthGroup.monthName}</h4>
+                        <span>
+                          {monthGroup.count} venda(s) • Total R$ {formatMoney(monthGroup.total)}
+                        </span>
+                      </button>
+
+                      {isOpenMonth && (
+                        <div className="admin-all-sales-table-wrap">
+                          <table className="admin-all-sales-table">
+                            <thead>
+                              <tr>
+                                <th>Data</th>
+                                <th>Vendedor</th>
+                                <th>Loja/Conta</th>
+                                <th>Cliente</th>
+                                <th>Produto/Medida</th>
+                                <th>Valor</th>
+                                <th>Observação</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {monthGroup.sales.map((sale, index) => (
+                                <tr key={`${yearGroup.year}-${monthGroup.key}-${sale?.id || index}`}>
+                                  <td>{formatDate(sale.__dateValue)}</td>
+                                  <td>{sale.__sellerName || '-'}</td>
+                                  <td>{sale.__accountName || '-'}</td>
+                                  <td>{normalizeMojibakeText(sale?.client) || '-'}</td>
+                                  <td>{resolveProductMeasure(sale)}</td>
+                                  <td>R$ {formatMoney(sale.__totalValue)}</td>
+                                  <td>{resolveObservation(sale)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </article>
+                  )
+                })}
               </section>
             ))
           )}

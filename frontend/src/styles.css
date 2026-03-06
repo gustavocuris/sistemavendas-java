@@ -6079,6 +6079,14 @@ body.dark-mode .btn-eye-large:hover {
   align-items: center;
   padding: 10px 14px;
   background: #fcfdff;
+  width: 100%;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.admin-all-sales-month-head.is-open {
+  background: #f8fafc;
 }
 
 .admin-all-sales-month-head h4 {
@@ -6163,6 +6171,10 @@ body.dark-mode .btn-eye-large:hover {
 
 .admin-all-sales-modal.dark-mode .admin-all-sales-month-head {
   background: #111827;
+}
+
+.admin-all-sales-modal.dark-mode .admin-all-sales-month-head.is-open {
+  background: #1f2937;
 }
 
 .admin-all-sales-modal.dark-mode .admin-all-sales-month-head h4 {
