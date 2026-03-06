@@ -67,7 +67,7 @@ export function normalizeSaleDate(sale, monthKey, year) {
   return null
 }
 
-export function getAllSalesFromActiveAccounts(allAccounts) {
+export function getAllSalesFromAllActiveAccounts(allAccounts) {
   const accounts = Array.isArray(allAccounts) ? allAccounts : []
   const merged = []
   const uniqueSales = new Set()
@@ -87,6 +87,9 @@ export function getAllSalesFromActiveAccounts(allAccounts) {
       Object.entries(monthsMap).forEach(([monthKeyRaw, monthData]) => {
         const monthKey = String(monthKeyRaw || '').padStart(2, '0')
         const sales = Array.isArray(monthData?.sales) ? monthData.sales : []
+        const sourceYear = Number(String(yearKey || '').trim())
+        const sourceMonthIndex = parseMonthKey(monthKey)
+        if (!Number.isFinite(sourceYear) || sourceYear <= 0 || !sourceMonthIndex) return
 
         sales.forEach((sale) => {
           if (!isSaleVisible(sale)) return
@@ -94,9 +97,9 @@ export function getAllSalesFromActiveAccounts(allAccounts) {
           const normalizedDate = normalizeSaleDate(sale, monthKey, yearKey)
           if (!normalizedDate) return
 
-          const year = normalizedDate.getFullYear()
-          const monthIndex = normalizedDate.getMonth() + 1
-          const normalizedMonthKey = String(monthIndex).padStart(2, '0')
+          const year = sourceYear
+          const monthIndex = sourceMonthIndex
+          const normalizedMonthKey = monthKey
 
           const uniqueKey = sale?.id != null
             ? `${accountId}::${String(sale.id)}`
@@ -117,7 +120,7 @@ export function getAllSalesFromActiveAccounts(allAccounts) {
             __accountKey: accountId,
             __sellerName: sellerName,
             __storeName: resolveStoreName(account, sale),
-            __sourceYear: String(yearKey),
+            __sourceYear: String(sourceYear),
             __sourceMonth: String(monthKey),
             __dateValue: normalizedDate
           })
@@ -128,6 +131,8 @@ export function getAllSalesFromActiveAccounts(allAccounts) {
 
   return merged
 }
+
+export const getAllSalesFromActiveAccounts = getAllSalesFromAllActiveAccounts
 
 function resolveSaleTotal(sale) {
   const explicitTotal = Number(sale?.total || 0)
