@@ -20,10 +20,6 @@ function resolveSeller(user, sale) {
   return normalizeMojibakeText(sale?.userName || user?.displayName || user?.username || sale?.seller || '-')
 }
 
-function resolveAccount(user, sale) {
-  return normalizeMojibakeText(user?.displayName || user?.username || sale?.store || sale?.account || sale?.userId || '-')
-}
-
 function resolveProductMeasure(sale) {
   const product = normalizeMojibakeText(sale?.product || '-')
   const tread = normalizeMojibakeText(sale?.tread_type || sale?.treadType || '').toUpperCase().trim()
@@ -63,7 +59,6 @@ function buildAllVisibleSales(activeAccounts) {
           merged.push({
             ...sale,
             __sellerName: resolveSeller(user, sale),
-            __accountName: resolveAccount(user, sale),
             __totalValue: resolveTotal(sale),
             __dateValue: sale?.date || sale?.created_at || sale?.createdAt
           })
@@ -188,11 +183,17 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
 
                   <div className="admin-all-sales-table-wrap">
                     <table className="admin-all-sales-table">
+                      <colgroup>
+                        <col className="admin-all-sales-col-date" />
+                        <col className="admin-all-sales-col-seller" />
+                        <col className="admin-all-sales-col-client" />
+                        <col className="admin-all-sales-col-product" />
+                        <col className="admin-all-sales-col-value" />
+                      </colgroup>
                       <thead>
                         <tr>
                           <th>Data</th>
                           <th>Vendedor</th>
-                          <th>Loja/Conta</th>
                           <th>Cliente</th>
                           <th>Produto/Medida</th>
                           <th>Valor</th>
@@ -203,7 +204,6 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                           <tr key={`${selectedYear}-${selectedMonthGroup.key}-${sale?.id || index}`}>
                             <td>{formatDate(sale.__dateValue)}</td>
                             <td>{sale.__sellerName || '-'}</td>
-                            <td>{sale.__accountName || '-'}</td>
                             <td>{normalizeMojibakeText(sale?.client) || '-'}</td>
                             <td>{resolveProductMeasure(sale)}</td>
                             <td>R$ {formatMoney(sale.__totalValue)}</td>

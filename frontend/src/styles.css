@@ -6139,7 +6139,28 @@ body.dark-mode .btn-eye-large:hover {
 .admin-all-sales-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 980px;
+  min-width: 860px;
+  table-layout: fixed;
+}
+
+.admin-all-sales-col-date {
+  width: 112px;
+}
+
+.admin-all-sales-col-seller {
+  width: 170px;
+}
+
+.admin-all-sales-col-client {
+  width: 220px;
+}
+
+.admin-all-sales-col-product {
+  width: auto;
+}
+
+.admin-all-sales-col-value {
+  width: 138px;
 }
 
 .admin-all-sales-table th,
@@ -6148,6 +6169,30 @@ body.dark-mode .btn-eye-large:hover {
   border-bottom: 1px solid #edf2f7;
   text-align: left;
   font-size: 0.82em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.admin-all-sales-table th:nth-child(1),
+.admin-all-sales-table th:nth-child(2),
+.admin-all-sales-table th:nth-child(5),
+.admin-all-sales-table td:nth-child(1),
+.admin-all-sales-table td:nth-child(2),
+.admin-all-sales-table td:nth-child(5) {
+  white-space: nowrap;
+}
+
+.admin-all-sales-table td:nth-child(3),
+.admin-all-sales-table td:nth-child(4) {
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.35;
+}
+
+.admin-all-sales-table th:nth-child(5),
+.admin-all-sales-table td:nth-child(5) {
+  text-align: right;
 }
 
 .admin-all-sales-table th {
