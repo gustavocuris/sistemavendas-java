@@ -43,18 +43,6 @@ function buildSaleUniqueKey(accountKey, sale, normalizedDate) {
 }
 
 export function normalizeSaleDate(saleOrRaw) {
-  if (typeof saleOrRaw === 'object' && saleOrRaw !== null) {
-    const sourceYear = String(saleOrRaw.__sourceYear || '').trim()
-    const sourceMonth = String(saleOrRaw.__sourceMonth || '').trim()
-    if (sourceYear && sourceMonth) {
-      const year = Number(sourceYear)
-      const month = Number(sourceMonth)
-      if (Number.isFinite(year) && Number.isFinite(month) && month >= 1 && month <= 12) {
-        return new Date(year, month - 1, 1, 12, 0, 0)
-      }
-    }
-  }
-
   const raw = typeof saleOrRaw === 'object' && saleOrRaw !== null
     ? saleOrRaw.__dateValue || saleOrRaw.date || saleOrRaw.created_at || saleOrRaw.createdAt
     : saleOrRaw
@@ -86,6 +74,18 @@ export function normalizeSaleDate(saleOrRaw) {
   const parsed = new Date(raw)
   if (!Number.isNaN(parsed.getTime())) {
     return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate(), 12, 0, 0)
+  }
+
+  if (typeof saleOrRaw === 'object' && saleOrRaw !== null) {
+    const sourceYear = String(saleOrRaw.__sourceYear || '').trim()
+    const sourceMonth = String(saleOrRaw.__sourceMonth || '').trim()
+    if (sourceYear && sourceMonth) {
+      const year = Number(sourceYear)
+      const month = Number(sourceMonth)
+      if (Number.isFinite(year) && Number.isFinite(month) && month >= 1 && month <= 12) {
+        return new Date(year, month - 1, 1, 12, 0, 0)
+      }
+    }
   }
 
   return null
