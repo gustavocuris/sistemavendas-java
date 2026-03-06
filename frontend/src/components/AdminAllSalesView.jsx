@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { normalizeMojibakeText } from '../utils/text'
-import { isSaleVisible } from '../utils/visibleSales'
-import { groupSalesByYearMonth } from '../utils/adminSalesGrouping'
+import { getAllSalesFromActiveAccounts, groupSalesByYearMonth } from '../utils/adminSalesGrouping'
 
 function formatMoney(value) {
   return Number(value || 0).toLocaleString('pt-BR', {
@@ -67,58 +66,22 @@ function resolveTotal(sale) {
   return Number.isFinite(calculated) ? calculated : 0
 }
 
-function buildAllVisibleSales(activeAccounts) {
-  const users = Array.isArray(activeAccounts) ? activeAccounts : []
-  const merged = []
-  const uniqueSales = new Set()
-
-  users.forEach((user) => {
-    if (!user || user.active === false || String(user.role || '').toLowerCase() === 'admin') return
-
-    const yearsMap = user?.salesByYearMonth && typeof user.salesByYearMonth === 'object'
-      ? user.salesByYearMonth
-      : {}
-
-    Object.values(yearsMap).forEach((monthsMap) => {
-      if (!monthsMap || typeof monthsMap !== 'object') return
-
-      Object.values(monthsMap).forEach((monthData) => {
-        const sales = Array.isArray(monthData?.sales) ? monthData.sales : []
-
-        sales.forEach((sale) => {
-          if (!isSaleVisible(sale)) return
-
-          const accountKey = String(user?.id || user?.username || user?.displayName || '')
-          const dateValue = sale?.date || sale?.created_at || sale?.createdAt || ''
-          const uniqueKey = sale?.id
-            ? `${accountKey}::${String(sale.id)}`
-            : `${accountKey}::${String(dateValue)}::${String(sale?.client || '')}::${String(sale?.product || '')}::${String(sale?.quantity || '')}::${String(sale?.unit_price || sale?.unitPrice || '')}::${String(sale?.total || '')}`
-
-          if (uniqueSales.has(uniqueKey)) return
-          uniqueSales.add(uniqueKey)
-
-          merged.push({
-            ...sale,
-            __sellerName: resolveSeller(user, sale),
-            __accountKey: accountKey,
-            __totalValue: resolveTotal(sale),
-            __dateValue: dateValue
-          })
-        })
-      })
-    })
-  })
-
-  return merged
-}
-
 export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, darkMode }) {
   const [selectedYear, setSelectedYear] = useState('')
   const [selectedMonth, setSelectedMonth] = useState('')
   const [selectedAccount, setSelectedAccount] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
 
-  const allSales = useMemo(() => buildAllVisibleSales(activeAccounts), [activeAccounts])
+  const allSales = useMemo(() => {
+    const consolidated = getAllSalesFromActiveAccounts(activeAccounts)
+    return consolidated.map((sale) => ({
+      ...sale,
+      __sellerName: sale?.__sellerName || sale?.sellerName || '-',
+      __accountKey: sale?.__accountKey || sale?.accountId || '',
+      __totalValue: sale?.__totalValue != null ? Number(sale.__totalValue) : resolveTotal(sale),
+      __dateValue: sale?.normalizedDate || sale?.__dateValue || sale?.date || sale?.created_at || sale?.createdAt
+    }))
+  }, [activeAccounts])
 
   const accountOptions = useMemo(() => {
     const users = Array.isArray(activeAccounts) ? activeAccounts : []
@@ -171,6 +134,19 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
   }, [allSales, selectedAccount, searchTerm])
 
   const groupedData = useMemo(() => groupSalesByYearMonth(filteredSales), [filteredSales])
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return
+
+    const marchSales = allSales.filter((sale) => Number(sale?.year) === 2026 && Number(sale?.monthIndex) === 3)
+    console.log('ADMIN ALL SALES DEBUG', {
+      selectedYear,
+      selectedMonth,
+      totalSalesFound: allSales.length,
+      filteredSalesFound: filteredSales.length,
+      marchSales
+    })
+  }, [allSales, filteredSales, selectedYear, selectedMonth])
 
   const availableYears = useMemo(() => groupedData.map((yearGroup) => String(yearGroup.year)), [groupedData])
 
