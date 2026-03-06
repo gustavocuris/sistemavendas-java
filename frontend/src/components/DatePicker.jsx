@@ -2,24 +2,61 @@ import { useState, useEffect } from 'react'
 
 export default function DatePicker({ value, onChange, currentMonth }) {
   const [showCalendar, setShowCalendar] = useState(false)
-  
-  // Usa o mês/ano da tabela (currentMonth) ou o valor selecionado ou a data atual
-  const getInitialDate = () => {
-    if (value) return new Date(value + 'T00:00:00')
-    if (currentMonth) {
-      const [year, month] = currentMonth.split('-')
-      return new Date(parseInt(year), parseInt(month) - 1)
+
+  const parseCurrentMonth = (monthValue) => {
+    const raw = String(monthValue || '').trim()
+    const match = raw.match(/^(\d{4})-(\d{1,2})$/)
+    if (!match) return null
+
+    const year = Number(match[1])
+    const month = Number(match[2])
+    if (!Number.isFinite(year) || !Number.isFinite(month) || month < 1 || month > 12) return null
+
+    return {
+      year,
+      month,
+      key: `${year}-${String(month).padStart(2, '0')}`
     }
+  }
+
+  const buildDateFromProps = () => {
+    if (value) {
+      const fromValue = new Date(`${value}T00:00:00`)
+      if (!Number.isNaN(fromValue.getTime())) return fromValue
+    }
+
+    const parsedMonth = parseCurrentMonth(currentMonth)
+    if (parsedMonth) {
+      return new Date(parsedMonth.year, parsedMonth.month - 1, 1)
+    }
+
     return new Date()
   }
-  
-  const [currentDate, setCurrentDate] = useState(getInitialDate())
-  
-  // Atualiza quando currentMonth mudar
-    useEffect(() => {
-    if (currentMonth && !value) {
-      const [year, month] = currentMonth.split('-')
-      setCurrentDate(new Date(parseInt(year), parseInt(month) - 1))
+
+  const [currentDate, setCurrentDate] = useState(buildDateFromProps())
+
+  useEffect(() => {
+    if (value) {
+      const fromValue = new Date(`${value}T00:00:00`)
+      if (!Number.isNaN(fromValue.getTime())) {
+        setCurrentDate(fromValue)
+        return
+      }
+    }
+
+    const parsedMonth = parseCurrentMonth(currentMonth)
+    if (parsedMonth) {
+      setCurrentDate(new Date(parsedMonth.year, parsedMonth.month - 1, 1))
+    }
+  }, [value, currentMonth])
+
+  useEffect(() => {
+    const parsedMonth = parseCurrentMonth(currentMonth)
+    if (!parsedMonth || !value) return
+
+    const valueMonth = String(value).slice(0, 7)
+    if (valueMonth !== parsedMonth.key) {
+      setCurrentDate(new Date(parsedMonth.year, parsedMonth.month - 1, 1))
     }
   }, [currentMonth, value])
 
@@ -52,6 +89,14 @@ export default function DatePicker({ value, onChange, currentMonth }) {
     onChange(`${year}-${month}-${date}`)
     setCurrentDate(today)
     setShowCalendar(false)
+  }
+
+  const handlePrevMonth = () => {
+    setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))
+  }
+
+  const handleNextMonth = () => {
+    setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))
   }
 
   const formatDisplayDate = (dateString) => {
@@ -119,9 +164,11 @@ export default function DatePicker({ value, onChange, currentMonth }) {
       {showCalendar && (
         <div className="calendar-popup">
           <div className="calendar-navigation">
+            <button type="button" className="calendar-nav-btn" onClick={handlePrevMonth} title="Mês anterior">‹</button>
             <span className="current-month">
               {months[currentDate.getMonth()]} {currentDate.getFullYear()}
             </span>
+            <button type="button" className="calendar-nav-btn" onClick={handleNextMonth} title="Próximo mês">›</button>
           </div>
 
           <div className="calendar-weekdays">
