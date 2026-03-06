@@ -97,9 +97,9 @@ export function getAllSalesFromAllActiveAccounts(allAccounts) {
           const normalizedDate = normalizeSaleDate(sale, monthKey, yearKey)
           if (!normalizedDate) return
 
-          const year = sourceYear
-          const monthIndex = sourceMonthIndex
-          const normalizedMonthKey = monthKey
+          const year = normalizedDate.getFullYear()
+          const monthIndex = normalizedDate.getMonth() + 1
+          const normalizedMonthKey = String(monthIndex).padStart(2, '0')
 
           const uniqueKey = sale?.id != null
             ? `${accountId}::${String(sourceYear)}-${String(monthKey)}::${String(sale.id)}`
@@ -155,9 +155,8 @@ export function groupSalesByYearMonth(allSales) {
     const date = normalizeSaleDate(sale, sourceMonth, sourceYear)
     if (!date) return
 
-    const hasSourceBucket = Number.isFinite(sourceYear) && sourceYear > 0 && Number.isFinite(sourceMonth) && sourceMonth >= 1 && sourceMonth <= 12
-    const resolvedYear = hasSourceBucket ? sourceYear : date.getFullYear()
-    const resolvedMonth = hasSourceBucket ? sourceMonth : (date.getMonth() + 1)
+    const resolvedYear = date.getFullYear()
+    const resolvedMonth = date.getMonth() + 1
 
     const year = String(resolvedYear)
     const monthKey = String(resolvedMonth).padStart(2, '0')
