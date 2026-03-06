@@ -39,7 +39,12 @@ export function groupSalesByYearMonth(allSales) {
   const grouped = {}
 
   sales.forEach((sale) => {
-    const date = getSaleDate(sale?.__dateValue || sale?.date || sale?.created_at || sale?.createdAt)
+    const sourceYear = String(sale?.__sourceYear || '').trim()
+    const sourceMonth = String(sale?.__sourceMonth || '').padStart(2, '0')
+
+    const date = (sourceYear && sourceMonth)
+      ? getSaleDate(`${sourceYear}-${sourceMonth}-01`)
+      : getSaleDate(sale?.__dateValue || sale?.date || sale?.created_at || sale?.createdAt)
     if (!date) return
 
     const year = String(date.getFullYear())

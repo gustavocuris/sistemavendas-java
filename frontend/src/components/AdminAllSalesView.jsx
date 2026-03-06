@@ -102,7 +102,9 @@ function buildAllVisibleSales(activeAccounts) {
             __sellerName: resolveSeller(user, sale),
             __accountKey: accountKey,
             __totalValue: resolveTotal(sale),
-            __dateValue: dateValue
+            __dateValue: dateValue,
+            __sourceYear: String(yearKey || ''),
+            __sourceMonth: String(monthKey || '').padStart(2, '0')
           })
         })
       })

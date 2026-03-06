@@ -94,10 +94,7 @@ export function getMonthlyTotalsFromActiveAccounts(allUsers) {
         }
 
         sales.forEach((sale) => {
-          const date = parseSaleCalendarDate(sale?.__dateValue || sale?.date || sale?.created_at || sale?.createdAt)
-          const monthKey = date
-            ? String(date.getMonth() + 1).padStart(2, '0')
-            : String(monthKeyFromGroup).padStart(2, '0')
+          const monthKey = String(monthKeyFromGroup).padStart(2, '0')
 
           if (!monthMap[monthKey]) return
 
