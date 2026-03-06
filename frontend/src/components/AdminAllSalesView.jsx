@@ -185,9 +185,6 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
               {selectedYearTotals && (
                 <div className="admin-all-sales-year-head">
                   <h3>{selectedYearTotals.year}</h3>
-                  <span>
-                    {selectedYearTotals.count} venda(s) • Total R$ {formatMoney(selectedYearTotals.total)}
-                  </span>
                 </div>
               )}
 
@@ -196,7 +193,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                   <div className="admin-all-sales-month-head is-open">
                     <h4>{selectedMonthGroup.monthName}</h4>
                     <span>
-                      {selectedMonthGroup.count} venda(s) • Total R$ {formatMoney(selectedMonthGroup.total)}
+                      Total R$ {formatMoney(selectedMonthGroup.total)}
                     </span>
                   </div>
 
