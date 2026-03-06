@@ -71,17 +71,18 @@ function buildAllVisibleSales(activeAccounts) {
       ? user.salesByYearMonth
       : {}
 
-    Object.values(yearsMap).forEach((monthsMap) => {
+    Object.entries(yearsMap).forEach(([yearKey, monthsMap]) => {
       if (!monthsMap || typeof monthsMap !== 'object') return
 
-      Object.values(monthsMap).forEach((monthData) => {
+      Object.entries(monthsMap).forEach(([monthKey, monthData]) => {
         const sales = Array.isArray(monthData?.sales) ? monthData.sales : []
 
         sales.forEach((sale) => {
           if (!isSaleVisible(sale)) return
 
           const accountKey = String(user?.id || user?.username || user?.displayName || '')
-          const dateValue = sale?.date || sale?.created_at || sale?.createdAt || ''
+          const fallbackMonthDate = `${yearKey}-${String(monthKey).padStart(2, '0')}-01`
+          const dateValue = sale?.date || sale?.created_at || sale?.createdAt || fallbackMonthDate
           const uniqueKey = sale?.id
             ? `${accountKey}::${String(sale.id)}`
             : `${accountKey}::${String(dateValue)}::${String(sale?.client || '')}::${String(sale?.product || '')}::${String(sale?.quantity || '')}::${String(sale?.unit_price || sale?.unitPrice || '')}::${String(sale?.total || '')}`
