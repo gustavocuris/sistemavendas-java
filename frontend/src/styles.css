@@ -149,6 +149,14 @@ h1 {
   margin-bottom: 0;
 }
 
+.admin-header-search {
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  width: 300px;
+}
+
 .header-title-group {
   display: flex;
   align-items: center;
@@ -169,6 +177,26 @@ h1 {
   min-width: 420px;
   max-width: 100%;
   flex: 1 1 560px;
+}
+
+.admin-header-search .admin-global-search {
+  min-width: 0;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.admin-header-search .admin-global-search-input-wrap {
+  min-width: 0;
+}
+
+.admin-header-search .admin-global-search-input-wrap input {
+  min-height: 38px;
+  font-size: 0.92em;
+}
+
+.admin-header-search .admin-global-filter-btn {
+  width: 38px;
+  height: 38px;
 }
 
 .admin-global-search-form {
@@ -5521,6 +5549,10 @@ body.dark-mode .btn-eye-large:hover {
 }
 
 @media (max-width: 1100px) {
+  .admin-header-search {
+    width: 250px;
+  }
+
   .header-title-group.is-admin {
     width: min(100%, calc(100% - 160px));
     flex-direction: column;
@@ -5568,6 +5600,22 @@ body.dark-mode .btn-eye-large:hover {
 }
 
 @media (max-width: 900px) {
+  .admin-header-search {
+    position: static;
+    width: min(420px, 100%);
+    margin: 8px auto 0;
+  }
+
+  .header-top {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .theme-controls,
+  .month-controls {
+    position: static;
+  }
+
   .header-title-group.is-admin {
     width: 100%;
   }
