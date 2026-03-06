@@ -1,4 +1,11 @@
-function getSaleDate(value) {
+function getSaleDate(sale) {
+  const sourceYear = Number(String(sale?.__sourceYear || '').trim())
+  const sourceMonth = Number(String(sale?.__sourceMonth || '').trim())
+  if (Number.isFinite(sourceYear) && Number.isFinite(sourceMonth) && sourceYear > 0 && sourceMonth >= 1 && sourceMonth <= 12) {
+    return new Date(sourceYear, sourceMonth - 1, 1, 12, 0, 0)
+  }
+
+  const value = sale?.date || sale?.created_at || sale?.createdAt
   if (typeof value === 'string') {
     const normalized = value.trim()
 
@@ -21,7 +28,7 @@ function getSaleDate(value) {
 
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return null
-  return date
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0)
 }
 
 function resolveSaleTotal(sale) {
@@ -39,7 +46,7 @@ export function groupSalesByYearMonth(allSales) {
   const grouped = {}
 
   sales.forEach((sale) => {
-    const date = getSaleDate(sale?.date || sale?.created_at || sale?.createdAt)
+    const date = getSaleDate(sale)
     if (!date) return
 
     const year = String(date.getFullYear())
