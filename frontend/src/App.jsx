@@ -9,7 +9,6 @@ import NotesPanel from './NotesPanel';
 import Login from './components/Login';
 import AdminPanel from './components/AdminPanel';
 import LoginManager from './components/LoginManager';
-import AdminSalesSearch from './components/AdminSalesSearch';
 import { YearSalesChartWithBoundary } from './components/YearSalesChart';
 import { normalizeMojibakeText } from './utils/text';
 import { getMonthlyTotalsFromActiveAccounts } from './utils/adminMonthlyTotals';
@@ -955,13 +954,7 @@ export default function App() {
         </div>
 
             <h1 className={isAdmin ? 'admin-main-title' : ''}>{isAdmin ? '\u00C1REA ADMINISTRADOR' : 'Tabela de Vendas'}</h1>
-            {isAdmin && (
-              <div className="admin-header-search">
-                <AdminSalesSearch activeAccounts={activeAccountsAdminView} />
-              </div>
-            )}
-
-        {!isAdmin && (
+{!isAdmin && (
           <div className="month-controls">
             <button className="btn-month" onClick={() => setShowMonthSelector(!showMonthSelector)} title="Selecionar mÃªs">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1287,6 +1280,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
