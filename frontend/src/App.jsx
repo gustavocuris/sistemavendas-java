@@ -779,7 +779,7 @@ export default function App() {
     setShowMonthSelector(false)
   }
 
-  const monthNames = ['Janeiro', 'Fevereiro', 'MarÃ§o', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+  const monthNames = ['Janeiro', 'Fevereiro', 'Mar\\u00E7o', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
   const formatMonthName = (monthStr) => {
     const [year, month] = monthStr.split('-')
@@ -981,7 +981,7 @@ export default function App() {
                       <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                   </button>
-                  <button onClick={() => setShowMonthSelector(false)}>âœ•</button>
+                  <button onClick={() => setShowMonthSelector(false)}>X</button>
                 </div>
 
                 <div className="months-grid">
@@ -1135,7 +1135,7 @@ export default function App() {
           <div className="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
             <div className="modal-header">
               <h3 id="confirm-title">CONFIRMAÃ‡ÃƒO</h3>
-              <button className="modal-close" onClick={closeConfirm} aria-label="Fechar">âœ•</button>
+              <button className="modal-close" onClick={closeConfirm} aria-label="Fechar">X</button>
             </div>
             <div className="modal-body">
               <p>{confirmState.message}</p>
