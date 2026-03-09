@@ -41,7 +41,7 @@ export default function Login({ onLogin, primaryColor, darkMode }) {
       })
 
       if (response.status === 200) {
-        setSuccess('Login realizado com sucesso! ✓')
+        setSuccess('Login realizado com sucesso! OK')
         const returnedUser = response.data?.user || null
         const isAdminLogin = String(username || '').trim().toUpperCase() === 'ADM'
         const normalizedUser = isAdminLogin

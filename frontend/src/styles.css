@@ -1268,7 +1268,7 @@ body.dark-mode .admin-viewing-label {
 }
 
 .items-preview h3::before {
-  content: '✓';
+  content: 'OK';
   display: inline-flex;
   align-items: center;
   justify-content: center;

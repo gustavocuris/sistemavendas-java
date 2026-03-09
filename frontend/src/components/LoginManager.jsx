@@ -197,7 +197,7 @@ export default function LoginManager({
                         <span className="login-manager-value">
                           {showPassword[cred.id]
                             ? cred.password || 'Não disponível'
-                            : '••••••••••'}
+                            : '**********'}
                         </span>
                       </div>
                       <div className="login-manager-row">

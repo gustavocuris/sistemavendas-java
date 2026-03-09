@@ -348,7 +348,7 @@ const formatDateFull = (value) => {
             title="Pneu a base de troca"
             aria-pressed={!!form.base_trade}
           >
-            <span className="trade-check">✓</span>
+            <span className="trade-check">OK</span>
             <span className="trade-text">Pneu a base de troca</span>
           </button>
         </div>
@@ -390,7 +390,7 @@ const formatDateFull = (value) => {
                   <strong>{item.product}</strong>
                   <span>{item.quantity}x R$ {formatPrice(Math.round(item.unit_price * 100))}</span>
                 </div>
-                <button type="button" onClick={() => removeItem(idx)} className="btn-remove-item" title="Remover item">×</button>
+                <button type="button" onClick={() => removeItem(idx)} className="btn-remove-item" title="Remover item">X</button>
               </div>
             ))}
           </div>
