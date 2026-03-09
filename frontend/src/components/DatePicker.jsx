@@ -164,11 +164,11 @@ export default function DatePicker({ value, onChange, currentMonth }) {
       {showCalendar && (
         <div className="calendar-popup">
           <div className="calendar-navigation">
-            <button type="button" className="calendar-nav-btn" onClick={handlePrevMonth} title="Mês anterior">‹</button>
+            <button type="button" className="calendar-nav-btn" onClick={handlePrevMonth} title="Mês anterior">&lt;</button>
             <span className="current-month">
               {months[currentDate.getMonth()]} {currentDate.getFullYear()}
             </span>
-            <button type="button" className="calendar-nav-btn" onClick={handleNextMonth} title="Próximo mês">›</button>
+            <button type="button" className="calendar-nav-btn" onClick={handleNextMonth} title="Próximo mês">&gt;</button>
           </div>
 
           <div className="calendar-weekdays">
