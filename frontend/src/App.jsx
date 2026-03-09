@@ -779,7 +779,7 @@ export default function App() {
     setShowMonthSelector(false)
   }
 
-  const monthNames = ['Janeiro', 'Fevereiro', 'Mar\\u00E7o', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+  const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
   const formatMonthName = (monthStr) => {
     const [year, month] = monthStr.split('-')
