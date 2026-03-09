@@ -3,6 +3,8 @@ import { normalizeMojibakeText } from '../utils/text'
 import { isSaleVisible } from '../utils/visibleSales'
 import { getAllSalesFromAllActiveAccounts, groupSalesBySourceYearMonth } from '../utils/adminSalesGrouping'
 
+const MONTH_NAMES_FULL = ['Janeiro', 'Fevereiro', 'Mar\u00E7o', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+
 function formatMoney(value) {
   return Number(value || 0).toLocaleString('pt-BR', {
     minimumFractionDigits: 2,
@@ -65,6 +67,13 @@ function resolveTotal(sale) {
   const unitPrice = Number(sale?.unit_price || sale?.unitPrice || 0)
   const calculated = quantity * unitPrice
   return Number.isFinite(calculated) ? calculated : 0
+}
+
+function formatMonthYearByKey(year, monthKey) {
+  const safeYear = Number(year)
+  const safeMonth = Number(monthKey)
+  if (!Number.isFinite(safeYear) || !Number.isFinite(safeMonth) || safeMonth < 1 || safeMonth > 12) return ''
+  return `${MONTH_NAMES_FULL[safeMonth - 1]} ${safeYear}`
 }
 
 export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, darkMode }) {
@@ -288,7 +297,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
                   <span>Mês</span>
                   <select value={selectedMonth} onChange={handleMonthChange}>
                     {monthsForSelectedYear.map((month) => (
-                      <option key={month.key} value={month.key}>{month.monthName}</option>
+                      <option key={month.key} value={month.key}>{formatMonthYearByKey(selectedYear, month.key)}</option>
                     ))}
                   </select>
                 </label>
@@ -324,7 +333,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
               {selectedMonthGroup && (
                 <article className="admin-all-sales-month-block">
                   <div className="admin-all-sales-month-head is-open">
-                    <h4>{selectedMonthGroup.monthName}</h4>
+                    <h4>{formatMonthYearByKey(selectedYear, selectedMonthGroup.key)}</h4>
                     <span>
                       Total R$ {formatMoney(selectedMonthGroup.total)}
                     </span>

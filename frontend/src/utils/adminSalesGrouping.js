@@ -1,6 +1,15 @@
 import { normalizeMojibakeText } from './text'
 import { isSaleVisible } from './visibleSales'
 
+const MONTH_NAMES_FULL = ['Janeiro', 'Fevereiro', 'Mar\u00E7o', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+
+function formatMonthYearLabel(year, monthIndex) {
+  const safeYear = Number(year)
+  const safeMonth = Number(monthIndex)
+  if (!Number.isFinite(safeYear) || !Number.isFinite(safeMonth) || safeMonth < 1 || safeMonth > 12) return ''
+  return `${MONTH_NAMES_FULL[safeMonth - 1]} ${safeYear}`
+}
+
 function toMiddayDate(date) {
   if (!(date instanceof Date) || Number.isNaN(date.getTime())) return null
   return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0)
@@ -212,7 +221,7 @@ export function groupSalesBySourceYearMonth(allSales) {
 
     const year = String(sourceYear)
     const monthKey = String(sourceMonth).padStart(2, '0')
-    const monthName = new Date(sourceYear, sourceMonth - 1, 1, 12, 0, 0).toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
+    const monthName = formatMonthYearLabel(sourceYear, sourceMonth)
     const total = resolveSaleTotal(sale)
 
     if (!grouped[year]) {
