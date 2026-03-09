@@ -206,7 +206,7 @@ const ChartView = ({ year, onClose, refreshKey, primaryColor, darkMode }) => {
           <div className="chart-header">
             <h2>Carregando gráfico...</h2>
             <button className="chart-close-btn" onClick={onClose} title="Fechar gráfico">
-              ×
+              X
             </button>
           </div>
           <div style={{ padding: '40px', textAlign: 'center', color: isDarkMode ? '#e0e0e0' : '#2d3748' }}>
@@ -224,7 +224,7 @@ const ChartView = ({ year, onClose, refreshKey, primaryColor, darkMode }) => {
           <div className="chart-header">
             <h2>Gráfico de Vendas - {year}</h2>
             <button className="chart-close-btn" onClick={onClose} title="Fechar gráfico">
-              ×
+              X
             </button>
           </div>
           <div style={{ padding: '40px', textAlign: 'center', color: isDarkMode ? '#e0e0e0' : '#2d3748' }}>
@@ -261,7 +261,7 @@ const ChartView = ({ year, onClose, refreshKey, primaryColor, darkMode }) => {
               {loading ? '⟳' : '↻'}
             </button>
             <button className="chart-close-btn" onClick={onClose} title="Fechar gráfico">
-              ×
+              X
             </button>
           </div>
         </div>

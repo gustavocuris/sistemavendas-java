@@ -30,7 +30,7 @@ function resolveStoreName(user) {
 function resolveSellerWithStore(user) {
   const sellerName = resolveSellerName(user);
   const storeName = resolveStoreName(user);
-  return storeName ? `${sellerName} — ${storeName}` : sellerName;
+  return storeName ? `${sellerName} - ${storeName}` : sellerName;
 }
 
 function toYmd(value) {
@@ -99,7 +99,7 @@ function buildSalesFromActiveUsers(activeUsers) {
 
     const sellerName = resolveSellerName(user);
     const storeName = resolveStoreName(user);
-    const sellerWithStore = storeName ? `${sellerName} — ${storeName}` : sellerName;
+    const sellerWithStore = storeName ? `${sellerName} - ${storeName}` : sellerName;
     const salesByYearMonth = user?.salesByYearMonth && typeof user.salesByYearMonth === 'object'
       ? user.salesByYearMonth
       : {};

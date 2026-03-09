@@ -46,7 +46,7 @@ export default function CommissionConfig({ isOpen, onClose }) {
       <div className="modal">
         <div className="modal-header">
           <h3>Configurar Comissões (%)</h3>
-          <button className="modal-close" onClick={onClose}>×</button>
+          <button className="modal-close" onClick={onClose}>X</button>
         </div>
         <div className="modal-body">
           <div className="commission-group">

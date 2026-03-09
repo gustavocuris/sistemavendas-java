@@ -45,7 +45,7 @@ function DBViewer({ isOpen, onClose }) {
       <div style={{...styles.modal, backgroundColor: isDarkMode ? '#1a1a1a' : '#fff', color: isDarkMode ? '#fff' : '#1a1a1a'}} onClick={(e) => e.stopPropagation()}>
         <div style={{...styles.header, borderBottomColor: isDarkMode ? '#333' : '#e2e8f0'}}>
           <h2 style={styles.title}>📊 Visualizar Banco de Dados</h2>
-          <button style={{...styles.closeBtn, color: isDarkMode ? '#aaa' : '#666'}} onClick={onClose}>×</button>
+          <button style={{...styles.closeBtn, color: isDarkMode ? '#aaa' : '#666'}} onClick={onClose}>X</button>
         </div>
 
         <div style={styles.content}>

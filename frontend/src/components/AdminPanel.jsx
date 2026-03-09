@@ -312,7 +312,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
       <div className="admin-panel" onClick={(event) => event.stopPropagation()}>
         <div className="admin-panel-header">
           <h2>Painel Administrativo</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
+          <button className="modal-close" onClick={onClose}>X</button>
         </div>
 
         <div className="admin-tabs">
@@ -353,7 +353,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
                       })
                     }}>
                       <strong>{user.displayName}</strong>
-                      <span>{user.username} • {user.role}</span>
+                      <span>{user.username} | {user.role}</span>
                     </button>
                     <button className="btn-danger-inline" onClick={() => handleDeleteUser(user.id)} disabled={user.id === 'adm'}>Excluir</button>
                   </div>

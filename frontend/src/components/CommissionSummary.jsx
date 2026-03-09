@@ -132,13 +132,13 @@ export default function CommissionSummary({ sales, commissions, onCommissionChan
                     className="btn-confirm"
                     onClick={() => handlePercentSave(type)}
                   >
-                    ✓
+                    OK
                   </button>
                   <button 
                     className="btn-cancel"
                     onClick={handlePercentCancel}
                   >
-                    ×
+                    X
                   </button>
                 </div>
               ) : (

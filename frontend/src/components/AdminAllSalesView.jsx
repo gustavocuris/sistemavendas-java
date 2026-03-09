@@ -275,7 +275,7 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
       <div className={`admin-all-sales-modal ${darkMode ? 'dark-mode' : ''}`}>
         <div className="admin-all-sales-header">
           <h2>Todas as vendas das contas ativas</h2>
-          <button type="button" className="admin-all-sales-close" onClick={onClose} title="Fechar">×</button>
+          <button type="button" className="admin-all-sales-close" onClick={onClose} title="Fechar">X</button>
         </div>
 
         <div className="admin-all-sales-content">
