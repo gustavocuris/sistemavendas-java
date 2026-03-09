@@ -312,7 +312,7 @@ export default function AdminPanel({ isOpen, onClose, users, onUsersRefresh, sel
       <div className="admin-panel" onClick={(event) => event.stopPropagation()}>
         <div className="admin-panel-header">
           <h2>Painel Administrativo</h2>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <button className="modal-close" onClick={onClose}>×</button>
         </div>
 
         <div className="admin-tabs">

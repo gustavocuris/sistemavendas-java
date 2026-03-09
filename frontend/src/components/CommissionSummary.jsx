@@ -138,7 +138,7 @@ export default function CommissionSummary({ sales, commissions, onCommissionChan
                     className="btn-cancel"
                     onClick={handlePercentCancel}
                   >
-                    ✕
+                    ×
                   </button>
                 </div>
               ) : (

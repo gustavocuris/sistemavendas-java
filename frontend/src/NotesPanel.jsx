@@ -240,7 +240,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
               Mês selecionado: <strong>{formatMonthDisplay(currentMonth)}</strong>
             </p>}
           </div>
-          <button className="flow-close" onClick={onClose}>✕</button>
+          <button className="flow-close" onClick={onClose}>×</button>
         </div>
 
         <div className="flow-tabs">
@@ -299,7 +299,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                   </button>
                   {editingComprar && (
                     <button type="button" className="flow-btn-cancel" onClick={() => { setEditingComprar(null); setFormComprar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', desfecho: 'entrega', base_trade: false }); setPriceDisplayComprar('0,00'); }}>
-                      ✕ Cancelar
+                      × Cancelar
                     </button>
                   )}
                 </div>
@@ -403,7 +403,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                   </button>
                   {editingPagar && (
                     <button type="button" className="flow-btn-cancel" onClick={() => { setEditingPagar(null); setFormPagar({ client: '', phone: '', product: '', tire_type: 'new', unit_price: '', quantity: '1', date: '', desfecho: 'entrega', base_trade: false }); setPriceDisplayPagar('0,00'); }}>
-                      ✕ Cancelar
+                      × Cancelar
                     </button>
                   )}
                 </div>
