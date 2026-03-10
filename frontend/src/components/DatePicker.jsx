@@ -103,14 +103,6 @@ export default function DatePicker({ value, onChange, currentMonth }) {
     setShowCalendar(false)
   }
 
-  const handlePrevMonth = () => {
-    setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))
-  }
-
-  const handleNextMonth = () => {
-    setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))
-  }
-
   const formatDisplayDate = (dateString) => {
     if (!dateString) return ''
     const [year, month, day] = dateString.split('-')
@@ -176,19 +168,9 @@ export default function DatePicker({ value, onChange, currentMonth }) {
       {showCalendar && (
         <div className="calendar-popup">
           <div className="calendar-navigation">
-            <button type="button" className="calendar-nav-btn" onClick={handlePrevMonth} title="M\u00EAs anterior" aria-label="M\u00EAs anterior">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
-            </button>
             <span className="current-month">
               {months[currentDate.getMonth()]} {currentDate.getFullYear()}
             </span>
-            <button type="button" className="calendar-nav-btn" onClick={handleNextMonth} title="Pr\u00F3ximo m\u00EAs" aria-label="Pr\u00F3ximo m\u00EAs">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </button>
           </div>
 
           <div className="calendar-weekdays">
