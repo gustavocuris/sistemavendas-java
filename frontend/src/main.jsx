@@ -15,9 +15,11 @@ function sanitizeMojibakeInDom(rootNode = document.body) {
     [/MarÃ§o/g, 'Março'],
     [/MÃªs/g, 'Mês'],
     [/PrÃ³ximo/g, 'Próximo'],
+    [/Ã¢â‚¬Â¢|Ã¢â‚¬â€¢|•|â€¢/g, '|'],
+    [/Ã¢Å“â€œ|âœ“|✓/g, '✓'],
     [/â€¢/g, '|'],
     [/âœ•/g, 'X'],
-    [/âœ“/g, 'OK'],
+    [/âœ“/g, '✓'],
     [/â€”/g, '-'],
     [/â€“/g, '-']
   ]
