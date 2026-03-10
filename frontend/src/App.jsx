@@ -17,7 +17,7 @@ import { getMonthlyTotalsFromActiveAccounts } from './utils/adminMonthlyTotals';
 const SAFE_EMPTY_NEW_USER = { displayName: '', username: '', password: '' };
 const CONFIRM_DIALOG_TITLE = 'CONFIRMA\u00C7\u00C3O';
 
-// Interceptor global para garantir x-user-id do usuÃ¡rio logado
+// Interceptor global para garantir x-user-id do usuÃƒÂ¡rio logado
 axios.interceptors.request.use((config) => {
   try {
     const raw = localStorage.getItem("currentUser");
@@ -30,7 +30,7 @@ axios.interceptors.request.use((config) => {
   return config;
 });
 
-// FunÃ§Ã£o para formatar nÃºmeros
+// FunÃƒÂ§ÃƒÂ£o para formatar nÃƒÂºmeros
 function formatReal(value) {
   return Number(value || 0).toLocaleString('pt-BR', {
     minimumFractionDigits: 2,
@@ -322,7 +322,7 @@ export default function App() {
     }
   }
 
-  // FunÃ§Ã£o correta para carregar vendas admin
+  // FunÃƒÂ§ÃƒÂ£o correta para carregar vendas admin
   const loadAdminSales = useCallback(async (search = '') => {
     if (!isAdmin) return;
     const qs = search ? `?q=${encodeURIComponent(search)}` : '';
@@ -330,7 +330,7 @@ export default function App() {
     setAdminSales(Array.isArray(res.data) ? res.data : []);
   }, [isAdmin]);
 
-// Deploy trigger: alteraÃ§Ã£o mÃ­nima para forÃ§ar rebuild (2)
+// Deploy trigger: alteraÃƒÂ§ÃƒÂ£o mÃƒÂ­nima para forÃƒÂ§ar rebuild (2)
 
   const loadAdminCredentials = async () => {
     if (!isAdmin) return
@@ -357,9 +357,9 @@ export default function App() {
       setNewUserForm(SAFE_EMPTY_NEW_USER)
       await loadAdminUsers()
       await loadAdminCredentials()
-      alert('UsuÃ¡rio criado com sucesso!')
+      alert('UsuÃƒÂ¡rio criado com sucesso!')
     } catch (err) {
-      alert(err.response?.data?.message || 'Erro ao criar usuÃ¡rio')
+      alert(err.response?.data?.message || 'Erro ao criar usuÃƒÂ¡rio')
     } finally {
       setAdminLoading(false)
     }
@@ -376,9 +376,9 @@ export default function App() {
       })
       await loadAdminUsers()
       await loadAdminCredentials()
-      alert('UsuÃ¡rio criado com sucesso!')
+      alert('UsuÃƒÂ¡rio criado com sucesso!')
     } catch (err) {
-      alert(err.response?.data?.message || 'Erro ao criar usuÃ¡rio')
+      alert(err.response?.data?.message || 'Erro ao criar usuÃƒÂ¡rio')
     } finally {
       setAdminLoading(false)
     }
@@ -390,9 +390,9 @@ export default function App() {
       await axios.delete(`${API}/admin/users/${userId}`)
       await loadAdminUsers()
       await loadAdminCredentials()
-      alert('UsuÃ¡rio deletado com sucesso!')
+      alert('UsuÃƒÂ¡rio deletado com sucesso!')
     } catch (err) {
-      alert(err.response?.data?.message || 'Erro ao deletar usuÃ¡rio')
+      alert(err.response?.data?.message || 'Erro ao deletar usuÃƒÂ¡rio')
     } finally {
       setAdminLoading(false)
     }
@@ -408,9 +408,9 @@ export default function App() {
       })
       await loadAdminUsers()
       await loadAdminCredentials()
-      alert('UsuÃ¡rio atualizado com sucesso!')
+      alert('UsuÃƒÂ¡rio atualizado com sucesso!')
     } catch (err) {
-      alert(err.response?.data?.message || 'Erro ao atualizar usuÃ¡rio')
+      alert(err.response?.data?.message || 'Erro ao atualizar usuÃƒÂ¡rio')
     } finally {
       setAdminLoading(false)
     }
@@ -462,7 +462,7 @@ export default function App() {
 
       return { allSales, salesByYearMonth }
     } catch (err) {
-      console.error('Erro ao carregar totais da visão admin por usuário:', err)
+      console.error('Erro ao carregar totais da visÃ£o admin por usuÃ¡rio:', err)
       return { allSales: [], salesByYearMonth: {} }
     }
   }, [])
@@ -472,7 +472,7 @@ export default function App() {
       const res = await axios.get(`${API}/admin/user-sales/${userId}`)
       const allSales = Array.isArray(res.data) ? res.data : []
 
-      // Agrupar vendas por ano e mÃªs
+      // Agrupar vendas por ano e mÃƒÂªs
       const salesByYearMonth = {}
       allSales.forEach((sale) => {
         const saleDate = new Date(sale.date || sale.created_at)
@@ -494,7 +494,7 @@ export default function App() {
         salesByYearMonth[year][month].total += Number(sale.total || 0)
       })
 
-      // Inicializar ano/mÃªs selecionados
+      // Inicializar ano/mÃƒÂªs selecionados
       const years = Object.keys(salesByYearMonth).sort((a, b) => Number(b) - Number(a))
       const firstYear = years.length > 0 ? years[0] : null
       const firstMonth = firstYear ? Object.keys(salesByYearMonth[firstYear]).sort((a, b) => Number(b) - Number(a))[0] : null
@@ -508,7 +508,7 @@ export default function App() {
       setSelectedSalesYear(firstYear)
       setSelectedSalesMonth(firstMonth)
     } catch (err) {
-      alert('Erro ao carregar vendas do usuÃ¡rio: ' + (err.response?.data?.message || err.message))
+      alert('Erro ao carregar vendas do usuÃƒÂ¡rio: ' + (err.response?.data?.message || err.message))
     } finally {
       setAdminLoading(false)
     }
@@ -539,7 +539,7 @@ export default function App() {
     localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
     axios.defaults.headers.common['x-user-id'] = resolvedUser.id
     setAuthKey((prev) => prev + 1)
-    // ForÃ§a reload para garantir atualizaÃ§Ã£o total
+    // ForÃƒÂ§a reload para garantir atualizaÃƒÂ§ÃƒÂ£o total
     window.location.reload()
   }
 
@@ -555,7 +555,7 @@ export default function App() {
     localStorage.removeItem('currentUser')
     delete axios.defaults.headers.common['x-user-id']
     setAuthKey((prev) => prev + 1)
-    // ForÃ§a reload para garantir atualizaÃ§Ã£o total
+    // ForÃƒÂ§a reload para garantir atualizaÃƒÂ§ÃƒÂ£o total
     window.location.reload()
   }
 
@@ -580,7 +580,7 @@ export default function App() {
       localStorage.setItem('currentUser', JSON.stringify(resolvedUser))
     }
 
-    // Carregar dados APÃ“S settar o header
+    // Carregar dados APÃƒâ€œS settar o header
     const loadAfterAuth = async () => {
       const isAdminUser = resolvedUser.role === 'admin'
       
@@ -597,7 +597,7 @@ export default function App() {
         const [months, monthsWithSales] = await Promise.all([loadMonths(), loadMonthsWithSales()])
         console.log('DEBUG loadAfterAuth: months=', months, 'monthsWithSales=', monthsWithSales)
         
-        // Preferir mÃªs salvo no localStorage se tiver vendas, senÃ£o ir pro primeiro com vendas
+        // Preferir mÃƒÂªs salvo no localStorage se tiver vendas, senÃƒÂ£o ir pro primeiro com vendas
         let targetMonth = currentMonth
         if (monthsWithSales.length > 0) {
           if (!monthsWithSales.includes(currentMonth)) {
@@ -675,7 +675,7 @@ export default function App() {
         localStorage.removeItem('authenticated')
         localStorage.removeItem('currentUser')
         delete axios.defaults.headers.common['x-user-id']
-        alert('SessÃ£o encerrada por inatividade.')
+        alert('SessÃƒÂ£o encerrada por inatividade.')
       }, INACTIVITY_TIME)
     }
 
@@ -715,7 +715,7 @@ export default function App() {
     await axios.put(`${API}/sales/${id}`, { ...payload, month: currentMonth })
     setEditing(null)
     await load()
-    // Sempre atualiza Ã¡rea admin
+    // Sempre atualiza ÃƒÂ¡rea admin
     await loadAdminSales(adminSearch)
     await loadAdminSummary()
     await loadAdminAnnual()
@@ -736,7 +736,7 @@ export default function App() {
       if (res.data.length === 0) {
         setMonthsWithData((prev) => prev.filter((m) => m !== currentMonth))
       }
-      // Sempre atualiza Ã¡rea admin
+      // Sempre atualiza ÃƒÂ¡rea admin
       await loadAdminSales(adminSearch)
       await loadAdminSummary()
       await loadAdminAnnual()
@@ -764,7 +764,7 @@ export default function App() {
       await loadMonths()
       setCurrentMonth(monthStr)
     } catch (err) {
-      console.error('Erro ao criar mÃªs:', err)
+      console.error('Erro ao criar mÃƒÂªs:', err)
     }
   }
 
@@ -781,7 +781,7 @@ export default function App() {
     setShowMonthSelector(false)
   }
 
-  const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+  const monthNames = ['Janeiro', 'Fevereiro', 'MarÃ§o', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
   const formatMonthName = (monthStr) => {
     const [year, month] = monthStr.split('-')
@@ -814,7 +814,7 @@ export default function App() {
     }
   }, [monthlyTotalsFromAdminView])
 
-  // Gráfico anual (jan-dez) usando os mesmos totais da tela "Visualizar Vendas"
+  // GrÃ¡fico anual (jan-dez) usando os mesmos totais da tela "Visualizar Vendas"
   const adminChartData = useMemo(() => {
     const year = Number(adminAnnual?.year || new Date().getFullYear())
     const yearTotals = Array.isArray(monthlyTotalsFromAdminView) ? monthlyTotalsFromAdminView : []
@@ -840,22 +840,22 @@ export default function App() {
     [adminChartData]
   )
 
-  // ProteÃ§Ã£o: garantir arrays/objetos vÃ¡lidos
+  // ProteÃƒÂ§ÃƒÂ£o: garantir arrays/objetos vÃƒÂ¡lidos
   const safeAdminSales = Array.isArray(adminSales) ? adminSales : [];
   const safeAdminUsers = Array.isArray(adminUsers) ? adminUsers : [];
   const safeAdminAnnual = adminAnnual && typeof adminAnnual === 'object' ? adminAnnual : { year: new Date().getFullYear(), months: [] };
 
   // Filtra vendas TESTE do frontend
-  // Ãšltimas vendas ADM jÃ¡ vÃªm limitadas do backend
+  // ÃƒÅ¡ltimas vendas ADM jÃƒÂ¡ vÃƒÂªm limitadas do backend
   const adminRecentSales = adminLatestSales;
   // ...existing code...
   // Remover return duplicado
-  // O return correto estÃ¡ no final do arquivo
+  // O return correto estÃƒÂ¡ no final do arquivo
   return (
     <>
-      {/* ProteÃ§Ã£o global: mensagem de erro amigÃ¡vel se algum dado essencial estiver ausente */}
+      {/* ProteÃƒÂ§ÃƒÂ£o global: mensagem de erro amigÃƒÂ¡vel se algum dado essencial estiver ausente */}
       {(!safeAdminSales || !safeAdminUsers || !safeAdminAnnual) && (
-        <div style={{color: 'red', padding: 20, fontWeight: 'bold'}}>Erro crÃ­tico: Dados essenciais nÃ£o carregados. Tente recarregar a pÃ¡gina ou contate o suporte.</div>
+        <div style={{color: 'red', padding: 20, fontWeight: 'bold'}}>Erro crÃƒÂ­tico: Dados essenciais nÃƒÂ£o carregados. Tente recarregar a pÃƒÂ¡gina ou contate o suporte.</div>
       )}
       <div className={`header-top${isAdmin ? ' admin-header-top' : ''}`}>
         <div className="theme-controls">
@@ -885,14 +885,14 @@ export default function App() {
           </button>
           {!isAdmin && (
             <>
-              <button className="btn-theme" onClick={() => setShowChart(true)} title="Ver grÃ¡fico de vendas">
+              <button className="btn-theme" onClick={() => setShowChart(true)} title="Ver grÃƒÂ¡fico de vendas">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="12" width="3" height="7"/>
                   <rect x="9" y="8" width="3" height="11"/>
                   <rect x="15" y="4" width="3" height="15"/>
                 </svg>
               </button>
-              <button className="btn-theme" onClick={() => setShowNotes(true)} title="Ver rascunhos e anotaÃ§Ãµes">
+              <button className="btn-theme" onClick={() => setShowNotes(true)} title="Ver rascunhos e anotaÃƒÂ§ÃƒÂµes">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="4" y="4" width="16" height="16" rx="2"/>
                   <line x1="8" y1="8" x2="16" y2="8"/>
@@ -909,7 +909,7 @@ export default function App() {
               </button>
             </>
           )}
-          {/* BotÃ£o de sair do sistema agora Ã© o Ãºltimo */}
+          {/* BotÃƒÂ£o de sair do sistema agora ÃƒÂ© o ÃƒÂºltimo */}
           {isAdmin && (
             <>
               <button className="btn-theme" onClick={() => setShowAdminPanel(true)} title="Gerenciar contas (painel)">
@@ -937,7 +937,7 @@ export default function App() {
             <div className="color-picker-dropdown">
               <div className="color-picker-header">
                 <span>Escolher cor principal</span>
-                <button onClick={() => setShowColorPicker(false)}>âœ•</button>
+                <button onClick={() => setShowColorPicker(false)}>Ã¢Å“â€¢</button>
               </div>
               <div className="color-presets">
                 {PRESET_COLORS.map((color) => (
@@ -949,7 +949,7 @@ export default function App() {
                     style={{ background: `linear-gradient(135deg, ${color.hex} 0%, ${color.dark} 100%)` }}
                   >
                     <span className="color-name">{color.name}</span>
-                    {primaryColor === color.hex && <span className="color-check">âœ“</span>}
+                    {primaryColor === color.hex && <span className="color-check">Ã¢Å“â€œ</span>}
                   </button>
                 ))}
               </div>
@@ -960,7 +960,7 @@ export default function App() {
             <h1 className={isAdmin ? 'admin-main-title' : ''}>{isAdmin ? '\u00C1REA ADMINISTRADOR' : 'Tabela de Vendas'}</h1>
 {!isAdmin && (
           <div className="month-controls">
-            <button className="btn-month" onClick={() => setShowMonthSelector(!showMonthSelector)} title="Selecionar mÃªs">
+            <button className="btn-month" onClick={() => setShowMonthSelector(!showMonthSelector)} title="Selecionar mÃƒÂªs">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                 <line x1="16" y1="2" x2="16" y2="6"/>
@@ -978,7 +978,7 @@ export default function App() {
                     </svg>
                   </button>
                   <span className="year-display">{selectedYear}</span>
-                  <button className="btn-arrow" onClick={handleNextYear} title="PrÃ³ximo ano">
+                  <button className="btn-arrow" onClick={handleNextYear} title="PrÃƒÂ³ximo ano">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
@@ -999,7 +999,7 @@ export default function App() {
                         title={`${monthName} ${selectedYear}`}
                       >
                         <span className="month-label">{monthName.substring(0, 3)}</span>
-                        <span className="month-indicator">{hasData ? 'âœ“' : '+'}</span>
+                        <span className="month-indicator">{hasData ? 'Ã¢Å“â€œ' : '+'}</span>
                       </button>
                     )
                   })}
@@ -1144,7 +1144,7 @@ export default function App() {
             </div>
             <div className="modal-footer">
               <button className="btn-secondary" type="button" onClick={closeConfirm} disabled={confirmSubmitting}>CANCELAR</button>
-              <button className="btn-primary" type="button" onClick={handleConfirm} disabled={confirmSubmitting}>SIM</button>
+              <button className="btn-primary" type="button" onClick={handleConfirm} disabled={confirmSubmitting}>{confirmSubmitting ? 'DELETANDO...' : 'SIM'}</button>
             </div>
           </div>
         </div>
@@ -1155,21 +1155,21 @@ export default function App() {
           <div className="footer-system">
             <strong>SV SISTEMA DE VENDAS 2026</strong>
           </div>
-          <div className="footer-divider">â€¢</div>
+          <div className="footer-divider">Ã¢â‚¬Â¢</div>
           <div className="footer-security">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
             <span>Security and Privacy Protected</span>
           </div>
-          <div className="footer-divider">â€¢</div>
+          <div className="footer-divider">Ã¢â‚¬Â¢</div>
           <div className="footer-author">
             Developed by <strong>Gustavo Curis de Francisco</strong>
           </div>
         </div>
       </footer>
 
-      {/* Modal de Vendas do UsuÃ¡rio */}
+      {/* Modal de Vendas do UsuÃƒÂ¡rio */}
       {viewUserSalesData && (
         <div className="login-manager-overlay">
           <div className={`user-sales-modal ${darkMode ? 'dark-mode' : ''}`}>
@@ -1185,7 +1185,7 @@ export default function App() {
                 }}
                 title="Fechar"
               >
-                âœ•
+                Ã¢Å“â€¢
               </button>
             </div>
 
@@ -1215,14 +1215,14 @@ export default function App() {
 
               {selectedSalesYear && (
                 <div className="user-sales-select-group">
-                  <label htmlFor="month-select">MÃªs:</label>
+                  <label htmlFor="month-select">MÃƒÂªs:</label>
                   <select 
                     id="month-select"
                     className="user-sales-select"
                     value={selectedSalesMonth || ''}
                     onChange={(e) => setSelectedSalesMonth(e.target.value)}
                   >
-                    <option value="">Selecione um mÃªs</option>
+                    <option value="">Selecione um mÃƒÂªs</option>
                     {Object.keys(viewUserSalesData.salesByYearMonth[selectedSalesYear] || {})
                       .sort((a, b) => Number(b) - Number(a))
                       .map((month) => {
@@ -1245,7 +1245,7 @@ export default function App() {
                 (() => {
                   const monthData = viewUserSalesData.salesByYearMonth[selectedSalesYear]?.[selectedSalesMonth]
                   if (!monthData) {
-                    return <p className="user-sales-empty">Nenhuma venda neste mÃªs</p>
+                    return <p className="user-sales-empty">Nenhuma venda neste mÃƒÂªs</p>
                   }
                   return (
                     <div className="user-sales-month-single">
@@ -1285,7 +1285,7 @@ export default function App() {
                   )
                 })()
               ) : (
-                <p className="user-sales-empty">Selecione um ano e mÃªs para visualizar</p>
+                <p className="user-sales-empty">Selecione um ano e mÃƒÂªs para visualizar</p>
               )}
             </div>
           </div>
