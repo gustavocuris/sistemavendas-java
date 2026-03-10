@@ -155,6 +155,7 @@ export default function App() {
   const [chartRefresh, setChartRefresh] = useState(0);
   const [showNotes, setShowNotes] = useState(false);
   const [confirmState, setConfirmState] = useState({ open: false, message: '', onConfirm: null });
+  const [confirmSubmitting, setConfirmSubmitting] = useState(false);
 
   // Admin polling functions as useCallback
   const loadAdminLatestSales = useCallback(async () => {
@@ -1141,8 +1142,8 @@ export default function App() {
               <p>{confirmState.message}</p>
             </div>
             <div className="modal-footer">
-              <button className="btn-secondary" type="button" onClick={closeConfirm}>CANCELAR</button>
-              <button className="btn-primary" type="button" onClick={handleConfirm}>SIM</button>
+              <button className="btn-secondary" type="button" onClick={closeConfirm} disabled={confirmSubmitting}>CANCELAR</button>
+              <button className="btn-primary" type="button" onClick={handleConfirm} disabled={confirmSubmitting}>SIM</button>
             </div>
           </div>
         </div>
