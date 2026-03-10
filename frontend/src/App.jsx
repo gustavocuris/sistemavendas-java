@@ -15,6 +15,7 @@ import { normalizeMojibakeText } from './utils/text';
 import { getMonthlyTotalsFromActiveAccounts } from './utils/adminMonthlyTotals';
 
 const SAFE_EMPTY_NEW_USER = { displayName: '', username: '', password: '' };
+const CONFIRM_DIALOG_TITLE = 'CONFIRMA\u00C7\u00C3O';
 
 // Interceptor global para garantir x-user-id do usuÃ¡rio logado
 axios.interceptors.request.use((config) => {
