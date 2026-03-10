@@ -6,6 +6,40 @@ import './styles.css'
 
 import { useState, useEffect } from 'react';
 
+function sanitizeMojibakeInDom(rootNode = document.body) {
+  if (!rootNode) return
+
+  const replacements = [
+    [/Mar\\u00E7o/g, 'Março'],
+    [/Mar\\u00e7o/g, 'Março'],
+    [/MarÃ§o/g, 'Março'],
+    [/MÃªs/g, 'Mês'],
+    [/PrÃ³ximo/g, 'Próximo'],
+    [/â€¢/g, '|'],
+    [/âœ•/g, 'X'],
+    [/âœ“/g, 'OK'],
+    [/â€”/g, '-'],
+    [/â€“/g, '-']
+  ]
+
+  const walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_TEXT)
+  const touched = []
+  while (walker.nextNode()) {
+    const node = walker.currentNode
+    const original = node.nodeValue || ''
+    let sanitized = original
+    for (const [pattern, replacement] of replacements) {
+      sanitized = sanitized.replace(pattern, replacement)
+    }
+    if (sanitized !== original) {
+      touched.push([node, sanitized])
+    }
+  }
+
+  touched.forEach(([node, value]) => {
+    node.nodeValue = value
+  })
+}
 
 
 // Move user loading and transition logic here
@@ -78,3 +112,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ErrorBoundaryWithUserLoad />
   </StrictMode>
 )
+
+sanitizeMojibakeInDom()
+
+const observer = new MutationObserver(() => {
+  sanitizeMojibakeInDom()
+})
+
+observer.observe(document.body, {
+  subtree: true,
+  childList: true,
+  characterData: true
+})
