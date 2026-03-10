@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import axios from 'axios';
 // import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 import SaleForm from './components/SaleForm';
@@ -1136,7 +1136,7 @@ export default function App() {
         <div className="modal-overlay">
           <div className="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
             <div className="modal-header">
-              <h3 id="confirm-title">CONFIRMACAO</h3>
+              <h3 id="confirm-title">{globalThis.String.fromCharCode(67, 79, 78, 70, 73, 82, 77, 65, 199, 195, 79)}</h3>
               <button className="modal-close" onClick={closeConfirm} aria-label="Fechar">X</button>
             </div>
             <div className="modal-body">
