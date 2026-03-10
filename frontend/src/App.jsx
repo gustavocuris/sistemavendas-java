@@ -560,11 +560,22 @@ export default function App() {
   }
 
   const openConfirm = (message, onConfirm) => setConfirmState({ open: true, message, onConfirm })
-  const closeConfirm = () => setConfirmState({ open: false, message: '', onConfirm: null })
-
+  const closeConfirm = () => {
+    setConfirmState({ open: false, message: '', onConfirm: null })
+    setConfirmSubmitting(false)
+  }
   const handleConfirm = async () => {
-    if (confirmState.onConfirm) await confirmState.onConfirm()
-    closeConfirm()
+    if (confirmSubmitting) return
+
+    const action = confirmState.onConfirm
+    setConfirmSubmitting(true)
+    setConfirmState({ open: false, message: '', onConfirm: null })
+
+    try {
+      if (action) await action()
+    } finally {
+      setConfirmSubmitting(false)
+    }
   }
 
   useEffect(() => {
