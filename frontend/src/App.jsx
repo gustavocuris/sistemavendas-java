@@ -1135,7 +1135,7 @@ export default function App() {
         <div className="modal-overlay">
           <div className="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
             <div className="modal-header">
-              <h3 id="confirm-title">CONFIRMAÃ‡ÃƒO</h3>
+              <h3 id="confirm-title">CONFIRMACAO</h3>
               <button className="modal-close" onClick={closeConfirm} aria-label="Fechar">X</button>
             </div>
             <div className="modal-body">
