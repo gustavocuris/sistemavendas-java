@@ -4664,6 +4664,12 @@ body.dark-mode .admin-total-label {
   box-shadow: none !important;
 }
 
+.admin-home-sales-top .list {
+  margin-left: -14px;
+  margin-right: -14px;
+  width: calc(100% + 28px);
+}
+
 .admin-home-sales-top .list th,
 .admin-home-sales-top .list td {
   text-transform: uppercase;
