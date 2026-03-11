@@ -948,7 +948,7 @@ export default function App() {
             <div className="color-picker-dropdown">
               <div className="color-picker-header">
                 <span>Escolher cor principal</span>
-                <button onClick={() => setShowColorPicker(false)}>Ã¢Å“â€¢</button>
+                <button onClick={() => setShowColorPicker(false)}>X</button>
               </div>
               <div className="color-presets">
                 {PRESET_COLORS.map((color) => (
