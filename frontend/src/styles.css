@@ -5750,6 +5750,73 @@ body.dark-mode .btn-eye-large:hover {
   background: rgba(74, 222, 128, 0.1);
 }
 
+/* LoginManager dark mode: button palette */
+.login-manager-modal.dark-mode .btn-eye-sm,
+.login-manager-modal.dark-mode .btn-delete-sm,
+.login-manager-modal.dark-mode .btn-edit-sm,
+.login-manager-modal.dark-mode .btn-table-sm {
+  background: #101010;
+  border-color: #2f2f2f;
+  color: #cbd5e1;
+}
+
+.login-manager-modal.dark-mode .btn-eye-sm:hover,
+.login-manager-modal.dark-mode .btn-edit-sm:hover,
+.login-manager-modal.dark-mode .btn-table-sm:hover {
+  background: #162016;
+  border-color: #4ade80;
+  color: #4ade80;
+}
+
+.login-manager-modal.dark-mode .btn-delete-sm:hover {
+  background: #231414;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.login-manager-modal.dark-mode .login-manager-btn-create {
+  background: #0f2c1b;
+  border: 1px solid #1f5f3b;
+  color: #86efac;
+}
+
+.login-manager-modal.dark-mode .login-manager-btn-create:hover:not(:disabled) {
+  background: #16492c;
+  border-color: #2b7a4b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-btn-save {
+  background: #0f2c1b;
+  border: 1px solid #1f5f3b;
+  color: #86efac;
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-btn-save:hover:not(:disabled) {
+  background: #16492c;
+  border-color: #2b7a4b;
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-btn-cancel {
+  background: #151515;
+  color: #d1d5db;
+  border-color: #2f2f2f;
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-btn-cancel:hover:not(:disabled) {
+  background: #222222;
+}
+
+.login-manager-modal-delete.dark-mode .login-manager-btn-delete-confirm {
+  background: #7f1d1d;
+  border: 1px solid #b91c1c;
+  color: #fee2e2;
+}
+
+.login-manager-modal-delete.dark-mode .login-manager-btn-delete-confirm:hover:not(:disabled) {
+  background: #991b1b;
+}
+
 /* Modal de Vendas do Usuário */
 .user-sales-modal {
   position: fixed;
