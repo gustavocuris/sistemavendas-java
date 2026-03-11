@@ -937,11 +937,15 @@ export default function App() {
                 </svg>
               </button>
               <button className="btn-theme" onClick={() => setShowLoginManager(true)} title="Gerenciar contas (modal)">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="15" cy="8" r="2.5"/>
-                  <path d="M10.5 18.5c0-2.3 1.9-3.8 4.5-3.8s4.5 1.5 4.5 3.8"/>
-                  <circle cx="10" cy="9" r="3"/>
-                  <path d="M4.5 20c0-2.9 2.4-4.8 5.5-4.8s5.5 1.9 5.5 4.8"/>
+                <svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="10" cy="10" r="3.5" />
+                  <circle cx="22" cy="10" r="3.5" />
+                  <circle cx="10" cy="22" r="3.5" />
+                  <circle cx="22" cy="22" r="3.5" />
+                  <path d="M5 29c0-2.3 2.5-4.5 5-4.5s5 2.2 5 4.5" />
+                  <path d="M17 29c0-2.3 2.5-4.5 5-4.5s5 2.2 5 4.5" />
+                  <path d="M5 17c0-2.3 2.5-4.5 5-4.5s5 2.2 5 4.5" />
+                  <path d="M17 17c0-2.3 2.5-4.5 5-4.5s5 2.2 5 4.5" />
                 </svg>
               </button>
               <button className="btn-logout" onClick={() => openConfirm('Deseja realmente sair do sistema?', handleLogout)} title="Sair do sistema">
