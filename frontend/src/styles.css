@@ -5023,8 +5023,8 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .login-manager-modal.dark-mode {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: #000000;
+  border: 1px solid #1f1f1f;
 }
 
 .login-manager-header {
@@ -5037,8 +5037,8 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .login-manager-modal.dark-mode .login-manager-header {
-  border-bottom-color: #334155;
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-bottom-color: #1f1f1f;
+  background: #050505;
 }
 
 .login-manager-header h2 {
@@ -5091,6 +5091,17 @@ body.dark-mode .admin-chart-wrap {
   padding: 24px;
 }
 
+.login-manager-modal.dark-mode .login-manager-content {
+  background: #000000;
+}
+
+.login-manager-modal.dark-mode .login-manager-section {
+  background: #0a0a0a;
+  border: 1px solid #1f1f1f;
+  border-radius: 10px;
+  padding: 14px;
+}
+
 .login-manager-section {
   margin-bottom: 32px;
 }
@@ -5131,13 +5142,13 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .login-manager-modal.dark-mode .login-manager-card {
-  background: #334155;
-  border-color: #475569;
+  background: #171717;
+  border-color: #2b2b2b;
 }
 
 .login-manager-modal.dark-mode .login-manager-card:hover {
   border-color: #4ade80;
-  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
 }
 
 .login-manager-card-header {
@@ -5309,8 +5320,8 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .login-manager-modal.dark-mode .login-manager-form-group input {
-  background: #0f172a;
-  border-color: #475569;
+  background: #141414;
+  border-color: #2f2f2f;
   color: #f1f5f9;
 }
 
@@ -5426,8 +5437,9 @@ body.dark-mode .btn-eye-large:hover {
 }
 
 .login-manager-modal-edit.dark-mode {
-  background: #0f172a;
+  background: #000000;
   color: #f1f5f9;
+  border: 1px solid #1f1f1f;
 }
 
 .login-manager-modal-edit .login-manager-header {
@@ -5436,7 +5448,8 @@ body.dark-mode .btn-eye-large:hover {
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-header {
-  border-bottom-color: #334155;
+  border-bottom-color: #1f1f1f;
+  background: #050505;
 }
 
 .login-manager-modal-edit .login-manager-form {
@@ -5518,8 +5531,9 @@ body.dark-mode .btn-eye-large:hover {
 }
 
 .login-manager-modal-delete.dark-mode {
-  background: #0f172a;
+  background: #000000;
   color: #f1f5f9;
+  border: 1px solid #1f1f1f;
 }
 
 .login-manager-modal-delete .login-manager-header {
@@ -5528,7 +5542,8 @@ body.dark-mode .btn-eye-large:hover {
 }
 
 .login-manager-modal-delete.dark-mode .login-manager-header {
-  border-bottom-color: #334155;
+  border-bottom-color: #1f1f1f;
+  background: #050505;
 }
 
 .login-manager-delete-content {
