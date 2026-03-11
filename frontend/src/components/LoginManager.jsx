@@ -63,7 +63,7 @@ export default function LoginManager({
     error: '',
     rates: { new: 5, recap: 8, recapping: 10, service: 0 },
     byYearMonth: {},
-    selectedYear: '',
+    selectedYear: 'ALL',
     selectedMonth: 'ALL',
   })
 
@@ -145,14 +145,14 @@ export default function LoginManager({
       error: '',
       rates: { new: 5, recap: 8, recapping: 10, service: 0 },
       byYearMonth: {},
-      selectedYear: '',
+      selectedYear: 'ALL',
       selectedMonth: 'ALL',
     })
 
     try {
       const payload = await onViewUserCommission(cred.id)
       const years = Object.keys(payload?.byYearMonth || {}).sort((a, b) => Number(b) - Number(a))
-      const selectedYear = years[0] || ''
+      const selectedYear = years[0] || 'ALL'
 
       setCommissionModal((prev) => ({
         ...prev,
@@ -179,7 +179,7 @@ export default function LoginManager({
       error: '',
       rates: { new: 5, recap: 8, recapping: 10, service: 0 },
       byYearMonth: {},
-      selectedYear: '',
+      selectedYear: 'ALL',
       selectedMonth: 'ALL',
     })
   }
@@ -189,27 +189,44 @@ export default function LoginManager({
   }
 
   const commissionYears = Object.keys(commissionModal.byYearMonth || {}).sort((a, b) => Number(b) - Number(a))
-  const commissionMonths = commissionModal.selectedYear
+  const commissionMonths = commissionModal.selectedYear && commissionModal.selectedYear !== 'ALL'
     ? Object.keys(commissionModal.byYearMonth?.[commissionModal.selectedYear] || {}).sort((a, b) => Number(b) - Number(a))
     : []
 
   const commissionTotals = (() => {
     const empty = { new: 0, recap: 0, recapping: 0, service: 0, total: 0 }
-    const yearData = commissionModal.byYearMonth?.[commissionModal.selectedYear]
-    if (!yearData) return empty
+    const allYears = Object.keys(commissionModal.byYearMonth || {})
+    if (allYears.length === 0) return empty
 
-    if (commissionModal.selectedMonth !== 'ALL') {
-      return yearData[commissionModal.selectedMonth] || empty
-    }
+    const yearsToUse = commissionModal.selectedYear && commissionModal.selectedYear !== 'ALL'
+      ? [commissionModal.selectedYear]
+      : allYears
 
-    return Object.values(yearData).reduce((acc, monthData) => ({
-      new: acc.new + Number(monthData?.new || 0),
-      recap: acc.recap + Number(monthData?.recap || 0),
-      recapping: acc.recapping + Number(monthData?.recapping || 0),
-      service: acc.service + Number(monthData?.service || 0),
-      total: acc.total + Number(monthData?.total || 0),
-    }), empty)
+    return yearsToUse.reduce((accYear, year) => {
+      const yearData = commissionModal.byYearMonth?.[year] || {}
+
+      if (commissionModal.selectedMonth !== 'ALL' && commissionModal.selectedYear !== 'ALL') {
+        const monthData = yearData[commissionModal.selectedMonth] || empty
+        return {
+          new: accYear.new + Number(monthData.new || 0),
+          recap: accYear.recap + Number(monthData.recap || 0),
+          recapping: accYear.recapping + Number(monthData.recapping || 0),
+          service: accYear.service + Number(monthData.service || 0),
+          total: accYear.total + Number(monthData.total || 0),
+        }
+      }
+
+      return Object.values(yearData).reduce((accMonth, monthData) => ({
+        new: accMonth.new + Number(monthData?.new || 0),
+        recap: accMonth.recap + Number(monthData?.recap || 0),
+        recapping: accMonth.recapping + Number(monthData?.recapping || 0),
+        service: accMonth.service + Number(monthData?.service || 0),
+        total: accMonth.total + Number(monthData?.total || 0),
+      }), accYear)
+    }, empty)
   })()
+
+  const hasCommissionData = commissionYears.length > 0
 
   return (
     <div className="login-manager-overlay">
@@ -503,15 +520,17 @@ export default function LoginManager({
                 <p className="login-manager-empty">Carregando comissao...</p>
               ) : commissionModal.error ? (
                 <p className="login-manager-empty">{commissionModal.error}</p>
-              ) : commissionYears.length === 0 ? (
-                <p className="login-manager-empty">Sem vendas para calcular comissao.</p>
               ) : (
                 <>
                   <div className="login-manager-commission-filters">
                     <select
                       value={commissionModal.selectedYear}
-                      onChange={(e) => setCommissionFilter('selectedYear', e.target.value)}
+                      onChange={(e) => {
+                        const nextYear = e.target.value
+                        setCommissionModal((prev) => ({ ...prev, selectedYear: nextYear, selectedMonth: 'ALL' }))
+                      }}
                     >
+                      <option value="ALL">TODOS OS ANOS</option>
                       {commissionYears.map((year) => (
                         <option key={year} value={year}>{year}</option>
                       ))}
@@ -519,8 +538,9 @@ export default function LoginManager({
                     <select
                       value={commissionModal.selectedMonth}
                       onChange={(e) => setCommissionFilter('selectedMonth', e.target.value)}
+                      disabled={!hasCommissionData || commissionModal.selectedYear === 'ALL'}
                     >
-                      <option value="ALL">ANO TODO</option>
+                      <option value="ALL">{commissionModal.selectedYear === 'ALL' ? 'TODOS OS MESES' : 'ANO TODO'}</option>
                       {commissionMonths.map((month) => (
                         <option key={month} value={month}>{MONTH_LABELS[month] || month}</option>
                       ))}
@@ -547,6 +567,10 @@ export default function LoginManager({
                     <span>TOTAL GERAL</span>
                     <strong>R$ {formatBRL(commissionTotals.total)}</strong>
                   </div>
+
+                  {!hasCommissionData && (
+                    <p className="login-manager-empty">Sem vendas registradas para este funcionario.</p>
+                  )}
                 </>
               )}
             </div>
