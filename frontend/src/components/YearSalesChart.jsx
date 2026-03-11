@@ -332,7 +332,7 @@ function YearSalesChart({ allUsersData, darkMode = false, year, users, monthlyTo
   }
 
   return (
-    <div style={{ width: '100%', height: 360 }}>
+    <div style={{ width: '100%', height: 360, background: darkMode ? '#1a1a1a' : 'transparent' }}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={totals} margin={{ top: 10, right: 16, left: 8, bottom: 8 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.12)'} vertical={false} />

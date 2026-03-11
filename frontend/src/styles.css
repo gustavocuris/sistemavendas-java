@@ -4734,6 +4734,12 @@ body.dark-mode .admin-home-card {
   color: #e5e7eb !important;
 }
 
+body.dark-mode .admin-home-chart-full,
+body.dark-mode .admin-home-chart-wrap,
+body.dark-mode .admin-home-chart-wrap.full-width {
+  background: #1a1a1a !important;
+}
+
 .admin-home-row-head {
   background: transparent;
   color: var(--primary-color);
