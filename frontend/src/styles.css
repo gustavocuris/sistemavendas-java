@@ -5045,6 +5045,7 @@ body.dark-mode .admin-chart-wrap {
   font-size: 1.5em;
   color: var(--primary-color);
   margin: 0;
+  text-transform: uppercase;
 }
 
 .login-manager-modal.dark-mode .login-manager-header h2 {
@@ -5116,6 +5117,7 @@ body.dark-mode .admin-chart-wrap {
   margin-bottom: 16px;
   padding-bottom: 8px;
   border-bottom: 2px solid var(--primary-color);
+  text-transform: uppercase;
 }
 
 .login-manager-modal.dark-mode .login-manager-section h3 {
@@ -5162,6 +5164,7 @@ body.dark-mode .admin-chart-wrap {
   font-weight: 600;
   font-size: 1em;
   color: #1e293b;
+  text-transform: uppercase;
 }
 
 .login-manager-modal.dark-mode .login-manager-name {
@@ -5254,6 +5257,11 @@ body.dark-mode .admin-chart-wrap {
   color: #475569;
   min-width: 80px;
   font-size: 0.9em;
+  text-transform: uppercase;
+}
+
+.login-manager-card .login-manager-row:nth-child(3) .login-manager-value {
+  text-transform: uppercase;
 }
 
 .login-manager-modal.dark-mode .login-manager-row label {
