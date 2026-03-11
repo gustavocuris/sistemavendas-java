@@ -4664,6 +4664,18 @@ body.dark-mode .admin-total-label {
   box-shadow: none !important;
 }
 
+.admin-home-sales-top .list {
+  margin: 0;
+}
+
+.admin-home-sales-top .list-header-with-sort {
+  padding: 14px;
+}
+
+.admin-home-sales-top .list-wrapper {
+  padding: 0 14px 14px;
+}
+
 .admin-home-sales-top .list th,
 .admin-home-sales-top .list td {
   text-transform: uppercase;
@@ -4773,6 +4785,13 @@ body.dark-mode .admin-home-sales-top {
   height: 380px;
   width: 100%;
   margin: 0;
+}
+
+.admin-home-chart-full h3,
+.admin-home-chart-full .admin-home-total,
+.admin-home-chart-full .admin-home-chart-wrap {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .admin-home-row-head {
