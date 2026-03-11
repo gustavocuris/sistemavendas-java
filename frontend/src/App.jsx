@@ -925,9 +925,15 @@ export default function App() {
           {isAdmin && (
             <>
               <button className="btn-theme" onClick={() => setShowAdminPanel(true)} title="Gerenciar contas (painel)">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="3" width="18" height="18" rx="2"/>
-                  <path d="M9 9h6v6H9z"/>
+                <svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="9" cy="10" r="3" />
+                  <circle cx="23" cy="10" r="3" />
+                  <circle cx="9" cy="22" r="3" />
+                  <circle cx="23" cy="22" r="3" />
+                  <path d="M5 28c0-2 4-4 4-4s4 2 4 4" />
+                  <path d="M19 28c0-2 4-4 4-4s4 2 4 4" />
+                  <path d="M5 16c0-2 4-4 4-4s4 2 4 4" />
+                  <path d="M19 16c0-2 4-4 4-4s4 2 4 4" />
                 </svg>
               </button>
               <button className="btn-theme" onClick={() => setShowLoginManager(true)} title="Gerenciar contas (modal)">
