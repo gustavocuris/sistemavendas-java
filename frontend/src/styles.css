@@ -5677,6 +5677,14 @@ body.dark-mode .btn-eye-large:hover {
   .theme-controls,
   .month-controls {
     position: static;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .theme-controls .btn-theme,
+  .month-controls .btn-month {
+    width: 100%;
   }
 
   .header-title-group.is-admin {
@@ -5725,6 +5733,15 @@ body.dark-mode .btn-eye-large:hover {
   .login-manager-actions {
     width: 100%;
     justify-content: flex-start;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .login-manager-actions .btn-eye-sm,
+  .login-manager-actions .btn-edit-sm,
+  .login-manager-actions .btn-table-sm,
+  .login-manager-actions .btn-delete-sm {
+    width: 100%;
   }
 }
 
