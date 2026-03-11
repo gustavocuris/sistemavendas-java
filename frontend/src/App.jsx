@@ -891,8 +891,9 @@ export default function App() {
           </button>
           <button className="btn-theme" onClick={() => setShowColorPicker(!showColorPicker)} title="Personalizar cores">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="8" r="3"/>
-              <path d="M6 20c0-3.2 2.7-5 6-5s6 1.8 6 5"/>
+              <path d="M14 4l6 6"></path>
+              <path d="M11 7l6 6"></path>
+              <path d="M4 20c2.5 0 4.5-2 4.5-4.5 0-.8-.2-1.5-.6-2.1l6.8-6.8-3.2-3.2-6.8 6.8c-.6-.4-1.3-.6-2.1-.6C1.2 9.6 0 10.8 0 12.2S1.2 14.8 2.6 14.8c.4 0 .8-.1 1.1-.2.2.3.3.6.3.9C4 17.4 2.4 19 0.5 19"></path>
             </svg>
           </button>
           {!isAdmin && (
