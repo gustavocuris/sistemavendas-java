@@ -5188,6 +5188,86 @@ body.dark-mode .admin-chart-wrap {
   gap: 8px;
 }
 
+.btn-commission-sm {
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: all 0.2s ease;
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+}
+
+.btn-commission-sm svg {
+  stroke: currentColor;
+  transition: all 0.2s ease;
+}
+
+.btn-commission-sm:hover {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+  color: #f59e0b;
+}
+
+.login-manager-modal.dark-mode .btn-commission-sm {
+  border-color: #475569;
+  color: #cbd5e1;
+}
+
+.login-manager-modal.dark-mode .btn-commission-sm:hover {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.login-manager-commission-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 18px;
+}
+
+.login-manager-commission-item {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-manager-commission-item span {
+  font-size: 0.78em;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: #64748b;
+}
+
+.login-manager-commission-item strong {
+  font-size: 1.2em;
+  color: var(--primary-color);
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-commission-item {
+  background: #0b1220;
+  border-color: #334155;
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-commission-item span {
+  color: #94a3b8;
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-commission-item strong {
+  color: #4ade80;
+}
+
 .btn-eye-sm,
 .btn-delete-sm,
 .btn-edit-sm,
@@ -5750,10 +5830,16 @@ body.dark-mode .btn-eye-large:hover {
   }
 
   .login-manager-actions .btn-eye-sm,
+  .login-manager-actions .btn-commission-sm,
   .login-manager-actions .btn-edit-sm,
   .login-manager-actions .btn-table-sm,
   .login-manager-actions .btn-delete-sm {
     width: 100%;
+  }
+
+  .login-manager-commission-grid {
+    grid-template-columns: 1fr;
+    padding: 16px;
   }
 }
 

@@ -8,6 +8,7 @@ export default function LoginManager({
   onUpdateUser,
   onDeleteUser,
   onViewUserSales,
+  onViewUserCommission,
   onRefresh,
   adminLoading,
   darkMode,
@@ -33,6 +34,14 @@ export default function LoginManager({
     id: null,
     displayName: '',
     confirmText: '',
+  })
+
+  const [commissionModal, setCommissionModal] = useState({
+    open: false,
+    displayName: '',
+    loading: false,
+    error: '',
+    values: { new: 5, recap: 8, recapping: 10, service: 0 },
   })
 
   if (!isOpen) return null
@@ -105,6 +114,37 @@ export default function LoginManager({
     closeDeleteConfirm()
   }
 
+  const openCommissionModal = async (cred) => {
+    setCommissionModal({
+      open: true,
+      displayName: cred.displayName,
+      loading: true,
+      error: '',
+      values: { new: 5, recap: 8, recapping: 10, service: 0 },
+    })
+
+    try {
+      const values = await onViewUserCommission(cred.id)
+      setCommissionModal((prev) => ({ ...prev, loading: false, values }))
+    } catch (error) {
+      setCommissionModal((prev) => ({
+        ...prev,
+        loading: false,
+        error: 'Nao foi possivel carregar a comissao deste funcionario.',
+      }))
+    }
+  }
+
+  const closeCommissionModal = () => {
+    setCommissionModal({
+      open: false,
+      displayName: '',
+      loading: false,
+      error: '',
+      values: { new: 5, recap: 8, recapping: 10, service: 0 },
+    })
+  }
+
   return (
     <div className="login-manager-overlay">
       <div className={`login-manager-modal ${darkMode ? 'dark-mode' : ''}`}>
@@ -168,6 +208,20 @@ export default function LoginManager({
                               <line x1="18" y1="20" x2="18" y2="10"></line>
                               <line x1="12" y1="20" x2="12" y2="4"></line>
                               <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                          </button>
+                        )}
+                        {cred.role !== 'admin' && (
+                          <button
+                            className="btn-commission-sm"
+                            onClick={() => openCommissionModal(cred)}
+                            disabled={adminLoading}
+                            title="Visualizar comissao"
+                          >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="19" y1="5" x2="5" y2="19"></line>
+                              <circle cx="7.5" cy="7.5" r="2.5"></circle>
+                              <circle cx="16.5" cy="16.5" r="2.5"></circle>
                             </svg>
                           </button>
                         )}
@@ -361,6 +415,49 @@ export default function LoginManager({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {commissionModal.open && (
+        <div className="login-manager-overlay">
+          <div className={`login-manager-modal-edit ${darkMode ? 'dark-mode' : ''}`}>
+            <div className="login-manager-header">
+              <h2>Comissao de {commissionModal.displayName}</h2>
+              <button className="login-manager-close" onClick={closeCommissionModal} title="Fechar">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="4" y1="4" x2="16" y2="16" />
+                  <line x1="16" y1="4" x2="4" y2="16" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="login-manager-commission-grid">
+              {commissionModal.loading ? (
+                <p className="login-manager-empty">Carregando comissao...</p>
+              ) : commissionModal.error ? (
+                <p className="login-manager-empty">{commissionModal.error}</p>
+              ) : (
+                <>
+                  <div className="login-manager-commission-item">
+                    <span>NOVO</span>
+                    <strong>{commissionModal.values.new}%</strong>
+                  </div>
+                  <div className="login-manager-commission-item">
+                    <span>RECAP</span>
+                    <strong>{commissionModal.values.recap}%</strong>
+                  </div>
+                  <div className="login-manager-commission-item">
+                    <span>RECAPAGEM</span>
+                    <strong>{commissionModal.values.recapping}%</strong>
+                  </div>
+                  <div className="login-manager-commission-item">
+                    <span>SERVICO</span>
+                    <strong>{commissionModal.values.service}%</strong>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}
