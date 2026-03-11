@@ -275,7 +275,12 @@ export default function AdminAllSalesView({ isOpen, onClose, activeAccounts, dar
       <div className={`admin-all-sales-modal ${darkMode ? 'dark-mode' : ''}`}>
         <div className="admin-all-sales-header">
           <h2>Todas as vendas das contas ativas</h2>
-          <button type="button" className="admin-all-sales-close" onClick={onClose} title="Fechar">X</button>
+          <button type="button" className="admin-all-sales-close" onClick={onClose} title="Fechar" aria-label="Fechar">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <line x1="4" y1="4" x2="16" y2="16" />
+              <line x1="16" y1="4" x2="4" y2="16" />
+            </svg>
+          </button>
         </div>
 
         <div className="admin-all-sales-content">

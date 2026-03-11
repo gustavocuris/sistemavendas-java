@@ -46,7 +46,12 @@ export default function CommissionConfig({ isOpen, onClose }) {
       <div className="modal">
         <div className="modal-header">
           <h3>Configurar Comissões (%)</h3>
-          <button className="modal-close" onClick={onClose}>X</button>
+          <button className="modal-close" onClick={onClose} aria-label="Fechar" title="Fechar">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <line x1="4" y1="4" x2="16" y2="16" />
+              <line x1="16" y1="4" x2="4" y2="16" />
+            </svg>
+          </button>
         </div>
         <div className="modal-body">
           <div className="commission-group">
