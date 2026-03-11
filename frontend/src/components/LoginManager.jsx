@@ -1,5 +1,25 @@
 import { useState } from 'react'
 
+const MONTH_LABELS = {
+  '01': 'JAN',
+  '02': 'FEV',
+  '03': 'MAR',
+  '04': 'ABR',
+  '05': 'MAI',
+  '06': 'JUN',
+  '07': 'JUL',
+  '08': 'AGO',
+  '09': 'SET',
+  '10': 'OUT',
+  '11': 'NOV',
+  '12': 'DEZ',
+}
+
+const formatBRL = (value) => Number(value || 0).toLocaleString('pt-BR', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})
+
 export default function LoginManager({
   isOpen,
   onClose,
@@ -41,7 +61,10 @@ export default function LoginManager({
     displayName: '',
     loading: false,
     error: '',
-    values: { new: 5, recap: 8, recapping: 10, service: 0 },
+    rates: { new: 5, recap: 8, recapping: 10, service: 0 },
+    byYearMonth: {},
+    selectedYear: '',
+    selectedMonth: 'ALL',
   })
 
   if (!isOpen) return null
@@ -120,12 +143,25 @@ export default function LoginManager({
       displayName: cred.displayName,
       loading: true,
       error: '',
-      values: { new: 5, recap: 8, recapping: 10, service: 0 },
+      rates: { new: 5, recap: 8, recapping: 10, service: 0 },
+      byYearMonth: {},
+      selectedYear: '',
+      selectedMonth: 'ALL',
     })
 
     try {
-      const values = await onViewUserCommission(cred.id)
-      setCommissionModal((prev) => ({ ...prev, loading: false, values }))
+      const payload = await onViewUserCommission(cred.id)
+      const years = Object.keys(payload?.byYearMonth || {}).sort((a, b) => Number(b) - Number(a))
+      const selectedYear = years[0] || ''
+
+      setCommissionModal((prev) => ({
+        ...prev,
+        loading: false,
+        rates: payload?.rates || { new: 5, recap: 8, recapping: 10, service: 0 },
+        byYearMonth: payload?.byYearMonth || {},
+        selectedYear,
+        selectedMonth: 'ALL',
+      }))
     } catch (error) {
       setCommissionModal((prev) => ({
         ...prev,
@@ -141,9 +177,39 @@ export default function LoginManager({
       displayName: '',
       loading: false,
       error: '',
-      values: { new: 5, recap: 8, recapping: 10, service: 0 },
+      rates: { new: 5, recap: 8, recapping: 10, service: 0 },
+      byYearMonth: {},
+      selectedYear: '',
+      selectedMonth: 'ALL',
     })
   }
+
+  const setCommissionFilter = (key, value) => {
+    setCommissionModal((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const commissionYears = Object.keys(commissionModal.byYearMonth || {}).sort((a, b) => Number(b) - Number(a))
+  const commissionMonths = commissionModal.selectedYear
+    ? Object.keys(commissionModal.byYearMonth?.[commissionModal.selectedYear] || {}).sort((a, b) => Number(b) - Number(a))
+    : []
+
+  const commissionTotals = (() => {
+    const empty = { new: 0, recap: 0, recapping: 0, service: 0, total: 0 }
+    const yearData = commissionModal.byYearMonth?.[commissionModal.selectedYear]
+    if (!yearData) return empty
+
+    if (commissionModal.selectedMonth !== 'ALL') {
+      return yearData[commissionModal.selectedMonth] || empty
+    }
+
+    return Object.values(yearData).reduce((acc, monthData) => ({
+      new: acc.new + Number(monthData?.new || 0),
+      recap: acc.recap + Number(monthData?.recap || 0),
+      recapping: acc.recapping + Number(monthData?.recapping || 0),
+      service: acc.service + Number(monthData?.service || 0),
+      total: acc.total + Number(monthData?.total || 0),
+    }), empty)
+  })()
 
   return (
     <div className="login-manager-overlay">
@@ -437,23 +503,49 @@ export default function LoginManager({
                 <p className="login-manager-empty">Carregando comissao...</p>
               ) : commissionModal.error ? (
                 <p className="login-manager-empty">{commissionModal.error}</p>
+              ) : commissionYears.length === 0 ? (
+                <p className="login-manager-empty">Sem vendas para calcular comissao.</p>
               ) : (
                 <>
+                  <div className="login-manager-commission-filters">
+                    <select
+                      value={commissionModal.selectedYear}
+                      onChange={(e) => setCommissionFilter('selectedYear', e.target.value)}
+                    >
+                      {commissionYears.map((year) => (
+                        <option key={year} value={year}>{year}</option>
+                      ))}
+                    </select>
+                    <select
+                      value={commissionModal.selectedMonth}
+                      onChange={(e) => setCommissionFilter('selectedMonth', e.target.value)}
+                    >
+                      <option value="ALL">ANO TODO</option>
+                      {commissionMonths.map((month) => (
+                        <option key={month} value={month}>{MONTH_LABELS[month] || month}</option>
+                      ))}
+                    </select>
+                  </div>
+
                   <div className="login-manager-commission-item">
-                    <span>NOVO</span>
-                    <strong>{commissionModal.values.new}%</strong>
+                    <span>NOVO ({commissionModal.rates.new}%)</span>
+                    <strong>R$ {formatBRL(commissionTotals.new)}</strong>
                   </div>
                   <div className="login-manager-commission-item">
-                    <span>RECAP</span>
-                    <strong>{commissionModal.values.recap}%</strong>
+                    <span>RECAP ({commissionModal.rates.recap}%)</span>
+                    <strong>R$ {formatBRL(commissionTotals.recap)}</strong>
                   </div>
                   <div className="login-manager-commission-item">
-                    <span>RECAPAGEM</span>
-                    <strong>{commissionModal.values.recapping}%</strong>
+                    <span>RECAPAGEM ({commissionModal.rates.recapping}%)</span>
+                    <strong>R$ {formatBRL(commissionTotals.recapping)}</strong>
                   </div>
                   <div className="login-manager-commission-item">
-                    <span>SERVICO</span>
-                    <strong>{commissionModal.values.service}%</strong>
+                    <span>SERVICO ({commissionModal.rates.service}%)</span>
+                    <strong>R$ {formatBRL(commissionTotals.service)}</strong>
+                  </div>
+                  <div className="login-manager-commission-item total">
+                    <span>TOTAL GERAL</span>
+                    <strong>R$ {formatBRL(commissionTotals.total)}</strong>
                   </div>
                 </>
               )}
