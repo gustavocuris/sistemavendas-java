@@ -166,7 +166,11 @@ export default function LoginManager({
       setCommissionModal((prev) => ({
         ...prev,
         loading: false,
-        error: 'Nao foi possivel carregar a comissao deste funcionario.',
+        error: '',
+        rates: prev.rates || { new: 5, recap: 8, recapping: 10, service: 0 },
+        byYearMonth: prev.byYearMonth || {},
+        selectedYear: prev.selectedYear || 'ALL',
+        selectedMonth: 'ALL',
       }))
     }
   }
