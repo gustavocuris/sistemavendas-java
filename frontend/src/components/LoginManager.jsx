@@ -150,7 +150,7 @@ export default function LoginManager({
     })
 
     try {
-      const payload = await onViewUserCommission(cred.id)
+      const payload = await onViewUserCommission(cred)
       const years = Object.keys(payload?.byYearMonth || {}).sort((a, b) => Number(b) - Number(a))
       const selectedYear = years[0] || 'ALL'
 
