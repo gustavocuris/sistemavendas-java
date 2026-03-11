@@ -454,18 +454,6 @@ body.dark-mode .admin-global-search-table-wrap td {
   align-items: center;
 }
 
-/* Vertical alignment requested for controls */
-.theme-controls,
-.month-controls {
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.theme-controls .btn-theme,
-.month-controls .btn-month {
-  width: 100%;
-}
-
 .admin-user-select {
   background: white;
   border: 2px solid #cbd5e1;
@@ -4380,16 +4368,6 @@ body.dark-mode .admin-panel {
   margin-bottom: 14px;
 }
 
-.admin-tabs {
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.admin-tab {
-  width: 100%;
-  text-align: left;
-}
-
 .admin-tab {
   border: 2px solid #cbd5e1;
   border-radius: 8px;
@@ -4422,10 +4400,6 @@ body.dark-mode .admin-tab.active {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
-}
-
-.admin-grid {
-  grid-template-columns: 1fr;
 }
 
 .admin-card {
@@ -4499,14 +4473,6 @@ body.dark-mode .admin-form select {
   background: #ffffff;
 }
 
-.admin-user-item {
-  flex-direction: column;
-}
-
-.btn-danger-inline {
-  width: 100%;
-}
-
 .admin-user-item.active {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.18);
@@ -4549,14 +4515,6 @@ body.dark-mode .admin-user-item {
   grid-template-columns: 2fr 1fr 1fr auto;
   gap: 8px;
   margin-bottom: 12px;
-}
-
-.admin-search-form {
-  grid-template-columns: 1fr;
-}
-
-.admin-search-form button {
-  width: 100%;
 }
 
 .admin-search-form input,
@@ -4607,15 +4565,6 @@ body.dark-mode .admin-search-form select {
   margin-bottom: 10px;
   color: #64748b;
   font-weight: 700;
-}
-
-.admin-toolbar {
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.admin-secondary-btn {
-  width: 100%;
 }
 
 body.dark-mode .admin-toolbar {
