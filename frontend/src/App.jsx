@@ -513,7 +513,143 @@ export default function App() {
       setAdminLoading(false)
     }
   }
+  const loadUserCommission = async (credential, filters = {}) => {
+    const credentialObj = (credential && typeof credential === 'object') ? credential : { id: credential }
+    const candidateIds = []
 
+    const addCandidateId = (value) => {
+      if (value == null) return
+      const key = String(value).trim()
+      if (!key) return
+      if (!candidateIds.includes(key)) candidateIds.push(key)
+    }
+
+    addCandidateId(credentialObj.id)
+    addCandidateId(credentialObj.userId)
+
+    const credUsername = String(credentialObj.username || '').trim().toLowerCase()
+    const credDisplayName = String(credentialObj.displayName || '').trim().toLowerCase()
+
+    ;(adminUsers || []).forEach((user) => {
+      const userUsername = String(user?.username || '').trim().toLowerCase()
+      const userDisplayName = String(user?.displayName || '').trim().toLowerCase()
+      if (credUsername && userUsername && credUsername === userUsername) addCandidateId(user?.id)
+      if (credDisplayName && userDisplayName && credDisplayName === userDisplayName) addCandidateId(user?.id)
+    })
+
+    if (candidateIds.length === 0) addCandidateId(credentialObj.id)
+
+    const computeFromSales = (sales, rates) => {
+      const grouped = buildSalesByYearMonthFromSales(Array.isArray(sales) ? sales : [])
+      const byYearMonth = {}
+
+      const normalizeType = (sale) => {
+        const raw = String(sale?.tire_type ?? sale?.tireType ?? '').toLowerCase().trim()
+        if (raw === 'sv_borracharia' || raw === 'service') return 'service'
+        if (raw === 'recap') return 'recap'
+        if (raw === 'recapping') return 'recapping'
+        return 'new'
+      }
+
+      Object.entries(grouped).forEach(([yearKey, months]) => {
+        byYearMonth[yearKey] = {}
+        Object.entries(months || {}).forEach(([monthKey, monthData]) => {
+          const summary = { new: 0, recap: 0, recapping: 0, service: 0, total: 0 }
+          const monthSales = Array.isArray(monthData?.sales) ? monthData.sales : []
+          monthSales.forEach((sale) => {
+            const type = normalizeType(sale)
+            const total = Number(sale?.total || 0)
+            const amount = (total * Number(rates?.[type] || 0)) / 100
+            summary[type] += amount
+            summary.total += amount
+          })
+          byYearMonth[yearKey][monthKey] = summary
+        })
+      })
+
+      const summary = { new: 0, recap: 0, recapping: 0, service: 0, total: 0 }
+      const yearFilter = Number(filters?.year)
+      const monthFilter = Number(filters?.month)
+
+      Object.entries(byYearMonth).forEach(([yearKey, months]) => {
+        if (Number.isInteger(yearFilter) && Number(yearKey) !== yearFilter) return
+        Object.entries(months || {}).forEach(([monthKey, monthData]) => {
+          if (Number.isInteger(monthFilter) && Number(monthKey) !== monthFilter) return
+          summary.new += Number(monthData?.new || 0)
+          summary.recap += Number(monthData?.recap || 0)
+          summary.recapping += Number(monthData?.recapping || 0)
+          summary.service += Number(monthData?.service || 0)
+          summary.total += Number(monthData?.total || 0)
+        })
+      })
+
+      return { byYearMonth, summary }
+    }
+
+    for (const candidateId of candidateIds) {
+      try {
+        const year = Number(filters?.year)
+        const month = Number(filters?.month)
+        const query = []
+        if (Number.isInteger(year) && year > 0) query.push(`year=${encodeURIComponent(String(year))}`)
+        if (Number.isInteger(month) && month >= 1 && month <= 12) query.push(`month=${encodeURIComponent(String(month))}`)
+        const qs = query.length > 0 ? `?${query.join('&')}` : ''
+
+        const response = await axios.get(`${API}/admin/users/${encodeURIComponent(candidateId)}/commissions${qs}`)
+        const data = response?.data || {}
+
+        return {
+          userId: data?.userId || candidateId,
+          rates: data?.rates || { new: 5, recap: 8, recapping: 10, service: 0 },
+          byYearMonth: data?.byYearMonth || {},
+          summary: data?.summaryCanonical || { new: 0, recap: 0, recapping: 0, service: 0, total: 0 },
+          availableYears: data?.availableYears || [],
+          availableMonthsByYear: data?.availableMonthsByYear || {}
+        }
+      } catch {
+        // try next id
+      }
+    }
+
+    for (const candidateId of candidateIds) {
+      try {
+        const [salesRes, ratesRes] = await Promise.all([
+          axios.get(`${API}/admin/user-sales/${encodeURIComponent(candidateId)}`),
+          axios.get(`${API}/commissions`, { headers: { 'x-user-id': candidateId } })
+        ])
+
+        const ratesRaw = ratesRes?.data || {}
+        const rates = {
+          new: Number(ratesRaw.new ?? 5),
+          recap: Number(ratesRaw.recap ?? 8),
+          recapping: Number(ratesRaw.recapping ?? 10),
+          service: Number(ratesRaw.service ?? 0)
+        }
+
+        const sales = Array.isArray(salesRes?.data) ? salesRes.data : []
+        const computed = computeFromSales(sales, rates)
+        return {
+          userId: candidateId,
+          rates,
+          byYearMonth: computed.byYearMonth,
+          summary: computed.summary,
+          availableYears: Object.keys(computed.byYearMonth).sort((a, b) => Number(b) - Number(a)),
+          availableMonthsByYear: {}
+        }
+      } catch {
+        // try next id
+      }
+    }
+
+    return {
+      userId: candidateIds[0] || String(credentialObj.id || ''),
+      rates: { new: 5, recap: 8, recapping: 10, service: 0 },
+      byYearMonth: {},
+      summary: { new: 0, recap: 0, recapping: 0, service: 0, total: 0 },
+      availableYears: [],
+      availableMonthsByYear: {}
+    }
+  }
 
   useEffect(() => {
     if (!isAuthenticated || !isAdmin) return
