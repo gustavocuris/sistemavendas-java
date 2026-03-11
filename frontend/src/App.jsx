@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import axios from 'axios';
 // import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 import SaleForm from './components/SaleForm';
@@ -947,12 +948,7 @@ export default function App() {
             <div className="color-picker-dropdown">
               <div className="color-picker-header">
                 <span>Escolher cor principal</span>
-                <button onClick={() => setShowColorPicker(false)} aria-label="Fechar" title="Fechar">
-                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <line x1="4" y1="4" x2="16" y2="16" />
-                    <line x1="16" y1="4" x2="4" y2="16" />
-                  </svg>
-                </button>
+                <button onClick={() => setShowColorPicker(false)}>Ã¢Å“â€¢</button>
               </div>
               <div className="color-presets">
                 {PRESET_COLORS.map((color) => (
