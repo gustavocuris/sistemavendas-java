@@ -154,6 +154,9 @@ export default function LoginManager({
     })
 
     try {
+      if (typeof onViewUserCommission !== 'function') {
+        throw new Error('Falha ao abrir comissao: funcao de consulta indisponivel.')
+      }
       const payload = await onViewUserCommission(cred)
       const years = Object.keys(payload?.byYearMonth || {}).sort((a, b) => Number(b) - Number(a))
       const selectedYear = years[0] || 'ALL'
@@ -169,10 +172,11 @@ export default function LoginManager({
         selectedMonth: 'ALL',
       }))
     } catch (error) {
+      console.error('Erro ao abrir comissao:', error)
       setCommissionModal((prev) => ({
         ...prev,
         loading: false,
-        error: error?.message || 'Erro ao carregar comissao.',
+        error: 'Erro ao carregar comissao desta conta. Tente novamente.',
         rates: prev.rates || { new: 5, recap: 8, recapping: 10, service: 0 },
         byYearMonth: prev.byYearMonth || {},
         summary: prev.summary || { new: 0, recap: 0, recapping: 0, service: 0, total: 0 },
@@ -185,6 +189,9 @@ export default function LoginManager({
   const reloadCommissionByFilter = async ({ year = null, month = null, selectedYear = 'ALL', selectedMonth = 'ALL' }) => {
     setCommissionModal((prev) => ({ ...prev, loading: true, error: '' }))
     try {
+      if (typeof onViewUserCommission !== 'function') {
+        throw new Error('Falha ao atualizar comissao: funcao de consulta indisponivel.')
+      }
       const payload = await onViewUserCommission(commissionModal.credential, { year, month })
       setCommissionModal((prev) => ({
         ...prev,
@@ -196,10 +203,11 @@ export default function LoginManager({
         selectedMonth,
       }))
     } catch (error) {
+      console.error('Erro ao filtrar comissao:', error)
       setCommissionModal((prev) => ({
         ...prev,
         loading: false,
-        error: error?.message || 'Erro ao carregar comissao.',
+        error: 'Erro ao atualizar comissao desta conta. Tente novamente.',
       }))
     }
   }
