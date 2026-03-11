@@ -1525,6 +1525,208 @@ app.delete('/api/admin/users/:id', async (req, res) => {
   return res.status(204).end();
 });
 
+function parseMoneyValue(value) {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+  const raw = String(value ?? '').trim();
+  if (!raw) return 0;
+  const normalized = raw
+    .replace(/R\$\s?/gi, '')
+    .replace(/\./g, '')
+    .replace(/,/g, '.')
+    .replace(/[^\d.-]/g, '');
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function normalizeCommissionCategory(sale) {
+  const tireRaw = String(sale?.tire_type ?? sale?.tireType ?? '').trim().toLowerCase();
+  const productRaw = String(sale?.product ?? '').trim().toLowerCase();
+
+  if (tireRaw === 'sv_borracharia' || tireRaw === 'service' || productRaw.includes('servico') || productRaw.includes('serviço')) {
+    return 'service';
+  }
+  if (tireRaw === 'recapping' || tireRaw.includes('recapagem') || productRaw.includes('recapagem')) {
+    return 'recapping';
+  }
+  if (tireRaw === 'recap' || tireRaw.includes('recapado') || productRaw.includes('recapado')) {
+    return 'recap';
+  }
+  return 'new';
+}
+
+function emptyCommissionSummary() {
+  return {
+    new: 0,
+    recap: 0,
+    recapping: 0,
+    service: 0,
+    total: 0
+  };
+}
+
+function toBrSummary(summary) {
+  return {
+    novo: Number(summary.new || 0),
+    'pneu recapado': Number(summary.recap || 0),
+    recapagem: Number(summary.recapping || 0),
+    servico: Number(summary.service || 0),
+    totalGeral: Number(summary.total || 0)
+  };
+}
+
+function extractUserSalesByMonth({ userId, authData }) {
+  const result = [];
+  const userData = db.data.userData?.[userId];
+
+  if (userData) {
+    Object.entries(userData.months || {}).forEach(([monthKey, monthData]) => {
+      (monthData.sales || []).forEach((sale) => {
+        result.push({ ...sale, month: monthKey, userId });
+      });
+    });
+  }
+
+  const user = (authData.users || []).find((u) => u.id === userId);
+  if (userId === 'adm' || (user && user.username === 'Intercap Pneus')) {
+    Object.entries(db.data.months || {}).forEach(([monthKey, monthData]) => {
+      (monthData.sales || []).forEach((sale) => {
+        if (!result.some((existing) => existing.id === sale.id && existing.month === monthKey)) {
+          result.push({ ...sale, month: monthKey, userId });
+        }
+      });
+    });
+  }
+
+  return result;
+}
+
+function summarizeCommissionsForSales({ sales, rates }) {
+  const summary = emptyCommissionSummary();
+
+  (sales || []).forEach((sale) => {
+    const category = normalizeCommissionCategory(sale);
+    const saleTotal = parseMoneyValue(sale?.total);
+    const amount = (saleTotal * Number(rates?.[category] || 0)) / 100;
+
+    summary[category] += amount;
+    summary.total += amount;
+  });
+
+  return summary;
+}
+
+const handleAdminUserCommissionSummary = async (req, res) => {
+  const ctx = await resolveRequestContext(req);
+  if (!requireAdmin(ctx, res)) return;
+
+  const userId = String(req.params.userId || '').trim();
+  if (!userId) {
+    return res.status(400).json({ message: 'userId é obrigatório' });
+  }
+
+  const user = (ctx.authData.users || []).find((u) => u.id === userId);
+  if (!user) {
+    return res.status(404).json({ message: 'Usuário não encontrado' });
+  }
+
+  const yearQuery = String(req.query.year || '').trim();
+  const monthQuery = String(req.query.month || '').trim();
+  const year = yearQuery ? Number(yearQuery) : null;
+  const month = monthQuery ? Number(monthQuery) : null;
+
+  if (yearQuery && (!Number.isInteger(year) || year < 2000 || year > 9999)) {
+    return res.status(400).json({ message: 'Parâmetro year inválido' });
+  }
+  if (monthQuery && (!Number.isInteger(month) || month < 1 || month > 12)) {
+    return res.status(400).json({ message: 'Parâmetro month inválido' });
+  }
+
+  const userData = ensureUserData(userId);
+  const rates = userData.commissions || defaultCommissions();
+  const allSales = extractUserSalesByMonth({ userId, authData: ctx.authData });
+
+  const byYearMonth = {};
+  const availableMonthsByYear = {};
+
+  allSales.forEach((sale) => {
+    const monthKey = String(sale?.month || '').trim();
+    const match = monthKey.match(/^(\d{4})-(\d{2})$/);
+    if (!match) return;
+
+    const saleYear = Number(match[1]);
+    const saleMonth = Number(match[2]);
+
+    if (year && saleYear !== year) return;
+    if (month && saleMonth !== month) return;
+
+    const yearKey = String(saleYear);
+    const monthToken = String(saleMonth).padStart(2, '0');
+
+    if (!byYearMonth[yearKey]) byYearMonth[yearKey] = {};
+    if (!byYearMonth[yearKey][monthToken]) {
+      byYearMonth[yearKey][monthToken] = emptyCommissionSummary();
+    }
+
+    if (!availableMonthsByYear[yearKey]) availableMonthsByYear[yearKey] = [];
+    if (!availableMonthsByYear[yearKey].includes(monthToken)) {
+      availableMonthsByYear[yearKey].push(monthToken);
+    }
+
+    const category = normalizeCommissionCategory(sale);
+    const saleTotal = parseMoneyValue(sale?.total);
+    const amount = (saleTotal * Number(rates?.[category] || 0)) / 100;
+
+    byYearMonth[yearKey][monthToken][category] += amount;
+    byYearMonth[yearKey][monthToken].total += amount;
+  });
+
+  Object.keys(availableMonthsByYear).forEach((yearKey) => {
+    availableMonthsByYear[yearKey] = availableMonthsByYear[yearKey]
+      .slice()
+      .sort((a, b) => Number(a) - Number(b));
+  });
+
+  const filteredSales = allSales.filter((sale) => {
+    const monthKey = String(sale?.month || '').trim();
+    const match = monthKey.match(/^(\d{4})-(\d{2})$/);
+    if (!match) return false;
+    const saleYear = Number(match[1]);
+    const saleMonth = Number(match[2]);
+    if (year && saleYear !== year) return false;
+    if (month && saleMonth !== month) return false;
+    return true;
+  });
+
+  const summaryCanonical = summarizeCommissionsForSales({
+    sales: filteredSales,
+    rates
+  });
+
+  const responsePayload = {
+    userId,
+    userName: user.displayName || user.username || userId,
+    year,
+    month,
+    rates: {
+      new: Number(rates.new ?? 0),
+      recap: Number(rates.recap ?? 0),
+      recapping: Number(rates.recapping ?? 0),
+      service: Number(rates.service ?? 0)
+    },
+    summary: toBrSummary(summaryCanonical),
+    summaryCanonical,
+    byYearMonth,
+    availableYears: Object.keys(byYearMonth).sort((a, b) => Number(b) - Number(a)),
+    availableMonthsByYear,
+    salesCount: filteredSales.length
+  };
+
+  return res.json(responsePayload);
+};
+
+app.get('/admin/users/:userId/commissions', handleAdminUserCommissionSummary);
+app.get('/api/admin/users/:userId/commissions', handleAdminUserCommissionSummary);
+
 const handleAdminSalesSearch = async (req, res) => {
   console.log('ADMIN SEARCH HIT', req.originalUrl);
   const ctx = await resolveRequestContext(req);
