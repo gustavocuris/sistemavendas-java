@@ -5278,11 +5278,6 @@ body.dark-mode .admin-chart-wrap {
   box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.35);
 }
 
-.login-manager-commission-item.total span,
-.login-manager-commission-item.total strong {
-  color: #ffffff;
-}
-
 .login-manager-commission-item.total span {
   color: rgba(255, 255, 255, 0.78);
 }
@@ -5303,6 +5298,10 @@ body.dark-mode .admin-chart-wrap {
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-item strong {
   color: var(--primary-color);
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-commission-item.total strong {
+  color: #07120d;
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-filters select {
