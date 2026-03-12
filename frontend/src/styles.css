@@ -5311,13 +5311,13 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-item.total {
-  background: color-mix(in srgb, var(--primary-color) 52%, #000 48%);
-  border-color: color-mix(in srgb, var(--primary-color) 42%, #000 58%);
+  background: color-mix(in srgb, var(--primary-color) 65%, #000 35%);
+  border-color: color-mix(in srgb, var(--primary-color) 55%, #000 45%);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.42);
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-item.total span {
-  color: color-mix(in srgb, var(--primary-color) 28%, #000 72%);
+  color: color-mix(in srgb, var(--primary-color) 15%, #000 85%);
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-grid {
