@@ -55,13 +55,14 @@ if (mongoUri) {
       if (totalSales > 0) await db.write();
     }
   } catch (error) {
-    console.error('[ERRO] Falha ao inicializar MongoDB. Fallback para file DB NÃO será feito em produção.', error);
-    if (isProduction) {
+    console.error('[ERRO] Falha ao inicializar MongoDB. Aplicando fallback para file DB.', error);
+    const strictMongo = String(process.env.STRICT_MONGODB || '').toLowerCase() === 'true';
+    if (isProduction && strictMongo) {
+      console.error('[ERRO] STRICT_MONGODB=true e MongoDB indisponível. Encerrando processo.');
       process.exit(1);
-    } else {
-      ({ default: db } = await import('./db.js'));
-      console.log('DB source: file (fallback DEV)');
     }
+    ({ default: db } = await import('./db.js'));
+    console.log(`DB source: file (fallback${isProduction ? ' PROD' : ' DEV'})`);
   }
 } else {
   ({ default: db } = await import('./db.js'));
@@ -505,11 +506,23 @@ async function saveAuth(authData) {
   });
 }
 
-if (typeof db.init === 'function') {
-  await db.init();
+try {
+  if (typeof db.init === 'function') {
+    await db.init();
+  }
+  await db.read();
+} catch (error) {
+  const strictMongo = String(process.env.STRICT_MONGODB || '').toLowerCase() === 'true';
+  console.error('[ERRO] Falha ao inicializar leitura do banco configurado. Tentando fallback para file DB.', error);
+  if (strictMongo) {
+    console.error('[ERRO] STRICT_MONGODB=true e fallback desabilitado. Encerrando processo.');
+    process.exit(1);
+  }
+  ({ default: db } = await import('./db.js'));
+  console.log('DB source: file (fallback runtime)');
+  await db.read();
 }
 
-await db.read();
 const authData = await getAuthData();
 migrateLegacyDataToAdmin();
 migrateLegacyDataToIntercap(authData);
