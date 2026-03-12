@@ -155,7 +155,7 @@ h1 {
 
 .admin-main-title {
   position: absolute;
-  top: 58%;
+  top: calc(50% + 18px);
   left: 50%;
   transform: translate(-50%, -50%);
   margin: 0;
