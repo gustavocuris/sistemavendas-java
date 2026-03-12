@@ -348,7 +348,7 @@ const formatDateFull = (value) => {
             title="Pneu a base de troca"
             aria-pressed={!!form.base_trade}
           >
-            <span className="trade-check">OK</span>
+            <span className="trade-check">✓</span>
             <span className="trade-text">Pneu a base de troca</span>
           </button>
         </div>

@@ -280,7 +280,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                     title="Pneu a base de troca"
                     aria-pressed={!!formComprar.base_trade}
                   >
-                    <span className="trade-check">OK</span>
+                    <span className="trade-check">✓</span>
                     <span className="trade-text">Pneu a base de troca</span>
                   </button>
                 )}
@@ -383,7 +383,7 @@ function NotesPanel({ isOpen, onClose, darkMode, currentMonth, onSaleAdded, onMo
                     title="Pneu a base de troca"
                     aria-pressed={!!formPagar.base_trade}
                   >
-                    <span className="trade-check">OK</span>
+                    <span className="trade-check">✓</span>
                     <span className="trade-text">Pneu a base de troca</span>
                   </button>
                 )}

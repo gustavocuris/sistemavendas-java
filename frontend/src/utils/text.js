@@ -17,7 +17,7 @@ export function normalizeMojibakeText(value) {
     [/MarÃ§o/g, 'Março'],
     [/MÃªs/g, 'Mês'],
     [/PrÃ³ximo/g, 'Próximo'],
-    [/Ã¢â‚¬Â¢|Ã¢â‚¬â€¢|â€¢/g, '|'],
+    [/Ã¢â‚¬Â¢|Ã¢â‚¬â€¢|â€¢|•/g, '-'],
     [/Ã¢Å“â€œ|âœ“/g, '✓'],
     [/âœ•/g, 'X'],
     [/â€”|â€“/g, '-']
