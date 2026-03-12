@@ -1314,14 +1314,14 @@ export default function App() {
           <div className="footer-system">
             <strong>SV SISTEMA DE VENDAS 2026</strong>
           </div>
-          <div className="footer-divider">ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢</div>
+          <div className="footer-divider">|</div>
           <div className="footer-security">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
             <span>Security and Privacy Protected</span>
           </div>
-          <div className="footer-divider">ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢</div>
+          <div className="footer-divider">|</div>
           <div className="footer-author">
             Developed by <strong>Gustavo Curis de Francisco</strong>
           </div>
@@ -1454,6 +1454,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
