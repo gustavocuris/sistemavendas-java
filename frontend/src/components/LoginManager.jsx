@@ -595,11 +595,11 @@ export default function LoginManager({
                   </div>
 
                   <div className="login-manager-commission-item">
-                    <span>NOVO ({commissionModal.rates.new}%)</span>
+                    <span>PNEU NOVO ({commissionModal.rates.new}%)</span>
                     <strong>R$ {formatBRL(commissionTotals.new)}</strong>
                   </div>
                   <div className="login-manager-commission-item">
-                    <span>RECAP ({commissionModal.rates.recap}%)</span>
+                    <span>PNEU RECAPADO ({commissionModal.rates.recap}%)</span>
                     <strong>R$ {formatBRL(commissionTotals.recap)}</strong>
                   </div>
                   <div className="login-manager-commission-item">
@@ -607,7 +607,7 @@ export default function LoginManager({
                     <strong>R$ {formatBRL(commissionTotals.recapping)}</strong>
                   </div>
                   <div className="login-manager-commission-item">
-                    <span>SERVICO ({commissionModal.rates.service}%)</span>
+                    <span>SV BORRACHARIA ({commissionModal.rates.service}%)</span>
                     <strong>R$ {formatBRL(commissionTotals.service)}</strong>
                   </div>
                   <div className="login-manager-commission-item total">
