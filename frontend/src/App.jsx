@@ -423,11 +423,22 @@ export default function App() {
 
     safeSales.forEach((sale) => {
       const saleDate = new Date(sale.date || sale.created_at)
-      if (Number.isNaN(saleDate.getTime())) return
+      let year = ''
+      let month = ''
+      let monthName = ''
 
-      const year = String(saleDate.getFullYear())
-      const month = String(saleDate.getMonth() + 1).padStart(2, '0')
-      const monthName = saleDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
+      if (!Number.isNaN(saleDate.getTime())) {
+        year = String(saleDate.getFullYear())
+        month = String(saleDate.getMonth() + 1).padStart(2, '0')
+        monthName = saleDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
+      } else {
+        const monthKey = String(sale?.month || '').trim()
+        const monthMatch = monthKey.match(/^(\d{4})-(\d{2})$/)
+        if (!monthMatch) return
+        year = monthMatch[1]
+        month = monthMatch[2]
+        monthName = new Date(Number(year), Number(month) - 1, 1).toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
+      }
 
       if (!salesByYearMonth[year]) {
         salesByYearMonth[year] = {}
@@ -1259,6 +1270,7 @@ export default function App() {
           onUpdateUser={updateUser}
           onDeleteUser={deleteUser}
           onViewUserSales={loadUserSalesAndYears}
+          onViewUserCommission={loadUserCommission}
           onRefresh={loadAdminCredentials}
           adminLoading={adminLoading}
           darkMode={darkMode}
