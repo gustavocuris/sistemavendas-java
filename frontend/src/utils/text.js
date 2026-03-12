@@ -4,12 +4,15 @@ export function normalizeMojibakeText(value) {
 
   let normalized = text
 
-  // Common double-encoding pattern (e.g. "MarÃ§o" -> "Março").
-  if (/[ÃÂâ]/.test(normalized)) {
+  // Common double-encoding patterns (e.g. "MarÃ§o" -> "Março").
+  for (let i = 0; i < 3; i += 1) {
+    if (!/[ÃÂâ]/.test(normalized)) break
     try {
-      normalized = decodeURIComponent(escape(normalized))
+      const decoded = decodeURIComponent(escape(normalized))
+      if (!decoded || decoded === normalized) break
+      normalized = decoded
     } catch {
-      // Ignore decode failures and keep best-effort replacements below.
+      break
     }
   }
 
@@ -17,9 +20,9 @@ export function normalizeMojibakeText(value) {
     [/MarÃ§o/g, 'Março'],
     [/MÃªs/g, 'Mês'],
     [/PrÃ³ximo/g, 'Próximo'],
-    [/Ã¢â‚¬Â¢|Ã¢â‚¬â€¢|â€¢|•/g, '-'],
-    [/Ã¢Å“â€œ|âœ“/g, '✓'],
-    [/âœ•/g, 'X'],
+    [/ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢|Ã¢â‚¬Â¢|Ã¢â‚¬â€¢|â€¢|•/g, '-'],
+    [/ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“|Ã¢Å“â€œ|âœ“|✓/g, '✓'],
+    [/ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¢|âœ•|✕|✖/g, 'X'],
     [/â€”|â€“/g, '-']
   ]
 
