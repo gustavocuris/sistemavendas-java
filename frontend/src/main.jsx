@@ -41,6 +41,25 @@ function sanitizeMojibakeInDom(rootNode = document.body) {
   touched.forEach(([node, value]) => {
     node.nodeValue = value
   })
+
+  const attrNames = ['title', 'aria-label', 'placeholder', 'alt']
+  const elements = rootNode.querySelectorAll ? rootNode.querySelectorAll('*') : []
+
+  elements.forEach((element) => {
+    attrNames.forEach((attrName) => {
+      const original = element.getAttribute(attrName)
+      if (!original) return
+
+      let sanitized = original
+      for (const [pattern, replacement] of replacements) {
+        sanitized = sanitized.replace(pattern, replacement)
+      }
+
+      if (sanitized !== original) {
+        element.setAttribute(attrName, sanitized)
+      }
+    })
+  })
 }
 
 
