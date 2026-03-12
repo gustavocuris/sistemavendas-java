@@ -5246,14 +5246,14 @@ body.dark-mode .admin-chart-wrap {
   padding: 9px 10px;
   font-weight: 700;
   color: #334155;
-  background: #ffffff;
+  background: #0f0f0f;
 }
 
 .login-manager-commission-item {
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 14px;
-  background: #1b1b1b;
+  background: #121212;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -5292,8 +5292,8 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-item {
-  background: #1f1f1f;
-  border-color: #262626;
+  background: #0d0d0d;
+  border-color: #1f1f1f;
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-item span {
@@ -5305,8 +5305,8 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-filters select {
-  background: #0b1220;
-  border-color: #232323;
+  background: #080808;
+  border-color: #1f1f1f;
   color: #e2e8f0;
 }
 
