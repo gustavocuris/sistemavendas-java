@@ -155,7 +155,7 @@ export default function LoginManager({
 
     try {
       if (typeof onViewUserCommission !== 'function') {
-        throw new Error('Falha ao abrir comissao: funcao de consulta indisponivel.')
+        throw new Error('Falha ao abrir comissão: função de consulta indisponível.')
       }
       const payload = await onViewUserCommission(cred)
       const years = Object.keys(payload?.byYearMonth || {}).sort((a, b) => Number(b) - Number(a))
@@ -197,7 +197,7 @@ export default function LoginManager({
       setCommissionModal((prev) => ({
         ...prev,
         loading: false,
-        error: 'Erro ao carregar comissao desta conta. Tente novamente.',
+        error: 'Erro ao carregar comissão desta conta. Tente novamente.',
         rates: prev.rates || { new: 5, recap: 8, recapping: 10, service: 0 },
         byYearMonth: prev.byYearMonth || {},
         summary: prev.summary || { new: 0, recap: 0, recapping: 0, service: 0, total: 0 },
@@ -211,7 +211,7 @@ export default function LoginManager({
     setCommissionModal((prev) => ({ ...prev, loading: true, error: '' }))
     try {
       if (typeof onViewUserCommission !== 'function') {
-        throw new Error('Falha ao atualizar comissao: funcao de consulta indisponivel.')
+        throw new Error('Falha ao atualizar comissão: função de consulta indisponível.')
       }
       const credentialForRequest = credentialOverride || commissionModal.credential
       const payload = await onViewUserCommission(credentialForRequest, { year, month })
@@ -229,7 +229,7 @@ export default function LoginManager({
       setCommissionModal((prev) => ({
         ...prev,
         loading: false,
-        error: 'Erro ao atualizar comissao desta conta. Tente novamente.',
+        error: 'Erro ao atualizar comissão desta conta. Tente novamente.',
       }))
     }
   }
@@ -329,7 +329,7 @@ export default function LoginManager({
                             className="btn-commission-sm"
                             onClick={() => openCommissionModal(cred)}
                             disabled={adminLoading}
-                            title="Visualizar comissao"
+                            title="Visualizar comissão"
                           >
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <line x1="19" y1="5" x2="5" y2="19"></line>
@@ -536,7 +536,7 @@ export default function LoginManager({
         <div className="login-manager-overlay">
           <div className={`login-manager-modal-edit ${darkMode ? 'dark-mode' : ''}`}>
             <div className="login-manager-header">
-              <h2>Comissao de {commissionModal.displayName}</h2>
+              <h2>Comissão de {commissionModal.displayName}</h2>
               <button className="login-manager-close" onClick={closeCommissionModal} title="Fechar">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="4" y1="4" x2="16" y2="16" />
@@ -547,7 +547,7 @@ export default function LoginManager({
 
             <div className="login-manager-commission-grid">
               {commissionModal.loading ? (
-                <p className="login-manager-empty">Carregando comissao...</p>
+                <p className="login-manager-empty">Carregando comissão...</p>
               ) : commissionModal.error ? (
                 <p className="login-manager-empty">{commissionModal.error}</p>
               ) : (
