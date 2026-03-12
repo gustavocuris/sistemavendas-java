@@ -5283,9 +5283,17 @@ body.dark-mode .admin-chart-wrap {
   color: #ffffff;
 }
 
+.login-manager-commission-item.total span {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.login-manager-commission-item.total strong {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+
 .login-manager-modal-edit.dark-mode .login-manager-commission-item {
   background: #1f1f1f;
-  border-color: #383838;
+  border-color: #262626;
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-item span {
@@ -5298,13 +5306,17 @@ body.dark-mode .admin-chart-wrap {
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-filters select {
   background: #0b1220;
-  border-color: #334155;
+  border-color: #232323;
   color: #e2e8f0;
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-item.total {
   background: var(--primary-color);
   border-color: var(--primary-color);
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-commission-grid {
+  border-top: 1px solid #141414;
 }
 
 .btn-eye-sm,
@@ -5587,7 +5599,7 @@ body.dark-mode .btn-eye-large:hover {
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-header {
-  border-bottom-color: #1f1f1f;
+  border-bottom-color: #101010;
   background: #050505;
 }
 
