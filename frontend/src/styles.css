@@ -5283,7 +5283,7 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .login-manager-commission-item.total strong {
-  color: #07120d;
+  color: color-mix(in srgb, var(--primary-color) 15%, #000 85%);
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
 }
 
@@ -5301,7 +5301,7 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-item.total strong {
-  color: #07120d;
+  color: color-mix(in srgb, var(--primary-color) 15%, #000 85%);
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-filters select {
