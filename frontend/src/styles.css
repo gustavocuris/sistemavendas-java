@@ -5276,8 +5276,6 @@ body.dark-mode .admin-chart-wrap {
   background: var(--primary-color);
   border-color: var(--primary-color);
   box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.35);
-  position: relative;
-  padding-bottom: 42px;
 }
 
 .login-manager-commission-item.total span {
@@ -5331,10 +5329,14 @@ body.dark-mode .admin-chart-wrap {
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
 }
 
+.login-manager-commission-total-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .login-manager-commission-link {
-  position: absolute;
-  right: 14px;
-  bottom: 10px;
   border: none;
   background: transparent;
   color: rgba(255, 255, 255, 0.9);

@@ -620,15 +620,17 @@ export default function LoginManager({
                   </div>
                   <div className="login-manager-commission-item total">
                     <span>TOTAL GERAL</span>
-                    <strong>R$ {formatBRL(commissionTotals.total)}</strong>
-                    <button
-                      type="button"
-                      className="login-manager-commission-link"
-                      onClick={handleViewSalesFromCommission}
-                      disabled={commissionModal.loading || !commissionModal.credential}
-                    >
-                      VER VENDAS
-                    </button>
+                    <div className="login-manager-commission-total-row">
+                      <strong>R$ {formatBRL(commissionTotals.total)}</strong>
+                      <button
+                        type="button"
+                        className="login-manager-commission-link"
+                        onClick={handleViewSalesFromCommission}
+                        disabled={commissionModal.loading || !commissionModal.credential}
+                      >
+                        VER VENDAS
+                      </button>
+                    </div>
                   </div>
 
                   {!hasCommissionData && (
