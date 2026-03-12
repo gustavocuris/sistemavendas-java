@@ -5253,7 +5253,7 @@ body.dark-mode .admin-chart-wrap {
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 14px;
-  background: #f8fafc;
+  background: #1b1b1b;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -5273,13 +5273,19 @@ body.dark-mode .admin-chart-wrap {
 
 .login-manager-commission-item.total {
   grid-column: 1 / -1;
-  background: #ecfdf5;
-  border-color: #86efac;
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.35);
+}
+
+.login-manager-commission-item.total span,
+.login-manager-commission-item.total strong {
+  color: #ffffff;
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-item {
-  background: #0b1220;
-  border-color: #334155;
+  background: #1f1f1f;
+  border-color: #383838;
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-item span {
@@ -5287,7 +5293,7 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-item strong {
-  color: #4ade80;
+  color: var(--primary-color);
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-filters select {
@@ -5297,8 +5303,8 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .login-manager-modal-edit.dark-mode .login-manager-commission-item.total {
-  background: #052e16;
-  border-color: #166534;
+  background: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
 .btn-eye-sm,
