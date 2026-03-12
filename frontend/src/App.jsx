@@ -1071,16 +1071,9 @@ export default function App() {
           {isAdmin && (
             <>
               <button className="btn-theme" onClick={() => setShowAdminPanel(true)} title="Gerenciar contas (painel)">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="3.2" />
-                  <path d="M12 2.8v2.4" />
-                  <path d="M12 18.8v2.4" />
-                  <path d="M2.8 12h2.4" />
-                  <path d="M18.8 12h2.4" />
-                  <path d="M5.5 5.5l1.7 1.7" />
-                  <path d="M16.8 16.8l1.7 1.7" />
-                  <path d="M18.5 5.5l-1.7 1.7" />
-                  <path d="M7.2 16.8l-1.7 1.7" />
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.7 1.7 0 0 0 .35 1.87l.05.05a2 2 0 1 1-2.83 2.83l-.05-.05a1.7 1.7 0 0 0-1.87-.35 1.7 1.7 0 0 0-1.03 1.55V21a2 2 0 1 1-4 0v-.08a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.87.35l-.05.05a2 2 0 1 1-2.83-2.83l.05-.05a1.7 1.7 0 0 0 .35-1.87 1.7 1.7 0 0 0-1.55-1.03H3a2 2 0 1 1 0-4h.08a1.7 1.7 0 0 0 1.55-1.03 1.7 1.7 0 0 0-.35-1.87l-.05-.05a2 2 0 1 1 2.83-2.83l.05.05a1.7 1.7 0 0 0 1.87.35h.02A1.7 1.7 0 0 0 10.03 3V2.92a2 2 0 1 1 4 0V3a1.7 1.7 0 0 0 1.03 1.55h.02a1.7 1.7 0 0 0 1.87-.35l.05-.05a2 2 0 1 1 2.83 2.83l-.05.05a1.7 1.7 0 0 0-.35 1.87v.02A1.7 1.7 0 0 0 21 10.03h.08a2 2 0 1 1 0 4H21a1.7 1.7 0 0 0-1.55 1.03z" />
                 </svg>
               </button>
               <button className="btn-theme" onClick={() => setShowLoginManager(true)} title="Gerenciar contas (modal)">
@@ -1461,6 +1454,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
