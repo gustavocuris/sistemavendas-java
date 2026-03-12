@@ -5276,6 +5276,8 @@ body.dark-mode .admin-chart-wrap {
   background: var(--primary-color);
   border-color: var(--primary-color);
   box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.35);
+  position: relative;
+  padding-bottom: 42px;
 }
 
 .login-manager-commission-item.total span {
@@ -5327,6 +5329,35 @@ body.dark-mode .admin-chart-wrap {
 .login-manager-modal-edit.dark-mode .login-manager-commission-item.total strong {
   color: color-mix(in srgb, var(--primary-color) 15%, #000 85%);
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
+}
+
+.login-manager-commission-link {
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 800;
+  font-size: 0.75em;
+  letter-spacing: 0.7px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: opacity 0.2s ease;
+}
+
+.login-manager-commission-link:hover:not(:disabled) {
+  opacity: 0.75;
+}
+
+.login-manager-commission-link:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.login-manager-modal-edit.dark-mode .login-manager-commission-link {
+  color: color-mix(in srgb, var(--primary-color) 10%, #000 90%);
 }
 
 .btn-eye-sm,

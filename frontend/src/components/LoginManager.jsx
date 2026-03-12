@@ -249,6 +249,14 @@ export default function LoginManager({
     })
   }
 
+  const handleViewSalesFromCommission = async () => {
+    const credential = commissionModal.credential
+    if (!credential || typeof onViewUserSales !== 'function') return
+
+    closeCommissionModal()
+    await onViewUserSales(credential.id, credential.displayName)
+  }
+
   const commissionYears = Object.keys(commissionModal.byYearMonth || {}).sort((a, b) => Number(b) - Number(a))
   const commissionMonths = commissionModal.selectedYear
     ? Object.keys(commissionModal.byYearMonth?.[commissionModal.selectedYear] || {}).sort((a, b) => Number(b) - Number(a))
@@ -613,6 +621,14 @@ export default function LoginManager({
                   <div className="login-manager-commission-item total">
                     <span>TOTAL GERAL</span>
                     <strong>R$ {formatBRL(commissionTotals.total)}</strong>
+                    <button
+                      type="button"
+                      className="login-manager-commission-link"
+                      onClick={handleViewSalesFromCommission}
+                      disabled={commissionModal.loading || !commissionModal.credential}
+                    >
+                      VER VENDAS
+                    </button>
                   </div>
 
                   {!hasCommissionData && (
