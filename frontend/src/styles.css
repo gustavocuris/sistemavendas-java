@@ -5210,9 +5210,9 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .btn-commission-sm:hover {
-  border-color: #f59e0b;
-  background: rgba(245, 158, 11, 0.08);
-  color: #f59e0b;
+  border-color: var(--primary-color);
+  background: rgba(var(--primary-color-rgb), 0.08);
+  color: var(--primary-color);
 }
 
 .login-manager-modal.dark-mode .btn-commission-sm {
@@ -5221,9 +5221,9 @@ body.dark-mode .admin-chart-wrap {
 }
 
 .login-manager-modal.dark-mode .btn-commission-sm:hover {
-  border-color: #f59e0b;
-  background: rgba(245, 158, 11, 0.12);
-  color: #f59e0b;
+  border-color: var(--primary-color);
+  background: rgba(var(--primary-color-rgb), 0.14);
+  color: var(--primary-color);
 }
 
 .login-manager-commission-grid {
