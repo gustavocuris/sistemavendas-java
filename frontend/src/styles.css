@@ -5246,14 +5246,14 @@ body.dark-mode .admin-chart-wrap {
   padding: 9px 10px;
   font-weight: 700;
   color: #334155;
-  background: #0f0f0f;
+  background: #f8fafc;
 }
 
 .login-manager-commission-item {
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 14px;
-  background: #121212;
+  background: #f8fafc;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -5263,7 +5263,7 @@ body.dark-mode .admin-chart-wrap {
   font-size: 0.78em;
   font-weight: 800;
   letter-spacing: 0.8px;
-  color: #64748b;
+  color: #475569;
 }
 
 .login-manager-commission-item strong {
@@ -5273,15 +5273,15 @@ body.dark-mode .admin-chart-wrap {
 
 .login-manager-commission-item.total {
   grid-column: 1 / -1;
-  background: var(--primary-color);
-  border-color: var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 80%, #fff 20%);
+  border-color: color-mix(in srgb, var(--primary-color) 65%, #fff 35%);
   box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.35);
   padding: 10px 14px;
   gap: 4px;
 }
 
 .login-manager-commission-item.total span {
-  color: rgba(255, 255, 255, 0.78);
+  color: color-mix(in srgb, var(--primary-color) 20%, #000 80%);
 }
 
 .login-manager-commission-item.total strong {
@@ -5341,7 +5341,7 @@ body.dark-mode .admin-chart-wrap {
 .login-manager-commission-link {
   border: none;
   background: transparent;
-  color: rgba(255, 255, 255, 0.9);
+  color: color-mix(in srgb, var(--primary-color) 20%, #000 80%);
   font-weight: 800;
   font-size: 0.9em;
   line-height: 1;
