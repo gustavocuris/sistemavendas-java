@@ -143,6 +143,7 @@ h1 {
   --spot-y: 50%;
   color: var(--primary-color);
   transition: color 0.22s ease;
+  z-index: 7;
 }
 
 .admin-title-spotlight::after {
@@ -167,7 +168,12 @@ h1 {
 }
 
 .admin-title-spotlight.title-spotlight-active {
-  color: var(--primary-color);
+  color: rgb(var(--primary-light-rgb));
+  text-shadow:
+    0 0 6px rgba(var(--primary-light-rgb), 0.9),
+    0 0 14px rgba(var(--primary-light-rgb), 0.7),
+    0 0 26px rgba(var(--primary-light-rgb), 0.4);
+  filter: saturate(1.18) brightness(1.1);
 }
 
 .admin-title-spotlight.title-spotlight-active::after {
