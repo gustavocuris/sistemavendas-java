@@ -453,14 +453,14 @@ body.dark-mode .admin-global-search-table-wrap td {
 }
 
 .admin-actions-right {
-  position: absolute;
+  position: fixed;
   right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 18px;
+  transform: none;
   display: flex;
   gap: 8px;
   align-items: center;
-  z-index: 6;
+  z-index: 1000;
 }
 
 .admin-actions-right .btn-logout {
