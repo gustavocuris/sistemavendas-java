@@ -447,6 +447,15 @@ body.dark-mode .admin-global-search-table-wrap td {
   align-items: center;
 }
 
+.admin-header-top .theme-controls {
+  left: 20px;
+  right: 20px;
+}
+
+.admin-header-top .admin-corner-start {
+  margin-left: auto;
+}
+
 .month-controls {
   position: absolute;
   right: 0;
