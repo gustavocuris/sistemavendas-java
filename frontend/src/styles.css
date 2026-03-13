@@ -136,41 +136,32 @@ h1 {
   line-height: 1.2;
 }
 
-.main-title-spotlight {
+.admin-title-spotlight {
   position: relative;
   display: inline-block;
   --spot-x: 50%;
   --spot-y: 50%;
-  isolation: isolate;
+  color: var(--primary-color);
+  transition: color 0.22s ease, text-shadow 0.22s ease, filter 0.22s ease;
 }
 
-.main-title-spotlight::after {
-  content: attr(data-text);
-  position: absolute;
-  inset: 0;
+.admin-title-spotlight.title-spotlight-active {
   color: transparent;
-  background: radial-gradient(
-    circle 82px at var(--spot-x) var(--spot-y),
-    rgba(var(--primary-light-rgb), 1) 0%,
-    rgba(var(--primary-light-rgb), 0.88) 26%,
-    rgba(var(--primary-light-rgb), 0.34) 52%,
-    rgba(var(--primary-light-rgb), 0.0) 72%
-  );
+  -webkit-text-fill-color: transparent;
+  background-image:
+    radial-gradient(
+      circle 78px at var(--spot-x) var(--spot-y),
+      rgba(var(--primary-light-rgb), 1) 0%,
+      rgba(var(--primary-light-rgb), 0.9) 24%,
+      rgba(var(--primary-light-rgb), 0.45) 47%,
+      rgba(var(--primary-light-rgb), 0.08) 66%,
+      rgba(var(--primary-light-rgb), 0) 78%
+    ),
+    linear-gradient(var(--primary-color), var(--primary-color));
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-fill-color: transparent;
-  opacity: 0;
-  transition: opacity 0.24s ease;
-  pointer-events: none;
-  text-shadow: 0 0 10px rgba(var(--primary-light-rgb), 0.75), 0 0 20px rgba(var(--primary-light-rgb), 0.35);
-}
-
-.admin-title-spotlight.title-spotlight-active::after {
-  opacity: 1;
-}
-
-.admin-title-spotlight:hover::after {
-  opacity: 1;
+  text-shadow: 0 0 12px rgba(var(--primary-light-rgb), 0.55), 0 0 26px rgba(var(--primary-light-rgb), 0.25);
+  filter: saturate(1.18);
 }
 
 .header-top {
