@@ -1115,7 +1115,7 @@ export default function App() {
           )}
         </div>
 
-            <h1 className={isAdmin ? 'admin-main-title' : ''}>{isAdmin ? '\u00C1REA ADMINISTRADOR' : 'Tabela de Vendas'}</h1>
+            <h1 className={isAdmin ? 'admin-main-title' : ''}>{isAdmin ? 'TESTE' : 'Tabela de Vendas'}</h1>
 {!isAdmin && (
           <div className="month-controls">
             <button className="btn-month" onClick={() => setShowMonthSelector(!showMonthSelector)} title="Selecionar mÃƒÆ’Ã‚Âªs">
@@ -1454,6 +1454,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
