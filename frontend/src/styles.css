@@ -168,7 +168,7 @@ h1 {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  right: 20px;
+  right: 148px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -449,18 +449,23 @@ body.dark-mode .admin-global-search-table-wrap td {
 
 .admin-header-top .theme-controls {
   left: 20px;
-  right: 20px;
+  right: 148px;
 }
 
 .admin-header-top .admin-corner-start,
 .admin-header-top .admin-right-controls {
-  margin-left: auto;
+  margin-left: 0;
 }
 
 .admin-right-controls {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   gap: 8px;
   align-items: center;
+  z-index: 6;
 }
 
 .admin-right-controls .btn-logout {
