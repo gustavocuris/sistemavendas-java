@@ -463,6 +463,10 @@ body.dark-mode .admin-global-search-table-wrap td {
   align-items: center;
 }
 
+.admin-right-controls .btn-logout {
+  margin-left: 0;
+}
+
 .month-controls {
   position: absolute;
   right: 0;
