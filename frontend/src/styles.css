@@ -152,19 +152,19 @@ h1 {
   inset: 0;
   color: transparent;
   background: radial-gradient(
-    circle 74px at var(--spot-x) var(--spot-y),
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(var(--primary-light-rgb), 1) 18%,
-    rgba(var(--primary-light-rgb), 0.72) 42%,
+    circle 92px at var(--spot-x) var(--spot-y),
+    rgba(255, 255, 255, 1) 0%,
+    rgba(var(--primary-light-rgb), 1) 20%,
+    rgba(var(--primary-light-rgb), 0.82) 40%,
     rgba(var(--primary-light-rgb), 0.0) 72%
   );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.18s ease;
   pointer-events: none;
-  text-shadow: 0 0 10px rgba(var(--primary-light-rgb), 0.7), 0 0 20px rgba(var(--primary-light-rgb), 0.35);
+  text-shadow: 0 0 12px rgba(var(--primary-light-rgb), 0.85), 0 0 26px rgba(var(--primary-light-rgb), 0.45);
 }
 
 .admin-title-spotlight.title-spotlight-active {
@@ -177,6 +177,18 @@ h1 {
 }
 
 .admin-title-spotlight.title-spotlight-active::after {
+  opacity: 1;
+}
+
+.admin-title-spotlight:hover {
+  color: rgb(var(--primary-light-rgb));
+  text-shadow:
+    0 0 8px rgba(var(--primary-light-rgb), 0.95),
+    0 0 18px rgba(var(--primary-light-rgb), 0.75),
+    0 0 30px rgba(var(--primary-light-rgb), 0.48);
+}
+
+.admin-title-spotlight:hover::after {
   opacity: 1;
 }
 
