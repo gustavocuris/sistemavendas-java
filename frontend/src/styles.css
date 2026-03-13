@@ -141,6 +141,7 @@ h1 {
   display: inline-block;
   --spot-x: 50%;
   --spot-y: 50%;
+  isolation: isolate;
 }
 
 .main-title-spotlight::after {
@@ -149,26 +150,26 @@ h1 {
   inset: 0;
   color: transparent;
   background: radial-gradient(
-    circle 96px at var(--spot-x) var(--spot-y),
+    circle 82px at var(--spot-x) var(--spot-y),
     rgba(var(--primary-light-rgb), 1) 0%,
-    rgba(var(--primary-light-rgb), 0.95) 22%,
-    rgba(var(--primary-light-rgb), 0.55) 44%,
+    rgba(var(--primary-light-rgb), 0.88) 26%,
+    rgba(var(--primary-light-rgb), 0.34) 52%,
     rgba(var(--primary-light-rgb), 0.0) 72%
   );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   opacity: 0;
-  transition: opacity 0.14s ease;
+  transition: opacity 0.24s ease;
   pointer-events: none;
-  text-shadow: 0 0 18px rgba(var(--primary-light-rgb), 0.9), 0 0 28px rgba(var(--primary-light-rgb), 0.55);
+  text-shadow: 0 0 10px rgba(var(--primary-light-rgb), 0.75), 0 0 20px rgba(var(--primary-light-rgb), 0.35);
 }
 
-.main-title-spotlight.title-spotlight-active::after {
+.admin-title-spotlight.title-spotlight-active::after {
   opacity: 1;
 }
 
-.main-title-spotlight:hover::after {
+.admin-title-spotlight:hover::after {
   opacity: 1;
 }
 
