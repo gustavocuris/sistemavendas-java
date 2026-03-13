@@ -447,23 +447,29 @@ body.dark-mode .admin-global-search-table-wrap td {
   align-items: center;
 }
 
-.admin-header-top .theme-controls {
+.admin-toolbar-left {
+  position: absolute;
   left: 20px;
-  right: auto;
-}
-
-.admin-actions-right {
-  position: fixed;
-  right: 20px;
-  top: 18px;
-  transform: none;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   gap: 8px;
   align-items: center;
-  z-index: 1000;
+  z-index: 5;
 }
 
-.admin-actions-right .btn-logout {
+.admin-toolbar-right {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 6;
+}
+
+.admin-toolbar-right .btn-logout {
   margin-left: 0;
 }
 
@@ -5886,14 +5892,20 @@ body.dark-mode .btn-eye-large:hover {
   }
 
   .theme-controls,
+  .admin-toolbar-left,
+  .admin-toolbar-right,
   .month-controls {
     position: static;
     flex-direction: column;
     align-items: stretch;
     width: 100%;
+    transform: none;
   }
 
   .theme-controls .btn-theme,
+  .admin-toolbar-left .btn-theme,
+  .admin-toolbar-right .btn-theme,
+  .admin-toolbar-right .btn-logout,
   .month-controls .btn-month {
     width: 100%;
   }
