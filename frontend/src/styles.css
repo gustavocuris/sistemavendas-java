@@ -452,8 +452,15 @@ body.dark-mode .admin-global-search-table-wrap td {
   right: 20px;
 }
 
-.admin-header-top .admin-corner-start {
+.admin-header-top .admin-corner-start,
+.admin-header-top .admin-right-controls {
   margin-left: auto;
+}
+
+.admin-right-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .month-controls {
