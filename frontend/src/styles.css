@@ -136,6 +136,36 @@ h1 {
   line-height: 1.2;
 }
 
+.main-title-spotlight {
+  position: relative;
+  display: inline-block;
+  --spot-x: 50%;
+  --spot-y: 50%;
+}
+
+.main-title-spotlight::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  background: radial-gradient(
+    circle 84px at var(--spot-x) var(--spot-y),
+    rgba(var(--primary-light-rgb), 0.98) 0%,
+    rgba(var(--primary-light-rgb), 0.78) 30%,
+    rgba(var(--primary-light-rgb), 0.0) 72%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0;
+  transition: opacity 0.14s ease;
+  pointer-events: none;
+  text-shadow: 0 0 12px rgba(var(--primary-light-rgb), 0.55);
+}
+
+.main-title-spotlight.title-spotlight-active::after {
+  opacity: 1;
+}
+
 .header-top {
   display: flex;
   justify-content: center;
