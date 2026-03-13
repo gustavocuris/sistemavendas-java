@@ -449,15 +449,10 @@ body.dark-mode .admin-global-search-table-wrap td {
 
 .admin-header-top .theme-controls {
   left: 20px;
-  right: 148px;
+  right: auto;
 }
 
-.admin-header-top .admin-corner-start,
-.admin-header-top .admin-right-controls {
-  margin-left: 0;
-}
-
-.admin-right-controls {
+.admin-actions-right {
   position: absolute;
   right: 20px;
   top: 50%;
@@ -468,7 +463,7 @@ body.dark-mode .admin-global-search-table-wrap td {
   z-index: 6;
 }
 
-.admin-right-controls .btn-logout {
+.admin-actions-right .btn-logout {
   margin-left: 0;
 }
 
