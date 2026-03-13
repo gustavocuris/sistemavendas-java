@@ -5892,8 +5892,6 @@ body.dark-mode .btn-eye-large:hover {
   }
 
   .theme-controls,
-  .admin-toolbar-left,
-  .admin-toolbar-right,
   .month-controls {
     position: static;
     flex-direction: column;
@@ -5902,10 +5900,19 @@ body.dark-mode .btn-eye-large:hover {
     transform: none;
   }
 
+  .admin-toolbar-left {
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .admin-toolbar-right {
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
   .theme-controls .btn-theme,
-  .admin-toolbar-left .btn-theme,
-  .admin-toolbar-right .btn-theme,
-  .admin-toolbar-right .btn-logout,
   .month-controls .btn-month {
     width: 100%;
   }
